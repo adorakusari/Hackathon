@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080b18">
-  <meta name="description" content="Test your reflexes and climb through the Reaction Speed Arena.">
+  <meta name="description" content="Test your reflexes and coding speed in Reaction Speed Arena.">
   <title>Reaction Speed Arena</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
@@ -15,35 +15,57 @@
     <div class="glow glow-two" aria-hidden="true"></div>
 
     <section class="hero" id="home-screen" aria-labelledby="game-title">
-      <p class="eyebrow">TEST YOUR REFLEXES</p>
+      <p class="eyebrow">TEST YOUR REFLEXES AND YOUR MIND</p>
       <h1 id="game-title">REACTION SPEED <span>ARENA</span></h1>
-      <p class="intro">Ready to prove how fast you are?</p>
-      <button class="start-button" id="levels-button" type="button">LEVEL</button>
+      <p class="intro">Think fast. React faster. Prove your skills.</p>
+      <button class="start-button" id="levels-button" type="button">PLAY</button>
+    </section>
+
+    <section class="panel mode-panel hidden" id="mode-screen" aria-labelledby="mode-title">
+      <button class="back-button" id="home-button" type="button">← HOME</button>
+      <p class="eyebrow">CHOOSE YOUR GAME MODE</p>
+      <h2 id="mode-title">ENTER THE ARENA</h2>
+      <p class="panel-subtitle">Pick a challenge and work your way through 10 levels.</p>
+      <div class="mode-grid">
+        <button class="mode-card color-mode" id="color-mode-button" type="button">
+          <span class="mode-icon" aria-hidden="true">◉</span>
+          <span class="mode-name">COLOR REACTION</span>
+          <span class="mode-description">Test your reflexes. Wait for the color and react at the perfect moment.</span>
+          <span class="mode-cta">PLAY MODE →</span>
+        </button>
+        <button class="mode-card html-mode" id="html-mode-button" type="button">
+          <span class="mode-icon" aria-hidden="true">&lt;/&gt;</span>
+          <span class="mode-name">HTML SPEED</span>
+          <span class="mode-description">Recognize HTML tags, choose the right code, and beat the clock.</span>
+          <span class="mode-cta">PLAY MODE →</span>
+        </button>
+      </div>
     </section>
 
     <section class="panel levels-panel hidden" id="levels-screen" aria-labelledby="levels-title">
-      <button class="back-button" id="home-button" type="button">← HOME</button>
-      <p class="eyebrow">CHOOSE YOUR CHALLENGE</p>
+      <button class="back-button" id="modes-back-button" type="button">← GAME MODES</button>
+      <p class="eyebrow" id="levels-eyebrow">COLOR REACTION</p>
       <h2 id="levels-title">THE LEVELS</h2>
       <p class="panel-subtitle">Complete each level to unlock the next one.</p>
       <div class="level-grid" id="level-grid"></div>
-      <p class="progress-label" id="progress-label">LEVEL 1 OF 10 UNLOCKED</p>
+      <p class="progress-label" id="progress-label"></p>
     </section>
 
     <section class="panel game-panel hidden" id="game-screen" aria-labelledby="game-title-active">
       <button class="back-button" id="levels-back-button" type="button">← LEVELS</button>
       <p class="eyebrow" id="active-level-label">LEVEL 1</p>
       <h2 id="game-title-active">Ready?</h2>
-      <p class="game-instructions" id="game-instructions">Press the button below, wait for green, then react as quickly as you can.</p>
+      <p class="game-instructions" id="game-instructions"></p>
       <div class="reaction-box" id="reaction-box">
         <span id="reaction-message">GET READY</span>
       </div>
+      <div class="html-options hidden" id="html-options" aria-label="Answer choices"></div>
       <button class="start-button game-action" id="reaction-button" type="button">START ROUND</button>
       <p class="result-message" id="result-message" aria-live="polite"></p>
       <p class="target-label" id="target-label"></p>
     </section>
 
-    <p class="footer-note">HOW FAST ARE YOUR REFLEXES?</p>
+    <p class="footer-note">HOW FAST CAN YOU THINK?</p>
   </main>
 </body>
 </html>

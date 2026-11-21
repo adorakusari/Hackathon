@@ -82,3 +82,11 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
   .back-button { margin-bottom:24px; }
 }
 \n.combo-label { min-height:24px; margin:10px 0 0; color:#9ca8ca; font:700 12px 'Orbitron',sans-serif; letter-spacing:.14em; transition:color .2s,text-shadow .2s; }\n.combo-label.combo-active { color:#ffe27a; text-shadow:0 0 16px rgba(255,226,122,.55); animation:combo-pop .35s ease-out; }\n@keyframes combo-pop { 0% { transform:scale(.8); } 70% { transform:scale(1.12); } 100% { transform:scale(1); } }\n
+.click-mode:hover { border-color:#77f0bd; box-shadow:0 12px 40px rgba(119,240,189,.12); }
+.click-settings { display:flex; align-items:center; justify-content:center; gap:14px; margin:0 auto 18px; color:#aeb6d2; font:700 11px 'Orbitron',sans-serif; letter-spacing:.08em; }
+.click-settings select { padding:11px 14px; border:1px solid #526080; border-radius:7px; background:#151d39; color:#f4f7ff; font:600 13px 'Inter',sans-serif; }
+.click-arena { min-height:240px; cursor:default; user-select:none; }
+.click-arena.click-active { cursor:pointer; border-color:#63ffc2; background:radial-gradient(ellipse at center,#155b52,#10152b); box-shadow:0 0 35px rgba(99,255,194,.2); }
+.click-arena.click-active:active { transform:scale(.99); }
+@media(min-width:650px) { .mode-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .mode-card { min-height:270px; } }
+@media(max-width:600px) { .click-settings { flex-direction:column; gap:8px; } }

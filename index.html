@@ -53,6 +53,12 @@
           <span class="mode-description">Click as many times as you can before the timer runs out. Beat your clicks-per-second record!</span>
           <span class="mode-cta">PLAY MODE →</span>
         </button>
+        <button class="mode-card code-mode" id="code-mode-button" type="button">
+          <span class="mode-icon" aria-hidden="true">⌨</span>
+          <span class="mode-name">CODE RACE</span>
+          <span class="mode-description">Type real code to race other drivers.</span>
+          <span class="mode-cta">PLAY MODE →</span>
+        </button>
       </div>
       <div class="stats-strip" aria-label="Your personal records">
         <h3 class="stats-heading">YOUR PERSONAL RECORDS</h3>
@@ -60,6 +66,7 @@
           <div class="stat-card"><span class="stat-mode">COLOR REACTION</span><strong id="color-best">—</strong><span class="stat-caption">BEST TIME</span><span class="stat-detail" id="color-accuracy">Accuracy: 0% (0/0)</span></div>
           <div class="stat-card"><span class="stat-mode">HTML SPEED</span><strong id="html-best">—</strong><span class="stat-caption">BEST TIME</span><span class="stat-detail" id="html-accuracy">Accuracy: 0% (0/0)</span></div>
           <div class="stat-card"><span class="stat-mode">CLICK SPEED</span><strong id="click-best">—</strong><span class="stat-caption">BEST CLICKS / SECOND</span><span class="stat-detail">Your fastest click test</span></div>
+          <div class="stat-card"><span class="stat-mode">CODE RACE</span><strong id="code-best">—</strong><span class="stat-caption">BEST WPM</span><span class="stat-detail" id="code-accuracy">Accuracy: —</span></div>
         </div>
       </div>
     </section>
@@ -95,6 +102,24 @@
       <p class="target-label" id="target-label"></p>
     </section>
 
+    <section class="panel race-panel hidden" id="race-screen" aria-labelledby="race-title">
+      <button class="back-button" id="race-home-button" type="button">← HOME</button>
+      <p class="eyebrow">LIVE TYPING CHALLENGE</p>
+      <h2 id="race-title">CODE RACE</h2>
+      <p class="panel-subtitle">Type the code accurately and race the other drivers.</p>
+      <div class="race-track" id="race-track" aria-label="Four racing lanes"></div>
+      <div class="race-code-card">
+        <div class="race-code-heading"><span>YOUR CODE</span><span id="race-progress">0%</span></div>
+        <pre class="race-code-display" id="race-code-display" aria-hidden="true"></pre>
+        <textarea class="race-input" id="race-input" aria-label="Type the code shown above" autocomplete="off" autocapitalize="off" spellcheck="false" disabled></textarea>
+        <p class="race-hint" id="race-hint">Press START RACE, then type the code exactly. Use Tab for indentation.</p>
+      </div>
+      <div class="race-controls">
+        <button class="start-button" id="race-start-button" type="button">START RACE</button>
+        <button class="back-button" id="race-leave-button" type="button">LEAVE RACE</button>
+      </div>
+      <div class="race-result hidden" id="race-result" aria-live="polite"></div>
+    </section>
     <p class="footer-note">HOW FAST CAN YOU THINK?</p>
   </main>
 </body>

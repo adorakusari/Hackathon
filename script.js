@@ -34,6 +34,11 @@ let htmlUnlocked = Math.min(TOTAL_LEVELS, Math.max(1, Number(localStorage.getIte
 let startTime = 0;
 let timeoutId = null;
 let roundState = 'idle';
+let clickInterval = null;
+let clickCount = 0;
+let clickDuration = 60;
+let clickEndsAt = 0;
+let clickBestCps = Number(localStorage.getItem('rsa-click-best-cps')) || 0;
 const comboStreaks = { color:0, html:0 };
 function updateCombo(message) {
   const label = document.getElementById('combo-label');
@@ -69,6 +74,8 @@ function recordAttempt(mode, isCorrect, timeMs) {
   renderStats();
 }
 function renderStats() {
+  const clickBest = document.getElementById('click-best');
+  if (clickBest) clickBest.textContent = clickBestCps ? clickBestCps.toFixed(2) : '—';
   ['color','html'].forEach(mode => {
     const record = stats[mode];
     const best = document.getElementById(mode + '-best');
@@ -119,9 +126,68 @@ function openMode(mode) {
   renderLevels();
   showScreen(levelsScreen);
 }
+function openClickMode() {
+  activeMode = 'click';
+  clearInterval(clickInterval);
+  roundState = 'idle';
+  removeNextButton();
+  htmlOptions.classList.add('hidden');
+  htmlOptions.innerHTML = '';
+  document.getElementById('click-settings').classList.add('hidden');
+  document.getElementById('combo-label').classList.remove('hidden');
+  document.getElementById('click-settings').classList.remove('hidden');
+  reactionButton.classList.remove('hidden');
+  reactionButton.disabled = false;
+  reactionButton.textContent = 'START CLICK TEST';
+  document.getElementById('active-level-label').textContent = 'CLICK SPEED TEST';
+  document.getElementById('game-title-active').textContent = 'HOW FAST CAN YOU CLICK?';
+  instructions.textContent = 'Choose a duration, then click inside the arena as many times as possible before time runs out.';
+  reactionBox.className = 'reaction-box click-arena';
+  reactionMessage.textContent = 'READY?';
+  resultMessage.textContent = '';
+  targetLabel.textContent = 'YOUR BEST: ' + (clickBestCps ? clickBestCps.toFixed(2) + ' CLICKS / SEC' : 'NO RECORD YET');
+  document.getElementById('combo-label').classList.add('hidden');
+  showScreen(gameScreen);
+}
+function startClickTest() {
+  clearInterval(clickInterval);
+  clickDuration = Number(document.getElementById('click-duration').value) || 60;
+  clickCount = 0;
+  clickEndsAt = Date.now() + clickDuration * 1000;
+  roundState = 'clicking';
+  reactionButton.disabled = true;
+  reactionButton.textContent = 'TEST IN PROGRESS';
+  reactionMessage.textContent = '0 CLICKS';
+  reactionBox.classList.add('click-active');
+  resultMessage.textContent = 'CLICK AS FAST AS YOU CAN!';
+  targetLabel.textContent = 'TIME LEFT: ' + clickDuration + ' SECONDS';
+  clickInterval = setInterval(() => {
+    const remaining = Math.max(0, (clickEndsAt - Date.now()) / 1000);
+    targetLabel.textContent = 'TIME LEFT: ' + remaining.toFixed(1) + ' SECONDS';
+    if (remaining <= 0) finishClickTest();
+  }, 50);
+}
+function finishClickTest() {
+  clearInterval(clickInterval);
+  clickInterval = null;
+  roundState = 'finished';
+  reactionBox.classList.remove('click-active');
+  const cps = clickCount / clickDuration;
+  reactionMessage.textContent = clickCount + ' CLICKS!';
+  reactionButton.disabled = false;
+  reactionButton.textContent = 'TRY AGAIN';
+  resultMessage.textContent = 'Your speed: ' + cps.toFixed(2) + ' clicks per second. ' + (cps > clickBestCps ? 'NEW PERSONAL RECORD!' : 'Keep practicing to beat your record!');
+  if (cps > clickBestCps) {
+    clickBestCps = cps;
+    localStorage.setItem('rsa-click-best-cps', String(clickBestCps));
+  }
+  targetLabel.textContent = 'BEST: ' + clickBestCps.toFixed(2) + ' CLICKS / SEC';
+  renderStats();
+}
 function openLevel(level) {
   activeLevel = level;
   clearTimeout(timeoutId);
+  clearInterval(clickInterval);
   removeNextButton();
   const oldRetry = document.getElementById('html-retry-button');
   if (oldRetry) oldRetry.remove();
@@ -262,5 +328,15 @@ document.getElementById('home-button').addEventListener('click', () => showScree
 document.getElementById('modes-back-button').addEventListener('click', () => showScreen(modeScreen));
 document.getElementById('color-mode-button').addEventListener('click', () => openMode('color'));
 document.getElementById('html-mode-button').addEventListener('click', () => openMode('html'));
-document.getElementById('levels-back-button').addEventListener('click', () => { clearTimeout(timeoutId); renderLevels(); showScreen(levelsScreen); });
-reactionButton.addEventListener('click', finishRound);
+document.getElementById('click-mode-button').addEventListener('click', openClickMode);
+document.getElementById('levels-back-button').addEventListener('click', () => { clearTimeout(timeoutId); clearInterval(clickInterval); renderLevels(); showScreen(levelsScreen); });
+reactionButton.addEventListener('click', () => {
+  if (activeMode === 'click') {
+    if (roundState !== 'clicking') startClickTest();
+  } else finishRound();
+});
+reactionBox.addEventListener('click', () => {
+  if (activeMode !== 'click' || roundState !== 'clicking') return;
+  clickCount++;
+  reactionMessage.textContent = clickCount + (clickCount === 1 ? ' CLICK!' : ' CLICKS!');
+});

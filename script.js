@@ -567,3 +567,25 @@ document.getElementById('race-home-button').addEventListener('click',leaveCodeRa
 document.getElementById('race-leave-button').addEventListener('click',leaveCodeRace);
 raceStartButton.addEventListener('click',startCodeRace);
 renderCodeRecord();
+
+
+// Rotating arena messages make the mode screen feel alive.
+const arenaMessages = [
+  'Your next record is waiting. Choose a mode and make it yours.',
+  'Quick reflexes. Sharp focus. One arena champion.',
+  'Challenge your friends, beat your best, and climb higher.',
+  'Every millisecond counts. Are you ready to compete?',
+  'Four challenges. One question: how fast are you?'
+];
+let arenaMessageIndex = 0;
+const arenaMessage = document.getElementById('arena-challenge-text');
+if (arenaMessage) {
+  setInterval(() => {
+    arenaMessage.style.opacity = '0';
+    setTimeout(() => {
+      arenaMessageIndex = (arenaMessageIndex + 1) % arenaMessages.length;
+      arenaMessage.textContent = arenaMessages[arenaMessageIndex];
+      arenaMessage.style.opacity = '1';
+    }, 220);
+  }, 4200);
+}

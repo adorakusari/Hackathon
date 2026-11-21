@@ -2,16 +2,16 @@ const TOTAL_LEVELS = 10;
 const colorThresholds = [800,700,600,550,500,450,400,350,300,250];
 const htmlThresholds = [12000,11000,10000,9000,8000,7000,6000,5000,4500,4000];
 const htmlQuestions = [
-  { prompt:'Which HTML tag creates a paragraph?', answer:'<p>', choices:['<div>','<h1>','<p>','<span>'] },
-  { prompt:'Which tag creates the main, largest heading?', answer:'<h1>', choices:['<h1>','<h2>','<title>','<strong>'] },
-  { prompt:'Which tag creates a clickable link?', answer:'<a>', choices:['<link>','<a>','<href>','<nav>'] },
-  { prompt:'Which tag displays an image?', answer:'<img>', choices:['<image>','<src>','<picture>','<img>'] },
-  { prompt:'Which tag inserts a line break?', answer:'<br>', choices:['<hr>','<break>','<br>','<p>'] },
-  { prompt:'Which tag creates an unordered (bulleted) list?', answer:'<ul>', choices:['<ol>','<li>','<ul>','<list>'] },
-  { prompt:'Which tag defines one item inside a list?', answer:'<li>', choices:['<li>','<ul>','<ol>','<item>'] },
-  { prompt:'Which tag creates a clickable button?', answer:'<button>', choices:['<input>','<click>','<btn>','<button>'] },
-  { prompt:'Which tag creates an input field for user data?', answer:'<input>', choices:['<form>','<input>','<textarea>','<label>'] },
-  { prompt:'Which tag is the root element of an HTML page?', answer:'<html>', choices:['<head>','<body>','<main>','<html>'] }
+  { prompt:'Which HTML tag creates a paragraph?', answer:'<p>', explanation:"Use <p> for paragraph text. It groups a block of readable text.", choices:['<div>','<h1>','<p>','<span>'] },
+  { prompt:'Which tag creates the main, largest heading?', answer:'<h1>', explanation:"Use <h1> for the main page heading. It usually represents the most important heading.", choices:['<h1>','<h2>','<title>','<strong>'] },
+  { prompt:'Which tag creates a clickable link?', answer:'<a>', explanation:"Use <a> to create a hyperlink. The href attribute tells the browser where it leads.", choices:['<link>','<a>','<href>','<nav>'] },
+  { prompt:'Which tag displays an image?', answer:'<img>', explanation:"Use <img> to display an image. The src attribute points to the image file.", choices:['<image>','<src>','<picture>','<img>'] },
+  { prompt:'Which tag inserts a line break?', answer:'<br>', explanation:"Use <br> to start a new line without creating a new paragraph.", choices:['<hr>','<break>','<br>','<p>'] },
+  { prompt:'Which tag creates an unordered (bulleted) list?', answer:'<ul>', explanation:"Use <ul> for an unordered list. The list items go inside it as <li> elements.", choices:['<ol>','<li>','<ul>','<list>'] },
+  { prompt:'Which tag defines one item inside a list?', answer:'<li>', explanation:"Use <li> for each individual item inside an ordered or unordered list.", choices:['<li>','<ul>','<ol>','<item>'] },
+  { prompt:'Which tag creates a clickable button?', answer:'<button>', explanation:"Use <button> for an interactive button that users can click.", choices:['<input>','<click>','<btn>','<button>'] },
+  { prompt:'Which tag creates an input field for user data?', answer:'<input>', explanation:"Use <input> to let users enter data, such as a name or email address.", choices:['<form>','<input>','<textarea>','<label>'] },
+  { prompt:'Which tag is the root element of an HTML page?', answer:'<html>', explanation:"The <html> element wraps the entire HTML document, including head and body.", choices:['<head>','<body>','<main>','<html>'] }
 ];
 
 const homeScreen = document.getElementById('home-screen');
@@ -141,6 +141,7 @@ function openClickMode() {
   document.getElementById('game-title-active').textContent = 'HOW FAST CAN YOU CLICK?';
   instructions.textContent = 'Choose a duration, then click inside the arena as many times as possible before time runs out.';
   reactionBox.className = 'reaction-box click-arena';
+  setupClickTargets();
   reactionMessage.textContent = 'READY?';
   resultMessage.textContent = '';
   targetLabel.textContent = 'YOUR BEST: ' + (clickBestCps ? clickBestCps.toFixed(2) + ' CLICKS / SEC' : 'NO RECORD YET');
@@ -159,8 +160,13 @@ function startClickTest() {
   reactionMessage.classList.remove('click-counter-pop');
   reactionBox.querySelectorAll('.click-float').forEach(item => item.remove());
   reactionBox.classList.add('click-active');
+  moveClickTargets();
   resultMessage.textContent = 'CLICK AS FAST AS YOU CAN!';
   targetLabel.textContent = 'TIME LEFT: ' + clickDuration + ' SECONDS';
+  clearInterval(clickTargetMoveTimer);
+  clickTargetMoveTimer = setInterval(() => { if (roundState === 'clicking') moveClickTargets(); },950);
+  clearTimeout(goldenSpawnTimer);
+  goldenSpawnTimer = setTimeout(() => { const gold=reactionBox.querySelector('.golden-powerup'); if (gold && roundState==='clicking') gold.style.display='grid'; },3500);
   clickInterval = setInterval(() => {
     const remaining = Math.max(0, (clickEndsAt - Date.now()) / 1000);
     targetLabel.textContent = 'TIME LEFT: ' + remaining.toFixed(1) + ' SECONDS';
@@ -169,10 +175,14 @@ function startClickTest() {
 }
 function finishClickTest() {
   clearInterval(clickInterval);
+  clearInterval(clickTargetMoveTimer);
+  clearTimeout(goldenSpawnTimer);
   clickInterval = null;
   roundState = 'finished';
   reactionBox.classList.remove('click-active');
+  reactionBox.querySelectorAll('.moving-click-target,.golden-powerup').forEach(node => node.style.display='none');
   const cps = clickCount / clickDuration;
+  playSound('finish');
   reactionMessage.textContent = clickCount + ' CLICKS!';
   reactionButton.disabled = false;
   reactionButton.textContent = 'TRY AGAIN';
@@ -190,6 +200,8 @@ function openLevel(level) {
   document.getElementById('combo-label').classList.remove('hidden');
   clearTimeout(timeoutId);
   clearInterval(clickInterval);
+  clearInterval(clickTargetMoveTimer);
+  clearTimeout(goldenSpawnTimer);
   removeNextButton();
   const oldRetry = document.getElementById('html-retry-button');
   if (oldRetry) oldRetry.remove();
@@ -258,18 +270,40 @@ function beginRound() {
   reactionMessage.textContent = 'WAIT FOR GREEN...';
   reactionButton.textContent = 'WAIT...';
   reactionButton.disabled = false;
-  resultMessage.textContent = '';
-  const delay = 1500 + Math.random() * 3000;
+  resultMessage.textContent = 'Watch carefully — some colors are fake-outs!';
+  const delay = 1500 + Math.random() * 2600;
   timeoutId = setTimeout(() => {
     if (roundState !== 'waiting') return;
-    roundState = 'go';
-    startTime = performance.now();
-    reactionBox.className = 'reaction-box go';
-    reactionMessage.textContent = 'CLICK NOW!';
-    reactionButton.textContent = 'REACT!';
+    if (Math.random() < 0.55) {
+      roundState = 'fakeout';
+      reactionBox.className = 'reaction-box fakeout';
+      reactionMessage.textContent = 'NOT YET!';
+      timeoutId = setTimeout(() => {
+        if (roundState !== 'fakeout') return;
+        roundState = 'waiting';
+        reactionBox.className = 'reaction-box waiting';
+        reactionMessage.textContent = 'WAIT FOR GREEN...';
+        timeoutId = setTimeout(showGreenSignal, 550 + Math.random() * 950);
+      }, 650);
+    } else showGreenSignal();
   }, delay);
 }
+function showGreenSignal() {
+  if (roundState !== 'waiting') return;
+  roundState = 'go';
+  startTime = performance.now();
+  reactionBox.className = 'reaction-box go';
+  reactionMessage.textContent = 'CLICK NOW!';
+  reactionButton.textContent = 'REACT!';
+  playSound('go');
+}
 function finishRound() {
+  if (roundState === 'fakeout') {
+    clearTimeout(timeoutId); roundState = 'idle'; reactionBox.className = 'reaction-box';
+    reactionMessage.textContent = 'FAKE-OUT!'; reactionButton.textContent = 'TRY AGAIN';
+    resultMessage.textContent = 'That color was a trick! Penalty: +500 ms. Stay sharp and try again.';
+    recordAttempt('color', false, null); registerComboResult(false); playSound('error'); return;
+  }
   if (roundState === 'waiting') {
     clearTimeout(timeoutId);
     roundState = 'idle';
@@ -277,6 +311,7 @@ function finishRound() {
     reactionMessage.textContent = 'TOO SOON!';
     reactionButton.textContent = 'TRY AGAIN';
     resultMessage.textContent = 'False start! Wait until the box turns green.';
+    playSound('error');
     recordAttempt('color', false, null);
     registerComboResult(false);
     return;
@@ -288,6 +323,7 @@ function finishRound() {
   reactionMessage.textContent = reaction + ' MS';
   reactionButton.textContent = 'TRY AGAIN';
   const passed = reaction <= colorThresholds[activeLevel - 1];
+  playSound(passed ? 'success' : 'error');
   recordAttempt('color', passed, reaction);
   registerComboResult(passed);
   if (passed) completeLevel(reaction);
@@ -302,16 +338,21 @@ function finishHtmlRound(choice) {
   const passed = choice === question.answer && reaction <= htmlThresholds[activeLevel - 1];
   recordAttempt('html', passed, reaction);
   registerComboResult(passed);
+  const explanation = question.explanation || 'Review the tag and what it does in an HTML page.';
   if (passed) {
     reactionMessage.textContent = question.answer + ' ✓';
+    resultMessage.textContent = 'Correct! ' + explanation;
+    playSound('success');
     completeLevel(reaction);
   } else if (choice !== question.answer) {
     reactionMessage.textContent = 'NOT QUITE!';
-    resultMessage.textContent = 'That is not the right tag. The correct answer is ' + question.answer + '. Try again!';
+    resultMessage.textContent = 'Not quite. The correct answer is ' + question.answer + '. ' + explanation;
+    playSound('error');
     showHtmlRetry();
   } else {
     reactionMessage.textContent = 'TOO SLOW!';
-    resultMessage.textContent = 'You got it right, but took ' + (reaction / 1000).toFixed(2) + ' seconds. Try to be faster!';
+    resultMessage.textContent = 'Correct, but too slow. ' + explanation;
+    playSound('error');
     showHtmlRetry();
   }
 }
@@ -340,6 +381,7 @@ reactionButton.addEventListener('click', () => {
 reactionBox.addEventListener('click', event => {
   if (activeMode !== 'click' || roundState !== 'clicking') return;
   clickCount++;
+  playSound('click');
   reactionMessage.textContent = clickCount + (clickCount === 1 ? ' CLICK!' : ' CLICKS!');
   reactionMessage.classList.remove('click-counter-pop');
   void reactionMessage.offsetWidth;
@@ -589,3 +631,94 @@ if (arenaMessage) {
     }, 220);
   }, 4200);
 }
+
+
+// Sound effects (generated locally with Web Audio; no external audio files).
+let soundMuted = localStorage.getItem('rsa-sound-muted') === 'true';
+let soundContext = null;
+function updateSoundToggle() {
+  const toggle = document.getElementById('sound-toggle');
+  if (!toggle) return;
+  toggle.textContent = soundMuted ? '🔇 SOUND OFF' : '🔊 SOUND ON';
+  toggle.setAttribute('aria-pressed', String(soundMuted));
+}
+function playSound(kind) {
+  if (soundMuted) return;
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    soundContext = soundContext || new AudioCtx();
+    if (soundContext.state === 'suspended') soundContext.resume();
+    const now = soundContext.currentTime;
+    const tones = kind === 'success' ? [660,880] : kind === 'go' ? [520,760] : kind === 'error' ? [190,130] : kind === 'finish' ? [520,660,880] : [420];
+    tones.forEach((hz,index) => {
+      const osc = soundContext.createOscillator();
+      const gain = soundContext.createGain();
+      osc.type = 'sine'; osc.frequency.value = hz;
+      gain.gain.setValueAtTime(.0001,now + index*.075);
+      gain.gain.exponentialRampToValueAtTime(.09,now + index*.075 + .012);
+      gain.gain.exponentialRampToValueAtTime(.0001,now + index*.075 + .13);
+      osc.connect(gain); gain.connect(soundContext.destination);
+      osc.start(now + index*.075); osc.stop(now + index*.075 + .14);
+    });
+  } catch (error) { /* Audio is optional; gameplay continues without it. */ }
+}
+document.getElementById('sound-toggle').addEventListener('click',() => {
+  soundMuted = !soundMuted;
+  localStorage.setItem('rsa-sound-muted',String(soundMuted));
+  updateSoundToggle();
+  if (!soundMuted) playSound('success');
+});
+updateSoundToggle();
+
+// Click Speed: a moving target and a golden bonus target (+10 clicks).
+let clickTargetMoveTimer = null;
+let goldenSpawnTimer = null;
+function setupClickTargets() {
+  reactionBox.querySelectorAll('.moving-click-target,.golden-powerup').forEach(node => node.remove());
+  const target = document.createElement('button');
+  target.type = 'button'; target.className = 'moving-click-target'; target.textContent = 'CLICK!';
+  target.setAttribute('aria-label','Moving click target');
+  target.addEventListener('click',event => {
+    event.stopPropagation();
+    if (roundState !== 'clicking') return;
+    countBonusClicks(1,event);
+    moveClickTargets();
+  });
+  const gold = document.createElement('button');
+  gold.type = 'button'; gold.className = 'golden-powerup'; gold.textContent = '★';
+  gold.setAttribute('aria-label','Golden power-up: add ten clicks');
+  gold.addEventListener('click',event => {
+    event.stopPropagation();
+    if (roundState !== 'clicking') return;
+    countBonusClicks(10,event);
+    gold.style.display = 'none';
+    playSound('finish');
+    clearTimeout(goldenSpawnTimer);
+    goldenSpawnTimer = setTimeout(() => { if (roundState === 'clicking') gold.style.display = 'grid'; },2600);
+  });
+  reactionBox.append(target,gold);
+  moveClickTargets();
+}
+function moveClickTargets() {
+  const target = reactionBox.querySelector('.moving-click-target');
+  const gold = reactionBox.querySelector('.golden-powerup');
+  if (!target || !gold) return;
+  const maxX = Math.max(8,reactionBox.clientWidth-78), maxY = Math.max(8,reactionBox.clientHeight-78);
+  target.style.left = (12 + Math.random()*Math.max(0,maxX-12))+'px';
+  target.style.top = (12 + Math.random()*Math.max(0,maxY-12))+'px';
+  gold.style.left = Math.max(10,reactionBox.clientWidth-68)+'px';
+  gold.style.top = '12px';
+}
+function countBonusClicks(amount,event) {
+  clickCount += amount;
+  reactionMessage.textContent = clickCount + ' CLICKS!';
+  reactionMessage.classList.remove('click-counter-pop'); void reactionMessage.offsetWidth; reactionMessage.classList.add('click-counter-pop');
+  const burst = document.createElement('span'); burst.className='click-float'; burst.textContent='+'+amount;
+  const rect=reactionBox.getBoundingClientRect();
+  burst.style.left=Math.max(10,Math.min(rect.width-48,event.clientX-rect.left-12))+'px';
+  burst.style.top=Math.max(10,Math.min(rect.height-34,event.clientY-rect.top-8))+'px';
+  reactionBox.appendChild(burst); burst.addEventListener('animationend',()=>burst.remove(),{once:true});
+  playSound('click');
+}
+const originalFinishClickTest = finishClickTest;

@@ -356,3 +356,195 @@ reactionBox.addEventListener('click', event => {
   reactionBox.appendChild(burst);
   burst.addEventListener('animationend', () => burst.remove(), { once:true });
 });
+
+
+// CODE RACE mode
+const raceScreen = document.getElementById('race-screen');
+const raceTrack = document.getElementById('race-track');
+const raceInput = document.getElementById('race-input');
+const raceCodeDisplay = document.getElementById('race-code-display');
+const raceProgress = document.getElementById('race-progress');
+const raceHint = document.getElementById('race-hint');
+const raceResult = document.getElementById('race-result');
+const raceStartButton = document.getElementById('race-start-button');
+const raceSnippets = ["int partition(vector<int>& arr, int low, int high) {\n    int pivot = arr[high];\n    int i = low - 1;\n\n    for (int j = low; j < high; j++) {\n        if (arr[j] <= pivot) {\n            i++;\n            swap(arr[i], arr[j]);\n        }\n    }\n\n    swap(arr[i + 1], arr[high]);\n    return i + 1;\n}","int partition(vector<int>& nums, int left, int right) {\n    int pivot = nums[right];\n    int boundary = left;\n\n    for (int current = left; current < right; current++) {\n        if (nums[current] < pivot) {\n            swap(nums[boundary], nums[current]);\n            boundary++;\n        }\n    }\n\n    swap(nums[boundary], nums[right]);\n    return boundary;\n}","int partition(vector<int>& values, int start, int end) {\n    int pivot = values[end];\n    int smaller = start - 1;\n\n    for (int index = start; index < end; index++) {\n        if (values[index] <= pivot) {\n            smaller++;\n            swap(values[smaller], values[index]);\n        }\n    }\n\n    swap(values[smaller + 1], values[end]);\n    return smaller + 1;\n}"];
+let raceCode = '';
+let raceStartedAt = 0;
+let raceTimer = null;
+let raceTyped = '';
+let raceKeystrokes = 0;
+let raceMistakes = 0;
+let raceBots = [];
+let raceFinished = false;
+let raceBest = JSON.parse(localStorage.getItem('rsa-code-best') || 'null');
+function renderCodeRecord() {
+  const best = document.getElementById('code-best');
+  const accuracy = document.getElementById('code-accuracy');
+  if (best) best.textContent = raceBest && raceBest.wpm ? raceBest.wpm.toFixed(1) : '—';
+  if (accuracy) accuracy.textContent = raceBest ? 'Accuracy: ' + raceBest.accuracy.toFixed(1) + '%' : 'Accuracy: —';
+}
+function carSvg(color) {
+  return '<svg viewBox="0 0 64 32" aria-hidden="true"><path d="M8 20 L12 12 Q14 9 20 9 L43 9 Q48 9 52 16 L57 18 L59 24 L5 24 Z" fill="' + color + '" stroke="#dcecff" stroke-width="1.3"/><path d="M19 11 L25 11 L25 17 L14 17 Z M29 11 L42 11 Q46 12 49 17 L29 17 Z" fill="#b9e5ff" opacity=".85"/><circle cx="17" cy="25" r="5" fill="#101827" stroke="#b9c9e2" stroke-width="1.5"/><circle cx="47" cy="25" r="5" fill="#101827" stroke="#b9c9e2" stroke-width="1.5"/><path d="M7 20 L3 20 L3 23 L8 23" fill="#ffe39a"/></svg>';
+}
+function openCodeRace() {
+  clearInterval(raceTimer);
+  raceFinished = false;
+  raceTyped = '';
+  raceKeystrokes = 0;
+  raceMistakes = 0;
+  raceCode = raceSnippets[Math.floor(Math.random() * raceSnippets.length)];
+  raceBots = ['Guest','Guest','Guest'].map((name,index) => ({
+    name, color:['#b38aff','#ff9a76','#73dfc1'][index],
+    wpm:15 + Math.random()*45, progress:0, finished:false, finishAt:null
+  }));
+  raceInput.value = '';
+  raceInput.disabled = true;
+  raceResult.classList.add('hidden');
+  raceResult.innerHTML = '';
+  raceStartButton.disabled = false;
+  raceStartButton.textContent = 'START RACE';
+  raceHint.textContent = 'Press START RACE, then type the code exactly. Use Tab for indentation.';
+  raceProgress.textContent = '0%';
+  renderRaceCode();
+  renderRaceTrack();
+  renderCodeRecord();
+  showScreen(raceScreen);
+}
+function renderRaceTrack() {
+  const drivers = [{name:'Guest (you)',you:true,color:'#58aaff',progress:raceCode.length ? raceTyped.length/raceCode.length : 0,wpm:currentRaceWpm(),finished:raceTyped.length>=raceCode.length},...raceBots];
+  raceTrack.innerHTML = '';
+  drivers.forEach((driver,index) => {
+    const lane = document.createElement('div');
+    lane.className = 'race-lane';
+    const name = document.createElement('div');
+    name.className = 'race-driver' + (driver.you ? ' you' : '');
+    name.textContent = driver.name;
+    const road = document.createElement('div');
+    road.className = 'race-road';
+    const line = document.createElement('span'); line.className = 'race-road-line'; road.appendChild(line);
+    const car = document.createElement('div'); car.className = 'race-car'; car.style.left = Math.min(94,Math.max(0,driver.progress*94)) + '%'; car.innerHTML = carSvg(driver.color); road.appendChild(car);
+    const wpm = document.createElement('div'); wpm.className='race-wpm'; wpm.textContent = Math.round(driver.wpm || 0) + ' WPM';
+    lane.append(name,road,wpm);
+    if (!driver.you && driver.finished) {
+      const place = document.createElement('span'); place.className='race-place'; place.textContent = driver.place || ''; lane.appendChild(place);
+    }
+    raceTrack.appendChild(lane);
+  });
+}
+function currentRaceWpm() {
+  const minutes = (Date.now()-raceStartedAt)/60000;
+  return raceStartedAt && minutes>0 ? (raceTyped.length/5)/minutes : 0;
+}
+function renderRaceCode() {
+  const typedLength = raceTyped.length;
+  let html = '';
+  for (let i=0;i<raceCode.length;i++) {
+    const ch = raceCode[i];
+    const shown = ch === ' ' ? '&nbsp;' : ch === '\n' ? '↵\n' : ch === '\t' ? '⇥' : ch.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    let cls = '';
+    if (i < typedLength) cls = raceTyped[i] === ch ? 'typed' : 'mistake';
+    else if (i === typedLength) cls = 'current';
+    html += '<span class="' + cls + '">' + shown + '</span>';
+  }
+  raceCodeDisplay.innerHTML = html;
+  const current = raceCodeDisplay.querySelector('.current');
+  if (current) current.scrollIntoView({block:'nearest'});
+  raceProgress.textContent = Math.floor(typedLength/raceCode.length*100) + '%';
+}
+function updateRace() {
+  const elapsed = (Date.now()-raceStartedAt)/60000;
+  raceBots.forEach(bot => {
+    if (bot.finished) return;
+    bot.progress = Math.min(1, (bot.wpm*5*elapsed)/raceCode.length);
+    if (bot.progress >= 1) { bot.finished=true; bot.finishAt=Date.now(); }
+  });
+  renderRaceTrack();
+}
+function startCodeRace() {
+  if (raceTimer) clearInterval(raceTimer);
+  raceStartedAt = Date.now();
+  raceFinished = false;
+  raceStartButton.disabled = true;
+  raceStartButton.textContent = 'RACE IN PROGRESS';
+  raceInput.disabled = false;
+  raceInput.focus();
+  raceHint.textContent = 'Type every character exactly. Mistakes are highlighted red; fix them to continue.';
+  raceTimer = setInterval(updateRace,120);
+}
+function handleRaceInput() {
+  if (!raceStartedAt || raceFinished) return;
+  const entered = raceInput.value;
+  raceKeystrokes = Math.max(raceKeystrokes, entered.length);
+  let validPrefix = 0;
+  for (let i=0;i<Math.min(entered.length,raceCode.length);i++) {
+    if (entered[i] !== raceCode[i]) break;
+    validPrefix++;
+  }
+  raceMistakes = Math.max(raceMistakes, entered.length-validPrefix);
+  // Mistakes must be corrected: only the matching prefix counts as progress.
+  raceTyped = entered.slice(0,validPrefix);
+  if (validPrefix !== entered.length) {
+    raceHint.textContent = 'There is a mistake in red. Correct it before continuing.';
+  } else {
+    raceHint.textContent = 'Perfect so far — keep typing!';
+  }
+  renderRaceCode();
+  updateRace();
+  if (raceTyped.length === raceCode.length) finishCodeRace();
+}
+function finishCodeRace() {
+  if (raceFinished) return;
+  raceFinished = true;
+  clearInterval(raceTimer);
+  raceTimer = null;
+  raceInput.disabled = true;
+  const elapsedMinutes = Math.max((Date.now()-raceStartedAt)/60000,1/60000);
+  const wpm = (raceTyped.length/5)/elapsedMinutes;
+  const accuracy = raceKeystrokes ? Math.max(0,(raceKeystrokes-raceMistakes)/raceKeystrokes*100) : 100;
+  const botsAhead = raceBots.filter(bot => bot.finishAt !== null && bot.finishAt <= Date.now() || bot.progress >= raceTyped.length/raceCode.length).length;
+  const place = botsAhead >= 3 ? '4th Place' : botsAhead === 2 ? '3rd Place' : botsAhead === 1 ? '2nd Place' : '1st Place';
+  if (!raceBest || wpm > raceBest.wpm) {
+    raceBest = {wpm,accuracy};
+    localStorage.setItem('rsa-code-best',JSON.stringify(raceBest));
+  } else if (accuracy > raceBest.accuracy) {
+    raceBest.accuracy = accuracy;
+    localStorage.setItem('rsa-code-best',JSON.stringify(raceBest));
+  }
+  renderCodeRecord();
+  renderRaceTrack();
+  raceResult.classList.remove('hidden');
+  raceResult.innerHTML = '<h3>' + place + '</h3><p>Typing speed: <strong>' + wpm.toFixed(1) + ' WPM</strong></p><p>Accuracy: <strong>' + accuracy.toFixed(1) + '%</strong></p><button class="start-button" id="race-again-button" type="button">RACE AGAIN</button>';
+  document.getElementById('race-again-button').addEventListener('click',openCodeRace);
+  raceHint.textContent = 'Race complete! You can race again with a new code snippet.';
+}
+function leaveCodeRace() {
+  clearInterval(raceTimer);
+  raceTimer = null;
+  raceStartedAt = 0;
+  raceInput.disabled = true;
+  showScreen(modeScreen);
+}
+raceInput.addEventListener('input',handleRaceInput);
+raceInput.addEventListener('keydown',event => {
+  if (!raceStartedAt || raceFinished) return;
+  if (event.key === 'Tab') {
+    event.preventDefault();
+    const start = raceInput.selectionStart, end = raceInput.selectionEnd;
+    raceInput.setRangeText('    ',start,end,'end');
+    raceInput.dispatchEvent(new Event('input',{bubbles:true}));
+  } else if (event.key === 'Enter') {
+    // Add the indentation of the current line automatically.
+    event.preventDefault();
+    const before = raceInput.value.slice(0,raceInput.selectionStart);
+    const line = before.slice(before.lastIndexOf('\n')+1);
+    const indent = (line.match(/^\s*/) || [''])[0];
+    const start = raceInput.selectionStart, end = raceInput.selectionEnd;
+    raceInput.setRangeText('\n'+indent,start,end,'end');
+    raceInput.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+});
+document.getElementById('code-mode-button').addEventListener('click',openCodeRace);
+document.getElementById('race-home-button').addEventListener('click',leaveCodeRace);
+document.getElementById('race-leave-button').addEventListener('click',leaveCodeRace);
+raceStartButton.addEventListener('click',startCodeRace);
+renderCodeRecord();

@@ -1,6 +1,21 @@
 const TOTAL_LEVELS = 10;
-const thresholds = [800, 700, 600, 550, 500, 450, 400, 350, 300, 250];
+const colorThresholds = [800,700,600,550,500,450,400,350,300,250];
+const htmlThresholds = [12000,11000,10000,9000,8000,7000,6000,5000,4500,4000];
+const htmlQuestions = [
+  { prompt:'Which HTML tag creates a paragraph?', answer:'<p>', choices:['<div>','<h1>','<p>','<span>'] },
+  { prompt:'Which tag creates the main, largest heading?', answer:'<h1>', choices:['<h1>','<h2>','<title>','<strong>'] },
+  { prompt:'Which tag creates a clickable link?', answer:'<a>', choices:['<link>','<a>','<href>','<nav>'] },
+  { prompt:'Which tag displays an image?', answer:'<img>', choices:['<image>','<src>','<picture>','<img>'] },
+  { prompt:'Which tag inserts a line break?', answer:'<br>', choices:['<hr>','<break>','<br>','<p>'] },
+  { prompt:'Which tag creates an unordered (bulleted) list?', answer:'<ul>', choices:['<ol>','<li>','<ul>','<list>'] },
+  { prompt:'Which tag defines one item inside a list?', answer:'<li>', choices:['<li>','<ul>','<ol>','<item>'] },
+  { prompt:'Which tag creates a clickable button?', answer:'<button>', choices:['<input>','<click>','<btn>','<button>'] },
+  { prompt:'Which tag creates an input field for user data?', answer:'<input>', choices:['<form>','<input>','<textarea>','<label>'] },
+  { prompt:'Which tag is the root element of an HTML page?', answer:'<html>', choices:['<head>','<body>','<main>','<html>'] }
+];
+
 const homeScreen = document.getElementById('home-screen');
+const modeScreen = document.getElementById('mode-screen');
 const levelsScreen = document.getElementById('levels-screen');
 const gameScreen = document.getElementById('game-screen');
 const levelGrid = document.getElementById('level-grid');
@@ -8,21 +23,38 @@ const progressLabel = document.getElementById('progress-label');
 const reactionBox = document.getElementById('reaction-box');
 const reactionMessage = document.getElementById('reaction-message');
 const reactionButton = document.getElementById('reaction-button');
+const htmlOptions = document.getElementById('html-options');
 const resultMessage = document.getElementById('result-message');
 const targetLabel = document.getElementById('target-label');
 const instructions = document.getElementById('game-instructions');
-let unlockedLevel = Math.min(TOTAL_LEVELS, Math.max(1, Number(localStorage.getItem('rsa-unlocked-level')) || 1));
+let activeMode = 'color';
 let activeLevel = 1;
+let colorUnlocked = Math.min(TOTAL_LEVELS, Math.max(1, Number(localStorage.getItem('rsa-unlocked-level')) || 1));
+let htmlUnlocked = Math.min(TOTAL_LEVELS, Math.max(1, Number(localStorage.getItem('rsa-html-unlocked-level')) || 1));
 let startTime = 0;
 let timeoutId = null;
 let roundState = 'idle';
 
+function getUnlocked() { return activeMode === 'color' ? colorUnlocked : htmlUnlocked; }
+function getThreshold() { return (activeMode === 'color' ? colorThresholds : htmlThresholds)[activeLevel - 1]; }
+function saveProgress() {
+  if (activeMode === 'color') localStorage.setItem('rsa-unlocked-level', String(colorUnlocked));
+  else localStorage.setItem('rsa-html-unlocked-level', String(htmlUnlocked));
+}
 function showScreen(screen) {
-  [homeScreen, levelsScreen, gameScreen].forEach(item => item.classList.add('hidden'));
+  [homeScreen,modeScreen,levelsScreen,gameScreen].forEach(item => item.classList.add('hidden'));
   screen.classList.remove('hidden');
+}
+function removeNextButton() {
+  const oldNext = document.getElementById('next-level-button');
+  if (oldNext) oldNext.remove();
 }
 function renderLevels() {
   levelGrid.innerHTML = '';
+  const unlockedLevel = getUnlocked();
+  levelsScreen.classList.toggle('html-levels', activeMode === 'html');
+  document.getElementById('levels-eyebrow').textContent = activeMode === 'color' ? 'COLOR REACTION' : 'HTML SPEED CHALLENGE';
+  document.getElementById('levels-title').textContent = activeMode === 'color' ? 'COLOR LEVELS' : 'HTML LEVELS';
   for (let level = 1; level <= TOTAL_LEVELS; level++) {
     const unlocked = level <= unlockedLevel;
     const completed = level < unlockedLevel;
@@ -30,35 +62,86 @@ function renderLevels() {
     button.type = 'button';
     button.className = 'level-button' + (unlocked ? ' unlocked' : '') + (completed ? ' completed' : '');
     button.disabled = !unlocked;
-    button.innerHTML = '<span class="level-number">0' + level + '</span><span class="level-status">' +
+    button.innerHTML = '<span class="level-number">' + String(level).padStart(2,'0') + '</span><span class="level-status">' +
       (completed ? '✓ COMPLETE' : unlocked ? 'UNLOCKED' : '🔒 LOCKED') + '</span>';
     if (unlocked) button.addEventListener('click', () => openLevel(level));
     levelGrid.appendChild(button);
   }
   progressLabel.textContent = 'LEVEL ' + unlockedLevel + ' OF ' + TOTAL_LEVELS + ' UNLOCKED';
 }
+function openMode(mode) {
+  activeMode = mode;
+  renderLevels();
+  showScreen(levelsScreen);
+}
 function openLevel(level) {
   activeLevel = level;
   clearTimeout(timeoutId);
+  removeNextButton();
   roundState = 'idle';
   reactionBox.className = 'reaction-box';
-  reactionMessage.textContent = 'GET READY';
-  document.getElementById('active-level-label').textContent = 'LEVEL ' + level;
-  document.getElementById('game-title-active').textContent = 'Level ' + level;
-  instructions.textContent = 'Press START ROUND. Wait for the box to turn green, then click as quickly as possible.';
-  reactionButton.textContent = 'START ROUND';
-  reactionButton.disabled = false;
+  htmlOptions.classList.add('hidden');
+  htmlOptions.innerHTML = '';
+  reactionButton.classList.toggle('hidden', activeMode === 'html');
+  document.getElementById('active-level-label').textContent = (activeMode === 'color' ? 'COLOR REACTION' : 'HTML SPEED') + ' • LEVEL ' + level;
+  document.getElementById('game-title-active').textContent = activeMode === 'color' ? 'Ready to react?' : 'HTML QUICKFIRE';
   resultMessage.textContent = '';
-  targetLabel.textContent = 'TARGET: UNDER ' + thresholds[level - 1] + ' MS';
+  if (activeMode === 'color') {
+    instructions.textContent = 'Press START ROUND. Wait for the box to turn green, then click as quickly as possible.';
+    reactionMessage.textContent = 'GET READY';
+    reactionButton.textContent = 'START ROUND';
+    reactionButton.disabled = false;
+    targetLabel.textContent = 'TARGET: UNDER ' + colorThresholds[level - 1] + ' MS';
+  } else {
+    const question = htmlQuestions[level - 1];
+    instructions.textContent = 'Choose the correct HTML tag as quickly as you can. Your time starts now!';
+    reactionMessage.textContent = question.prompt;
+    htmlOptions.classList.remove('hidden');
+    question.choices.forEach(choice => {
+      const answer = document.createElement('button');
+      answer.type = 'button';
+      answer.className = 'answer-button';
+      answer.textContent = choice;
+      answer.addEventListener('click', () => finishHtmlRound(choice));
+      htmlOptions.appendChild(answer);
+    });
+    startTime = performance.now();
+    targetLabel.textContent = 'TIME LIMIT: ' + (htmlThresholds[level - 1] / 1000).toFixed(1) + ' SECONDS';
+  }
   showScreen(gameScreen);
 }
+function completeLevel(reaction) {
+  let unlocked = getUnlocked();
+  if (activeLevel === unlocked && unlocked < TOTAL_LEVELS) {
+    unlocked++;
+    if (activeMode === 'color') colorUnlocked = unlocked;
+    else htmlUnlocked = unlocked;
+    saveProgress();
+  }
+  resultMessage.textContent = activeLevel === TOTAL_LEVELS
+    ? 'INCREDIBLE! YOU COMPLETED THIS GAME MODE!'
+    : 'Amazing! You passed Level ' + activeLevel + ' in ' + reaction + ' ms!';
+  if (activeMode === 'color') reactionButton.textContent = 'PLAY AGAIN';
+  if (activeLevel === TOTAL_LEVELS) resultMessage.textContent = 'INCREDIBLE! YOU COMPLETED THIS GAME MODE!';
+  const next = document.createElement('button');
+  next.type = 'button';
+  next.id = 'next-level-button';
+  next.className = 'start-button game-action next-level-button';
+  next.style.marginTop = '12px';
+  next.textContent = activeLevel === TOTAL_LEVELS ? 'BACK TO LEVELS' : 'NEXT LEVEL';
+  next.addEventListener('click', () => {
+    if (activeLevel < TOTAL_LEVELS) openLevel(activeLevel + 1);
+    else { renderLevels(); showScreen(levelsScreen); }
+  });
+  reactionButton.insertAdjacentElement('afterend', next);
+}
 function beginRound() {
-  const oldNext = document.getElementById('next-level-button');
-  if (oldNext) oldNext.remove();
+  removeNextButton();
   roundState = 'waiting';
   reactionBox.className = 'reaction-box waiting';
   reactionMessage.textContent = 'WAIT FOR GREEN...';
   reactionButton.textContent = 'WAIT...';
+  reactionButton.disabled = false;
   resultMessage.textContent = '';
   const delay = 1500 + Math.random() * 3000;
   timeoutId = setTimeout(() => {
@@ -80,45 +163,47 @@ function finishRound() {
     resultMessage.textContent = 'False start! Wait until the box turns green.';
     return;
   }
-  if (roundState !== 'go') {
-    beginRound();
-    return;
-  }
+  if (roundState !== 'go') { beginRound(); return; }
   const reaction = Math.round(performance.now() - startTime);
   roundState = 'idle';
   reactionBox.className = 'reaction-box';
   reactionMessage.textContent = reaction + ' MS';
   reactionButton.textContent = 'TRY AGAIN';
-  if (reaction <= thresholds[activeLevel - 1]) {
-    resultMessage.textContent = 'Amazing! You passed Level ' + activeLevel + '!';
-    if (activeLevel === unlockedLevel && unlockedLevel < TOTAL_LEVELS) {
-      unlockedLevel++;
-      localStorage.setItem('rsa-unlocked-level', String(unlockedLevel));
-    }
-    if (activeLevel === TOTAL_LEVELS) {
-      resultMessage.textContent = 'INCREDIBLE! YOU COMPLETED THE ARENA!';
-    }
-    reactionButton.textContent = 'PLAY AGAIN';
-    const next = document.createElement('button');
-    next.type = 'button';
-    next.className = 'start-button game-action';
-    next.style.marginTop = '12px';
-    next.textContent = activeLevel === TOTAL_LEVELS ? 'LEVELS' : 'NEXT LEVEL';
-    next.addEventListener('click', () => {
-      if (activeLevel < TOTAL_LEVELS) openLevel(activeLevel + 1);
-      else { renderLevels(); showScreen(levelsScreen); }
-    });
-    const oldNext = document.getElementById('next-level-button');
-    if (oldNext) oldNext.remove();
-    next.id = 'next-level-button';
-    reactionButton.insertAdjacentElement('afterend', next);
+  if (reaction <= colorThresholds[activeLevel - 1]) completeLevel(reaction);
+  else resultMessage.textContent = reaction + ' ms — you need ' + colorThresholds[activeLevel - 1] + ' ms or faster. Try again!';
+}
+function finishHtmlRound(choice) {
+  if (roundState !== 'idle') return;
+  roundState = 'answered';
+  const reaction = Math.round(performance.now() - startTime);
+  const question = htmlQuestions[activeLevel - 1];
+  htmlOptions.querySelectorAll('button').forEach(button => { button.disabled = true; });
+  if (choice === question.answer && reaction <= htmlThresholds[activeLevel - 1]) {
+    reactionMessage.textContent = question.answer + ' ✓';
+    completeLevel(reaction);
+  } else if (choice !== question.answer) {
+    reactionMessage.textContent = 'NOT QUITE!';
+    resultMessage.textContent = 'That is not the right tag. The correct answer is ' + question.answer + '. Try again!';
+    showHtmlRetry();
   } else {
-    resultMessage.textContent = reaction + ' ms — you need ' + thresholds[activeLevel - 1] + ' ms or faster. Try again!';
-    const oldNext = document.getElementById('next-level-button');
-    if (oldNext) oldNext.remove();
+    reactionMessage.textContent = 'TOO SLOW!';
+    resultMessage.textContent = 'You got it right, but took ' + (reaction / 1000).toFixed(2) + ' seconds. Try to be faster!';
+    showHtmlRetry();
   }
 }
-document.getElementById('levels-button').addEventListener('click', () => { renderLevels(); showScreen(levelsScreen); });
+function showHtmlRetry() {
+  const retry = document.createElement('button');
+  retry.type = 'button';
+  retry.className = 'start-button game-action';
+  retry.textContent = 'TRY AGAIN';
+  retry.style.marginTop = '12px';
+  retry.addEventListener('click', () => openLevel(activeLevel));
+  htmlOptions.insertAdjacentElement('afterend', retry);
+}
+document.getElementById('levels-button').addEventListener('click', () => showScreen(modeScreen));
 document.getElementById('home-button').addEventListener('click', () => showScreen(homeScreen));
-document.getElementById('levels-back-button').addEventListener('click', () => { renderLevels(); showScreen(levelsScreen); });
+document.getElementById('modes-back-button').addEventListener('click', () => showScreen(modeScreen));
+document.getElementById('color-mode-button').addEventListener('click', () => openMode('color'));
+document.getElementById('html-mode-button').addEventListener('click', () => openMode('html'));
+document.getElementById('levels-back-button').addEventListener('click', () => { clearTimeout(timeoutId); renderLevels(); showScreen(levelsScreen); });
 reactionButton.addEventListener('click', finishRound);

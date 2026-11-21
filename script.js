@@ -195,7 +195,7 @@ function renderDailyChallenges() {
       item.id==='code' ? (item.completed?'40+ WPM REACHED': 'BEST: '+(item.progress?Number(item.progress).toFixed(1)+' WPM':'—')) :
       item.id==='click' ? (item.completed?'100+ CLICKS REACHED': 'BEST: '+item.progress+'/100') :
       (item.completed?'3 PERFECT LEVELS':'STREAK: '+item.progress+'/3');
-    return '<article class="daily-item '+(item.completed?'is-complete':'')+'"><span class="daily-status">'+(item.completed?'✓':'✦')+'</span><div class="daily-copy"><strong>'+item.title+'</strong><p>'+item.description+'</p><small>'+progressText+'</small></div><span class="daily-reward">'+(item.completed?'CLAIMED':'+50 XP')+'</span></article>';
+    return '<article class="daily-item daily-'+item.id+' '+(item.completed?'is-complete':'')+'"><span class="daily-status">'+(item.completed?'✓':'✦')+'</span><div class="daily-copy"><strong>'+item.title+'</strong><p>'+item.description+'</p><small>'+progressText+'</small></div><span class="daily-reward">'+(item.completed?'CLAIMED':'+50 XP')+'</span></article>';
   }).join('');
   const completed=dailyState.challenges.filter(item=>item.completed).length;
   document.getElementById('daily-progress-label').textContent=completed+' / 3 COMPLETE';

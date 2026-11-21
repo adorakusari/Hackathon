@@ -147,6 +147,7 @@ function openClickMode() {
   targetLabel.textContent = 'YOUR BEST: ' + (clickBestCps ? clickBestCps.toFixed(2) + ' CLICKS / SEC' : 'NO RECORD YET');
   document.getElementById('combo-label').classList.add('hidden');
   showScreen(gameScreen);
+  moveClickTargets();
 }
 function startClickTest() {
   clearInterval(clickInterval);
@@ -301,7 +302,7 @@ function finishRound() {
   if (roundState === 'fakeout') {
     clearTimeout(timeoutId); roundState = 'idle'; reactionBox.className = 'reaction-box';
     reactionMessage.textContent = 'FAKE-OUT!'; reactionButton.textContent = 'TRY AGAIN';
-    resultMessage.textContent = 'That color was a trick! Penalty: +500 ms. Stay sharp and try again.';
+    resultMessage.textContent = 'That color was a trick! That counts as a false start and resets your combo. Stay sharp and try again.';
     recordAttempt('color', false, null); registerComboResult(false); playSound('error'); return;
   }
   if (roundState === 'waiting') {
@@ -344,6 +345,7 @@ function finishHtmlRound(choice) {
     resultMessage.textContent = 'Correct! ' + explanation;
     playSound('success');
     completeLevel(reaction);
+    resultMessage.textContent = 'Correct! ' + explanation + ' Level cleared!';
   } else if (choice !== question.answer) {
     reactionMessage.textContent = 'NOT QUITE!';
     resultMessage.textContent = 'Not quite. The correct answer is ' + question.answer + '. ' + explanation;

@@ -78,6 +78,8 @@ function openLevel(level) {
   activeLevel = level;
   clearTimeout(timeoutId);
   removeNextButton();
+  const oldRetry = document.getElementById('html-retry-button');
+  if (oldRetry) oldRetry.remove();
   roundState = 'idle';
   reactionBox.className = 'reaction-box';
   htmlOptions.classList.add('hidden');
@@ -194,6 +196,7 @@ function finishHtmlRound(choice) {
 function showHtmlRetry() {
   const retry = document.createElement('button');
   retry.type = 'button';
+  retry.id = 'html-retry-button';
   retry.className = 'start-button game-action';
   retry.textContent = 'TRY AGAIN';
   retry.style.marginTop = '12px';

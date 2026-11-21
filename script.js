@@ -34,6 +34,38 @@ let htmlUnlocked = Math.min(TOTAL_LEVELS, Math.max(1, Number(localStorage.getIte
 let startTime = 0;
 let timeoutId = null;
 let roundState = 'idle';
+const emptyStats = () => ({ attempts:0, correct:0, bestMs:null });
+function readStats(mode) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('rsa-stats-' + mode));
+    if (saved && Number.isFinite(saved.attempts) && Number.isFinite(saved.correct)) {
+      return { attempts:saved.attempts, correct:saved.correct, bestMs:Number.isFinite(saved.bestMs) ? saved.bestMs : null };
+    }
+  } catch (error) { /* Start with clean stats if saved data is invalid. */ }
+  return emptyStats();
+}
+const stats = { color:readStats('color'), html:readStats('html') };
+function recordAttempt(mode, isCorrect, timeMs) {
+  const record = stats[mode];
+  record.attempts++;
+  if (isCorrect) {
+    record.correct++;
+    if (record.bestMs === null || timeMs < record.bestMs) record.bestMs = timeMs;
+  }
+  localStorage.setItem('rsa-stats-' + mode, JSON.stringify(record));
+  renderStats();
+}
+function renderStats() {
+  ['color','html'].forEach(mode => {
+    const record = stats[mode];
+    const best = document.getElementById(mode + '-best');
+    const accuracy = document.getElementById(mode + '-accuracy');
+    if (!best || !accuracy) return;
+    best.textContent = record.bestMs === null ? '—' : record.bestMs + ' MS';
+    const percent = record.attempts ? Math.round(record.correct / record.attempts * 100) : 0;
+    accuracy.textContent = 'Accuracy: ' + percent + '% (' + record.correct + '/' + record.attempts + ')';
+  });
+}
 
 function getUnlocked() { return activeMode === 'color' ? colorUnlocked : htmlUnlocked; }
 function getThreshold() { return (activeMode === 'color' ? colorThresholds : htmlThresholds)[activeLevel - 1]; }
@@ -163,6 +195,7 @@ function finishRound() {
     reactionMessage.textContent = 'TOO SOON!';
     reactionButton.textContent = 'TRY AGAIN';
     resultMessage.textContent = 'False start! Wait until the box turns green.';
+    recordAttempt('color', false, null);
     return;
   }
   if (roundState !== 'go') { beginRound(); return; }
@@ -171,7 +204,9 @@ function finishRound() {
   reactionBox.className = 'reaction-box';
   reactionMessage.textContent = reaction + ' MS';
   reactionButton.textContent = 'TRY AGAIN';
-  if (reaction <= colorThresholds[activeLevel - 1]) completeLevel(reaction);
+  const passed = reaction <= colorThresholds[activeLevel - 1];
+  recordAttempt('color', passed, reaction);
+  if (passed) completeLevel(reaction);
   else resultMessage.textContent = reaction + ' ms — you need ' + colorThresholds[activeLevel - 1] + ' ms or faster. Try again!';
 }
 function finishHtmlRound(choice) {
@@ -180,7 +215,9 @@ function finishHtmlRound(choice) {
   const reaction = Math.round(performance.now() - startTime);
   const question = htmlQuestions[activeLevel - 1];
   htmlOptions.querySelectorAll('button').forEach(button => { button.disabled = true; });
-  if (choice === question.answer && reaction <= htmlThresholds[activeLevel - 1]) {
+  const passed = choice === question.answer && reaction <= htmlThresholds[activeLevel - 1];
+  recordAttempt('html', passed, reaction);
+  if (passed) {
     reactionMessage.textContent = question.answer + ' ✓';
     completeLevel(reaction);
   } else if (choice !== question.answer) {
@@ -203,7 +240,7 @@ function showHtmlRetry() {
   retry.addEventListener('click', () => openLevel(activeLevel));
   htmlOptions.insertAdjacentElement('afterend', retry);
 }
-document.getElementById('levels-button').addEventListener('click', () => showScreen(modeScreen));
+document.getElementById('levels-button').addEventListener('click', () => { renderStats(); showScreen(modeScreen); });
 document.getElementById('home-button').addEventListener('click', () => showScreen(homeScreen));
 document.getElementById('modes-back-button').addEventListener('click', () => showScreen(modeScreen));
 document.getElementById('color-mode-button').addEventListener('click', () => openMode('color'));

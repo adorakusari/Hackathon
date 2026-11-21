@@ -133,8 +133,6 @@ function openClickMode() {
   removeNextButton();
   htmlOptions.classList.add('hidden');
   htmlOptions.innerHTML = '';
-  document.getElementById('click-settings').classList.add('hidden');
-  document.getElementById('combo-label').classList.remove('hidden');
   document.getElementById('click-settings').classList.remove('hidden');
   reactionButton.classList.remove('hidden');
   reactionButton.disabled = false;
@@ -186,6 +184,8 @@ function finishClickTest() {
 }
 function openLevel(level) {
   activeLevel = level;
+  document.getElementById('click-settings').classList.add('hidden');
+  document.getElementById('combo-label').classList.remove('hidden');
   clearTimeout(timeoutId);
   clearInterval(clickInterval);
   removeNextButton();
@@ -329,7 +329,7 @@ document.getElementById('modes-back-button').addEventListener('click', () => sho
 document.getElementById('color-mode-button').addEventListener('click', () => openMode('color'));
 document.getElementById('html-mode-button').addEventListener('click', () => openMode('html'));
 document.getElementById('click-mode-button').addEventListener('click', openClickMode);
-document.getElementById('levels-back-button').addEventListener('click', () => { clearTimeout(timeoutId); clearInterval(clickInterval); renderLevels(); showScreen(levelsScreen); });
+document.getElementById('levels-back-button').addEventListener('click', () => { clearTimeout(timeoutId); clearInterval(clickInterval); if (activeMode === 'click') showScreen(modeScreen); else { renderLevels(); showScreen(levelsScreen); } });
 reactionButton.addEventListener('click', () => {
   if (activeMode === 'click') {
     if (roundState !== 'clicking') startClickTest();

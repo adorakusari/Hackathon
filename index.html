@@ -35,6 +35,7 @@
       <p class="eyebrow">CHOOSE YOUR GAME MODE</p>
       <h2 id="mode-title">ENTER THE ARENA</h2>
       <p class="panel-subtitle">Choose your challenge. Set a new record. Become the arena champion.</p>
+      <button class="profile-open-button" id="open-profile-button" type="button"><span class="profile-open-avatar" id="profile-button-avatar">🚀</span><span><strong id="profile-button-name">ARENA PLAYER</strong><small>VIEW PLAYER PROFILE ↗</small></span></button>
       <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary">🏅 0 ACHIEVEMENTS UNLOCKED</div></section>
       <section class="daily-challenges" aria-label="Daily challenges">
         <div class="daily-heading"><div><span class="daily-kicker">FRESH EVERY DAY</span><h3>DAILY CHALLENGES</h3></div><span class="daily-reset" id="daily-reset">RESETS AT MIDNIGHT</span></div>
@@ -98,6 +99,45 @@
           <div class="stat-card"><span class="stat-mode">CODE RACE</span><strong id="code-best">—</strong><span class="stat-caption">BEST WPM</span><span class="stat-detail" id="code-accuracy">Accuracy: —</span></div>
         </div>
       </div>
+    </section>
+
+    <section class="panel profile-panel hidden" id="profile-screen" aria-labelledby="profile-title">
+      <button class="back-button" id="profile-back-button" type="button">← BACK TO ARENA</button>
+      <p class="eyebrow">YOUR COMPETITIVE IDENTITY</p>
+      <h2 id="profile-title">PLAYER PROFILE</h2>
+      <p class="panel-subtitle">Your progress, personal records and achievements in one place.</p>
+      <div class="profile-hero-card">
+        <div class="profile-avatar-large" id="profile-display-avatar">🚀</div>
+        <div class="profile-identity">
+          <span class="profile-kicker">ARENA PLAYER</span>
+          <h3 id="profile-display-name">ARENA PLAYER</h3>
+          <span class="profile-rank-pill" id="profile-rank-detail">ROOKIE</span>
+        </div>
+        <div class="profile-level-mark"><strong id="profile-level-detail">01</strong><span>LEVEL</span></div>
+      </div>
+      <div class="profile-edit-card">
+        <div class="profile-section-heading"><span>PERSONALIZE YOUR PROFILE</span><small>SAVED ON THIS DEVICE</small></div>
+        <div class="profile-edit-fields">
+          <label>PLAYER NAME<input id="profile-name-input" type="text" maxlength="16" placeholder="Enter your player name" autocomplete="nickname"></label>
+          <label>CHOOSE AVATAR<select id="profile-avatar-select"><option value="🚀">🚀 Rocket</option><option value="⚡">⚡ Lightning</option><option value="👾">👾 Arcade</option><option value="🤖">🤖 Robot</option><option value="🦊">🦊 Fox</option><option value="🐉">🐉 Dragon</option><option value="🎮">🎮 Gamer</option><option value="🧠">🧠 Brain</option></select></label>
+        </div>
+        <button class="profile-save-button" id="profile-save-button" type="button">SAVE PROFILE</button>
+        <p class="profile-save-status" id="profile-save-status" aria-live="polite"></p>
+      </div>
+      <div class="profile-xp-card">
+        <div class="profile-section-heading"><span>ARENA PROGRESSION</span><strong id="profile-xp-detail">0 XP</strong></div>
+        <div class="xp-track"><span id="profile-xp-fill"></span></div>
+        <div class="profile-xp-foot"><span id="profile-xp-level-label">LEVEL 1</span><span id="profile-xp-next-label">0 / 250 XP</span></div>
+      </div>
+      <div class="profile-section-heading profile-stats-heading"><span>PERFORMANCE OVERVIEW</span><small>YOUR PERSONAL BESTS</small></div>
+      <div class="profile-stat-grid">
+        <div class="profile-stat-card"><span>COLOR REACTION</span><strong id="profile-color-best">—</strong><small>BEST TIME</small></div>
+        <div class="profile-stat-card"><span>HTML SPEED</span><strong id="profile-html-best">—</strong><small>BEST TIME</small></div>
+        <div class="profile-stat-card"><span>CLICK SPEED</span><strong id="profile-click-best">—</strong><small>BEST CLICKS / SEC</small></div>
+        <div class="profile-stat-card"><span>CODE RACE</span><strong id="profile-code-best">—</strong><small>BEST WPM</small></div>
+      </div>
+      <div class="profile-section-heading profile-achievement-heading"><span>ACHIEVEMENT COLLECTION</span><strong id="profile-achievement-count">0 / 5 UNLOCKED</strong></div>
+      <div class="profile-achievement-grid" id="profile-achievements"></div>
     </section>
 
     <section class="panel levels-panel hidden" id="levels-screen" aria-labelledby="levels-title">

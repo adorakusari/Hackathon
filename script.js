@@ -223,19 +223,30 @@ function openLevel(level) {
     targetLabel.textContent = 'TARGET: UNDER ' + colorThresholds[level - 1] + ' MS';
   } else {
     const question = htmlQuestions[level - 1];
-    instructions.textContent = 'Choose the correct HTML tag as quickly as you can. Your time starts now!';
+    instructions.textContent = 'Type the correct HTML tag yourself, then press ENTER or SUBMIT. Your time starts now!';
     reactionMessage.textContent = question.prompt;
     htmlOptions.classList.remove('hidden');
-    question.choices.forEach(choice => {
-      const answer = document.createElement('button');
-      answer.type = 'button';
-      answer.className = 'answer-button';
-      answer.textContent = choice;
-      answer.addEventListener('click', () => finishHtmlRound(choice));
-      htmlOptions.appendChild(answer);
+    const answerInput = document.createElement('input');
+    answerInput.type = 'text';
+    answerInput.className = 'html-answer-input';
+    answerInput.id = 'html-answer-input';
+    answerInput.placeholder = 'Type your HTML tag...';
+    answerInput.autocomplete = 'off';
+    answerInput.spellcheck = false;
+    answerInput.setAttribute('aria-label','Type your HTML answer');
+    const submit = document.createElement('button');
+    submit.type = 'button';
+    submit.className = 'answer-button html-submit-button';
+    submit.textContent = 'SUBMIT ANSWER';
+    const submitAnswer = () => finishHtmlRound(answerInput.value.trim());
+    submit.addEventListener('click', submitAnswer);
+    answerInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') submitAnswer();
     });
+    htmlOptions.append(answerInput, submit);
     startTime = performance.now();
     targetLabel.textContent = 'TIME LIMIT: ' + (htmlThresholds[level - 1] / 1000).toFixed(1) + ' SECONDS';
+    answerInput.focus();
   }
   showScreen(gameScreen);
 }
@@ -335,8 +346,8 @@ function finishHtmlRound(choice) {
   roundState = 'answered';
   const reaction = Math.round(performance.now() - startTime);
   const question = htmlQuestions[activeLevel - 1];
-  htmlOptions.querySelectorAll('button').forEach(button => { button.disabled = true; });
-  const passed = choice === question.answer && reaction <= htmlThresholds[activeLevel - 1];
+  htmlOptions.querySelectorAll('button,input').forEach(control => { control.disabled = true; });
+  const passed = choice.toLowerCase() === question.answer.toLowerCase() && reaction <= htmlThresholds[activeLevel - 1];
   recordAttempt('html', passed, reaction);
   registerComboResult(passed);
   const explanation = question.explanation || 'Review the tag and what it does in an HTML page.';
@@ -346,7 +357,7 @@ function finishHtmlRound(choice) {
     playSound('success');
     completeLevel(reaction);
     resultMessage.textContent = 'Correct! ' + explanation + ' Level cleared!';
-  } else if (choice !== question.answer) {
+  } else if (choice.toLowerCase() !== question.answer.toLowerCase()) {
     reactionMessage.textContent = 'NOT QUITE!';
     resultMessage.textContent = 'Not quite. The correct answer is ' + question.answer + '. ' + explanation;
     playSound('error');

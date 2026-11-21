@@ -345,3 +345,32 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .html-answer-input::placeholder { color:#77718f; font:500 13px 'Inter',sans-serif; }
 .html-answer-input:focus { border-color:#c2adff; box-shadow:0 0 0 3px rgba(167,139,250,.16),0 0 22px rgba(167,139,250,.12); }
 .html-submit-button { width:100%; }
+
+
+/* Player XP, ranks, and post-challenge rewards */
+.player-progression { max-width:620px; margin:22px auto 28px; padding:18px 20px; text-align:left; border:1px solid rgba(119,151,255,.34); border-radius:13px; background:linear-gradient(110deg,rgba(15,33,66,.94),rgba(34,24,72,.88)); box-shadow:0 0 28px rgba(88,126,255,.1); }
+.progression-top,.progression-bottom,.reward-progress > div:first-child { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.progression-top > div:first-child { display:flex; flex-direction:column; gap:5px; }
+.progression-kicker,.xp-total span,.progression-bottom,.achievement-summary { color:#9caed5; font:700 9px 'Orbitron',sans-serif; letter-spacing:.13em; }
+.progression-top strong { color:#e7eaff; font:800 18px 'Orbitron',sans-serif; }
+.xp-total { text-align:right; }
+.xp-total strong { color:#76d8ff; font-size:22px; }
+.xp-track { height:8px; margin:12px 0 8px; overflow:hidden; border-radius:20px; background:rgba(5,12,30,.8); box-shadow:inset 0 1px 4px #050b18; }
+.xp-track > span { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#42c8ff,#927aff,#d29aff); box-shadow:0 0 14px rgba(117,151,255,.65); transition:width .35s ease; }
+.progression-bottom { font-size:8px; }
+.achievement-summary { margin-top:13px; color:#d8c6ff; }
+.reward-summary { max-width:560px; margin:18px auto 10px; padding:18px; border:1px solid rgba(112,224,195,.35); border-radius:12px; background:linear-gradient(145deg,rgba(14,48,59,.88),rgba(24,28,63,.92)); text-align:left; }
+.reward-heading { color:#8cebc9; font:800 10px 'Orbitron',sans-serif; letter-spacing:.18em; }
+.reward-xp { margin-top:8px; color:#ffe58a; font:900 29px 'Orbitron',sans-serif; text-shadow:0 0 18px rgba(255,220,111,.2); }
+.reward-xp span { color:#b9c5df; font:600 11px 'Inter',sans-serif; }
+.reward-detail,.no-achievement { color:#b8c4df; font-size:12px; line-height:1.5; }
+.new-achievements { margin:14px 0; padding-top:12px; border-top:1px solid rgba(160,185,220,.16); }
+.new-achievements > span { color:#c7b5ff; font:700 9px 'Orbitron',sans-serif; letter-spacing:.12em; }
+.achievement-unlock { display:flex; flex-direction:column; gap:4px; margin-top:9px; }
+.achievement-unlock b { color:#fff0b2; font:700 11px 'Orbitron',sans-serif; }
+.achievement-unlock small { color:#aebbd7; font-size:11px; }
+.reward-progress { margin-top:12px; }
+.reward-progress > div:first-child { color:#dce5ff; font:700 9px 'Orbitron',sans-serif; }
+.reward-progress > div:first-child span { color:#9caed5; font-size:8px; }
+.race-reward-summary { margin:16px 0; }
+@media(max-width:600px) { .player-progression { margin:18px 0 24px; padding:15px; } .reward-summary { padding:14px; } }

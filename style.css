@@ -94,3 +94,25 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .click-arena.click-active:active { transform:scale(.99); }
 @media(min-width:650px) { .mode-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .mode-card { min-height:270px; } }
 @media(max-width:600px) { .click-settings { flex-direction:column; gap:8px; } }
+
+
+/* Click Speed visual feedback */
+.click-arena { position:relative; overflow:hidden; }
+.click-arena.click-active { touch-action:manipulation; }
+#reaction-message.click-counter-pop { display:inline-block; animation:click-counter-pop .18s ease-out; }
+@keyframes click-counter-pop {
+  0% { transform:scale(.78); color:#ffffff; text-shadow:0 0 0 rgba(78,168,255,0); }
+  65% { transform:scale(1.2); color:#b9d9ff; text-shadow:0 0 24px rgba(78,168,255,.9); }
+  100% { transform:scale(1); color:#eaf0ff; text-shadow:0 0 12px rgba(167,139,250,.35); }
+}
+.click-float {
+  position:absolute; z-index:2; pointer-events:none;
+  color:#b9d9ff; font:800 20px 'Orbitron',sans-serif;
+  text-shadow:0 0 12px rgba(78,168,255,.9),0 0 24px rgba(167,139,250,.65);
+  animation:click-float-up .65s ease-out forwards;
+}
+@keyframes click-float-up {
+  0% { opacity:0; transform:translateY(8px) scale(.7); }
+  20% { opacity:1; transform:translateY(0) scale(1.15); }
+  100% { opacity:0; transform:translateY(-42px) scale(.9); }
+}

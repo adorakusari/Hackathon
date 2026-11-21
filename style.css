@@ -249,3 +249,11 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
  .race-controls { flex-direction:column; }
  .race-controls button { width:100%; }
 }
+
+
+/* CODE RACE language selector */
+.race-language-row { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin:18px 0 10px; color:#9eb8e5; font:700 10px 'Orbitron',sans-serif; letter-spacing:.16em; }
+.race-language-row select { min-width:170px; padding:10px 13px; border:1px solid #45658f; border-radius:8px; outline:none; background:rgba(8,20,41,.96); color:#eaf2ff; font:600 13px 'Inter',sans-serif; }
+.race-language-row select:focus { border-color:#78baff; box-shadow:0 0 0 3px rgba(78,168,255,.14); }
+.race-language-row select:disabled { opacity:.6; }
+@media(max-width:600px) { .race-language-row { justify-content:center; flex-wrap:wrap; } .race-language-row select { width:100%; } }

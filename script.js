@@ -33,6 +33,7 @@ const MYSTERY_TOTAL_ROUNDS = 5;
 let lastMysteryMode = '';
 function finishMysteryRound() {
   if (!mysteryActive || document.getElementById('mystery-next-button')) return;
+  reactionButton.disabled = true;
   const completed = mysteryRound >= MYSTERY_TOTAL_ROUNDS;
   const button = document.createElement('button');
   button.type = 'button';

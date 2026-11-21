@@ -202,6 +202,7 @@ function openClickMode() {
   setupClickTargets();
   reactionMessage.textContent = 'READY?';
   resultMessage.textContent = '';
+  document.getElementById('reward-summary').classList.add('hidden');
   targetLabel.textContent = 'YOUR BEST: ' + (clickBestCps ? clickBestCps.toFixed(2) + ' CLICKS / SEC' : 'NO RECORD YET');
   document.getElementById('combo-label').classList.add('hidden');
   showScreen(gameScreen);

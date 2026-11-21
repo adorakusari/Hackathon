@@ -4,18 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080b18">
+  <meta name="description" content="Test your reflexes and climb through the Reaction Speed Arena.">
   <title>Reaction Speed Arena</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <main class="home">
     <div class="glow glow-one" aria-hidden="true"></div>
     <div class="glow glow-two" aria-hidden="true"></div>
-    <section class="hero" aria-labelledby="game-title">
+
+    <section class="hero" id="home-screen" aria-labelledby="game-title">
       <p class="eyebrow">TEST YOUR REFLEXES</p>
       <h1 id="game-title">REACTION SPEED <span>ARENA</span></h1>
-      <button class="start-button" type="button">START</button>
+      <p class="intro">Ready to prove how fast you are?</p>
+      <button class="start-button" id="levels-button" type="button">LEVEL</button>
     </section>
+
+    <section class="panel levels-panel hidden" id="levels-screen" aria-labelledby="levels-title">
+      <button class="back-button" id="home-button" type="button">← HOME</button>
+      <p class="eyebrow">CHOOSE YOUR CHALLENGE</p>
+      <h2 id="levels-title">THE LEVELS</h2>
+      <p class="panel-subtitle">Complete each level to unlock the next one.</p>
+      <div class="level-grid" id="level-grid"></div>
+      <p class="progress-label" id="progress-label">LEVEL 1 OF 10 UNLOCKED</p>
+    </section>
+
+    <section class="panel game-panel hidden" id="game-screen" aria-labelledby="game-title-active">
+      <button class="back-button" id="levels-back-button" type="button">← LEVELS</button>
+      <p class="eyebrow" id="active-level-label">LEVEL 1</p>
+      <h2 id="game-title-active">Ready?</h2>
+      <p class="game-instructions" id="game-instructions">Press the button below, wait for green, then react as quickly as you can.</p>
+      <div class="reaction-box" id="reaction-box">
+        <span id="reaction-message">GET READY</span>
+      </div>
+      <button class="start-button game-action" id="reaction-button" type="button">START ROUND</button>
+      <p class="result-message" id="result-message" aria-live="polite"></p>
+      <p class="target-label" id="target-label"></p>
+    </section>
+
     <p class="footer-note">HOW FAST ARE YOUR REFLEXES?</p>
   </main>
 </body>

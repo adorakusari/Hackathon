@@ -156,6 +156,8 @@ function startClickTest() {
   reactionButton.disabled = true;
   reactionButton.textContent = 'TEST IN PROGRESS';
   reactionMessage.textContent = '0 CLICKS';
+  reactionMessage.classList.remove('click-counter-pop');
+  reactionBox.querySelectorAll('.click-float').forEach(item => item.remove());
   reactionBox.classList.add('click-active');
   resultMessage.textContent = 'CLICK AS FAST AS YOU CAN!';
   targetLabel.textContent = 'TIME LEFT: ' + clickDuration + ' SECONDS';
@@ -335,8 +337,22 @@ reactionButton.addEventListener('click', () => {
     if (roundState !== 'clicking') startClickTest();
   } else finishRound();
 });
-reactionBox.addEventListener('click', () => {
+reactionBox.addEventListener('click', event => {
   if (activeMode !== 'click' || roundState !== 'clicking') return;
   clickCount++;
   reactionMessage.textContent = clickCount + (clickCount === 1 ? ' CLICK!' : ' CLICKS!');
+  reactionMessage.classList.remove('click-counter-pop');
+  void reactionMessage.offsetWidth;
+  reactionMessage.classList.add('click-counter-pop');
+
+  const burst = document.createElement('span');
+  burst.className = 'click-float';
+  burst.textContent = '+1';
+  const bounds = reactionBox.getBoundingClientRect();
+  const x = Math.max(12, Math.min(bounds.width - 48, event.clientX - bounds.left - 12));
+  const y = Math.max(18, Math.min(bounds.height - 34, event.clientY - bounds.top - 8));
+  burst.style.left = x + 'px';
+  burst.style.top = y + 'px';
+  reactionBox.appendChild(burst);
+  burst.addEventListener('animationend', () => burst.remove(), { once:true });
 });

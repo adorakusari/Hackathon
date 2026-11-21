@@ -385,3 +385,42 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .mystery-mode:hover { border-color:#f2d88e; box-shadow:0 12px 42px rgba(201,157,255,.2),0 0 24px rgba(242,216,142,.1); }
 .mystery-next-button { margin:14px auto 0; border-color:#e4c36c; background:linear-gradient(110deg,#8c5bc7,#d5a84d); }
 .mystery-banner { color:#f2d88e !important; }
+
+
+/* Make Mystery Mode the featured, oversized challenge card. */
+.mode-card.mystery-mode {
+  grid-column: 1 / -1;
+  min-height: 340px;
+  padding: 30px 34px;
+  border-width: 2px;
+  background:
+    radial-gradient(ellipse at 88% 12%,rgba(242,216,142,.16),transparent 38%),
+    linear-gradient(115deg,rgba(58,35,91,.99),rgba(28,25,67,.98) 58%,rgba(55,35,79,.98));
+  box-shadow: 0 0 32px rgba(190,139,255,.16), inset 0 0 35px rgba(242,216,142,.06);
+}
+.mode-card.mystery-mode .mode-icon {
+  width: 68px;
+  height: 68px;
+  margin: 24px 0 16px;
+  font-size: 38px;
+}
+.mode-card.mystery-mode .mode-name {
+  font-size: 21px;
+  letter-spacing: .08em;
+}
+.mode-card.mystery-mode .mode-description {
+  max-width: 620px;
+  min-height: auto;
+  font-size: 14px;
+}
+.mode-card.mystery-mode .mode-cta {
+  font-size: 11px;
+}
+@media(max-width:600px) {
+  .mode-card.mystery-mode {
+    grid-column: 1;
+    min-height: 290px;
+    padding: 22px;
+  }
+  .mode-card.mystery-mode .mode-name { font-size: 18px; }
+}

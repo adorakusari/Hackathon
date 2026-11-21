@@ -229,9 +229,23 @@ function updateDailyChallenge(type,value) {
   saveDailyState();
   renderDailyChallenges();
 }
+function updateDailyHtmlLevel(level) {
+  const entry=dailyState.challenges.find(item=>item.id==='html' && !item.completed);
+  if(!entry) return;
+  if(!Array.isArray(entry.levels)) entry.levels=[];
+  if(!entry.levels.includes(level)) entry.levels.push(level);
+  entry.progress=entry.levels.length;
+  if(entry.progress>=3) {
+    entry.completed=true;
+    const unlocked=awardXP(50);
+    showRewardSummary('daily',50,unlocked,'Daily challenge completed: HTML PERFECTIONIST.');
+  }
+  saveDailyState();
+  renderDailyChallenges();
+}
 function resetDailyHtmlStreak() {
   dailyState.challenges.forEach(entry=>{
-    if(entry.id==='html' && !entry.completed) entry.progress=0;
+    if(entry.id==='html' && !entry.completed) { entry.progress=0; entry.levels=[]; }
   });
   saveDailyState();
   renderDailyChallenges();
@@ -455,7 +469,7 @@ function openLevel(level) {
   }
   showScreen(gameScreen);
 }
-function completeLevel(reaction) {\n  if (activeMode === 'color') updateDailyChallenge('color',reaction);\n  if (activeMode === 'html') { const dailyHtml=dailyState.challenges.find(item=>item.id==='html' && !item.completed); if(dailyHtml) updateDailyChallenge('html',dailyHtml.progress+1); }
+function completeLevel(reaction) {\n  if (activeMode === 'color') updateDailyChallenge('color',reaction);\n  if (activeMode === 'html') updateDailyHtmlLevel(activeLevel);
   let unlocked = getUnlocked();
   if (activeLevel === unlocked && unlocked < TOTAL_LEVELS) {
     unlocked++;

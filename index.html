@@ -39,12 +39,19 @@
           <span class="mode-description">Recognize HTML tags, choose the right code, and beat the clock.</span>
           <span class="mode-cta">PLAY MODE →</span>
         </button>
+        <button class="mode-card click-mode" id="click-mode-button" type="button">
+          <span class="mode-icon" aria-hidden="true">✦</span>
+          <span class="mode-name">CLICK SPEED</span>
+          <span class="mode-description">Click as many times as you can before the timer runs out. Beat your clicks-per-second record!</span>
+          <span class="mode-cta">PLAY MODE →</span>
+        </button>
       </div>
       <div class="stats-strip" aria-label="Your personal records">
         <h3 class="stats-heading">YOUR PERSONAL RECORDS</h3>
         <div class="stats-grid">
           <div class="stat-card"><span class="stat-mode">COLOR REACTION</span><strong id="color-best">—</strong><span class="stat-caption">BEST TIME</span><span class="stat-detail" id="color-accuracy">Accuracy: 0% (0/0)</span></div>
           <div class="stat-card"><span class="stat-mode">HTML SPEED</span><strong id="html-best">—</strong><span class="stat-caption">BEST TIME</span><span class="stat-detail" id="html-accuracy">Accuracy: 0% (0/0)</span></div>
+          <div class="stat-card"><span class="stat-mode">CLICK SPEED</span><strong id="click-best">—</strong><span class="stat-caption">BEST CLICKS / SECOND</span><span class="stat-detail">Your fastest click test</span></div>
         </div>
       </div>
     </section>
@@ -67,6 +74,14 @@
         <span id="reaction-message">GET READY</span>
       </div>
       <div class="html-options hidden" id="html-options" aria-label="Answer choices"></div>
+      <div class="click-settings hidden" id="click-settings">
+        <label for="click-duration">TEST DURATION</label>
+        <select id="click-duration">
+          <option value="30">30 seconds</option>
+          <option value="60" selected>1 minute</option>
+          <option value="120">2 minutes</option>
+        </select>
+      </div>
       <button class="start-button game-action" id="reaction-button" type="button">START ROUND</button>
       <p class="combo-label" id="combo-label" aria-live="polite">COMBO: 0</p>\n      <p class="result-message" id="result-message" aria-live="polite"></p>
       <p class="target-label" id="target-label"></p>

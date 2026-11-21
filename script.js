@@ -34,6 +34,19 @@ let htmlUnlocked = Math.min(TOTAL_LEVELS, Math.max(1, Number(localStorage.getIte
 let startTime = 0;
 let timeoutId = null;
 let roundState = 'idle';
+const comboStreaks = { color:0, html:0 };
+function updateCombo(message) {
+  const label = document.getElementById('combo-label');
+  if (!label) return;
+  const streak = comboStreaks[activeMode];
+  label.textContent = message || (streak >= 2 ? '🔥 ' + streak + 'x COMBO!' : streak === 1 ? '1 CORRECT IN A ROW' : 'COMBO: 0');
+  label.classList.toggle('combo-active', streak >= 2);
+}
+function registerComboResult(passed) {
+  if (passed) comboStreaks[activeMode]++;
+  else comboStreaks[activeMode] = 0;
+  updateCombo(!passed ? 'COMBO RESET — TRY AGAIN!' : comboStreaks[activeMode] >= 2 ? '🔥 ' + comboStreaks[activeMode] + 'x COMBO!' : 'NICE! KEEP GOING!');
+}
 const emptyStats = () => ({ attempts:0, correct:0, bestMs:null });
 function readStats(mode) {
   try {

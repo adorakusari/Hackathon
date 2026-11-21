@@ -471,7 +471,8 @@ function openLevel(level) {
   showScreen(gameScreen);
 }
 function completeLevel(reaction) {
-  if (activeMode === 'color') updateDailyChallenge('color',reaction);\n  if (activeMode === 'html') updateDailyHtmlLevel(activeLevel);
+  if (activeMode === 'color') updateDailyChallenge('color',reaction);
+  if (activeMode === 'html') updateDailyHtmlLevel(activeLevel);
   let unlocked = getUnlocked();
   if (activeLevel === unlocked && unlocked < TOTAL_LEVELS) {
     unlocked++;
@@ -589,7 +590,8 @@ function finishHtmlRound(choice) {
     playSound('success');
     completeLevel(reaction);
     resultMessage.textContent = 'Correct! ' + explanation + ' Level cleared!';
-  } else if (choice.toLowerCase() !== question.answer.toLowerCase()) {\n    resetDailyHtmlStreak();
+  } else if (choice.toLowerCase() !== question.answer.toLowerCase()) {
+    resetDailyHtmlStreak();
     reactionMessage.textContent = 'NOT QUITE!';
     resultMessage.textContent = 'Not quite. The correct answer is ' + question.answer + '. ' + explanation;
     playSound('error');
@@ -805,7 +807,8 @@ function finishCodeRace() {
   raceLanguage.disabled = false;
   const elapsedMinutes = Math.max((Date.now()-raceStartedAt)/60000,1/60000);
   const wpm = (raceTyped.length/5)/elapsedMinutes;
-  const accuracy = raceKeystrokes ? Math.max(0,(raceKeystrokes-raceMistakes)/raceKeystrokes*100) : 100;\n  updateDailyChallenge('code',wpm);
+  const accuracy = raceKeystrokes ? Math.max(0,(raceKeystrokes-raceMistakes)/raceKeystrokes*100) : 100;
+  updateDailyChallenge('code',wpm);
   const botsAhead = raceBots.filter(bot => bot.progress > raceTyped.length/raceCode.length).length;
   const place = botsAhead >= 3 ? '4th Place' : botsAhead === 2 ? '3rd Place' : botsAhead === 1 ? '2nd Place' : '1st Place';
   const xpEarned = 20 + (place === '1st Place' ? 30 : place === '2nd Place' ? 20 : place === '3rd Place' ? 10 : 0) + (accuracy >= 95 ? 10 : 0);

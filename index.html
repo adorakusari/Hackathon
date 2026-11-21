@@ -36,6 +36,12 @@
       <h2 id="mode-title">ENTER THE ARENA</h2>
       <p class="panel-subtitle">Choose your challenge. Set a new record. Become the arena champion.</p>
       <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary">🏅 0 ACHIEVEMENTS UNLOCKED</div></section>
+      <section class="daily-challenges" aria-label="Daily challenges">
+        <div class="daily-heading"><div><span class="daily-kicker">FRESH EVERY DAY</span><h3>DAILY CHALLENGES</h3></div><span class="daily-reset" id="daily-reset">RESETS AT MIDNIGHT</span></div>
+        <p class="daily-intro">Complete all three missions to earn bonus XP. Your progress is saved on this device.</p>
+        <div class="daily-list" id="daily-challenge-list" aria-live="polite"></div>
+        <div class="daily-footer"><span id="daily-progress-label">0 / 3 COMPLETE</span><strong id="daily-bonus-label">UP TO +150 BONUS XP</strong></div>
+      </section>
       <div class="arena-challenge" aria-live="polite">
         <span class="challenge-orbit" aria-hidden="true">✦</span>
         <div><span class="challenge-kicker">ARENA TRANSMISSION</span><strong id="arena-challenge-text">Your next record is waiting. Choose a mode and make it yours.</strong></div>

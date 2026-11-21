@@ -125,3 +125,35 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
   20% { opacity:1; transform:translateY(0) scale(1.15); }
   100% { opacity:0; transform:translateY(-42px) scale(.9); }
 }
+
+
+/* Game-mode page: galaxy backdrop with a looping orbiting meteor. */
+.home:has(#mode-screen:not(.hidden)) {
+  background:
+    linear-gradient(rgba(4, 9, 25, .48), rgba(4, 9, 25, .68)),
+    url("https://assets.science.nasa.gov/dynamicimage/assets/science/missions/hubble/releases/2014/01/STScI-01EVT37XAM3KAF51GHW3744Z3D.tif?fit=clip&h=1200&w=2000&format=jpg")
+    center center / cover no-repeat;
+}
+.home:has(#mode-screen:not(.hidden)) .glow { opacity:.08; }
+.home:has(#mode-screen:not(.hidden))::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:50%;
+  left:50%;
+  width:150px;
+  height:3px;
+  border-radius:50%;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(135,190,255,.18) 35%,#c7e5ff 88%,#fff 100%);
+  box-shadow:0 0 9px #8bcaff,0 0 22px rgba(112,160,255,.9),0 0 42px rgba(167,139,250,.65);
+  transform-origin:center;
+  animation:meteor-orbit 18s linear infinite;
+}
+@keyframes meteor-orbit {
+  from { transform:translate(-50%,-50%) rotate(0deg) translateX(min(34vw,360px)) rotate(-18deg); }
+  to { transform:translate(-50%,-50%) rotate(360deg) translateX(min(34vw,360px)) rotate(-18deg); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .home:has(#mode-screen:not(.hidden))::before { animation:none; }
+}

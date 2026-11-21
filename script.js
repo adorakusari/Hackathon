@@ -52,6 +52,63 @@ function registerComboResult(passed) {
   else comboStreaks[activeMode] = 0;
   updateCombo(!passed ? 'COMBO RESET — TRY AGAIN!' : comboStreaks[activeMode] >= 2 ? '🔥 ' + comboStreaks[activeMode] + 'x COMBO!' : 'NICE! KEEP GOING!');
 }
+
+const XP_PER_LEVEL = 250;
+const achievementCatalog = {
+  first_game:{name:'FIRST VICTORY',icon:'🎯',description:'Complete your first challenge.'},
+  combo_5:{name:'UNSTOPPABLE',icon:'🔥',description:'Reach a 5x combo.'},
+  lightning:{name:'LIGHTNING REFLEX',icon:'⚡',description:'React in 250 ms or less.'},
+  clicker:{name:'CLICK MACHINE',icon:'🖱️',description:'Reach 5 clicks per second.'},
+  code_master:{name:'CODE MASTER',icon:'💻',description:'Reach 40 WPM in Code Race.'}
+};
+function readPlayerProfile() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('rsa-player-profile') || '{}');
+    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : []};
+  } catch (error) { return {xp:0,games:0,achievements:[]}; }
+}
+const playerProfile = readPlayerProfile();
+function playerLevel() { return Math.floor(playerProfile.xp / XP_PER_LEVEL) + 1; }
+function renderProfile() {
+  const level = playerLevel();
+  const inLevel = playerProfile.xp % XP_PER_LEVEL;
+  const rank = level >= 10 ? 'ARENA LEGEND' : level >= 7 ? 'SPEED MASTER' : level >= 4 ? 'QUICK THINKER' : 'ROOKIE';
+  const rankNode = document.getElementById('player-rank');
+  if (!rankNode) return;
+  rankNode.textContent = rank;
+  document.getElementById('player-xp').textContent = playerProfile.xp;
+  document.getElementById('player-level').textContent = 'LEVEL ' + level;
+  document.getElementById('xp-to-next').textContent = inLevel + ' / ' + XP_PER_LEVEL + ' XP';
+  document.getElementById('xp-fill').style.width = (inLevel / XP_PER_LEVEL * 100) + '%';
+  document.getElementById('achievement-summary').textContent = '🏅 ' + playerProfile.achievements.length + ' ACHIEVEMENT' + (playerProfile.achievements.length === 1 ? '' : 'S') + ' UNLOCKED';
+}
+function awardXP(amount, achievementKeys=[]) {
+  playerProfile.xp += amount;
+  playerProfile.games++;
+  const unlocked = [];
+  if (playerProfile.games === 1 && !playerProfile.achievements.includes('first_game')) achievementKeys.push('first_game');
+  achievementKeys.forEach(key => {
+    if (achievementCatalog[key] && !playerProfile.achievements.includes(key)) {
+      playerProfile.achievements.push(key);
+      unlocked.push(achievementCatalog[key]);
+    }
+  });
+  localStorage.setItem('rsa-player-profile',JSON.stringify(playerProfile));
+  renderProfile();
+  return unlocked;
+}
+function showRewardSummary(mode, amount, unlocked, detail) {
+  const panel = document.getElementById('reward-summary');
+  if (!panel) return;
+  const level = playerLevel();
+  const progress = playerProfile.xp % XP_PER_LEVEL;
+  const achievements = unlocked.length
+    ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(item => '<div class="achievement-unlock"><b>' + item.icon + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>'
+    : '<p class="no-achievement">Keep playing to unlock your next achievement.</p>';
+  panel.innerHTML = '<div class="reward-heading">CHALLENGE COMPLETE</div><div class="reward-xp">+' + amount + ' XP <span>earned</span></div><p class="reward-detail">' + detail + '</p>' + achievements + '<div class="reward-progress"><div><b>LEVEL ' + level + '</b><span>' + progress + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (progress / XP_PER_LEVEL * 100) + '%"></span></div></div>';
+  panel.classList.remove('hidden');
+}
+
 const emptyStats = () => ({ attempts:0, correct:0, bestMs:null });
 function readStats(mode) {
   try {
@@ -74,6 +131,7 @@ function recordAttempt(mode, isCorrect, timeMs) {
   renderStats();
 }
 function renderStats() {
+  renderProfile();
   const clickBest = document.getElementById('click-best');
   if (clickBest) clickBest.textContent = clickBestCps ? clickBestCps.toFixed(2) : '—';
   ['color','html'].forEach(mode => {
@@ -183,6 +241,9 @@ function finishClickTest() {
   reactionBox.classList.remove('click-active');
   reactionBox.querySelectorAll('.moving-click-target,.golden-powerup').forEach(node => node.style.display='none');
   const cps = clickCount / clickDuration;
+  const xpEarned = Math.max(10,Math.round(10 + cps * 5));
+  const unlockedAchievements = awardXP(xpEarned,cps >= 5 ? ['clicker'] : []);
+  showRewardSummary('click',xpEarned,unlockedAchievements,'You scored ' + clickCount + ' clicks at ' + cps.toFixed(2) + ' clicks per second.');
   playSound('finish');
   reactionMessage.textContent = clickCount + ' CLICKS!';
   reactionButton.disabled = false;
@@ -214,6 +275,7 @@ function openLevel(level) {
   document.getElementById('active-level-label').textContent = (activeMode === 'color' ? 'COLOR REACTION' : 'HTML SPEED') + ' • LEVEL ' + level;
   document.getElementById('game-title-active').textContent = activeMode === 'color' ? 'Ready to react?' : 'HTML QUICKFIRE';
   resultMessage.textContent = '';
+  document.getElementById('reward-summary').classList.add('hidden');
   updateCombo();
   if (activeMode === 'color') {
     instructions.textContent = 'Press START ROUND. Wait for the box to turn green, then click as quickly as possible.';
@@ -258,6 +320,13 @@ function completeLevel(reaction) {
     else htmlUnlocked = unlocked;
     saveProgress();
   }
+  const comboBonus = Math.min(50, Math.max(0, comboStreaks[activeMode] - 1) * 5);
+  const xpEarned = 50 + comboBonus;
+  const achievements = [];
+  if (comboStreaks[activeMode] >= 5) achievements.push('combo_5');
+  if (activeMode === 'color' && reaction <= 250) achievements.push('lightning');
+  const unlockedAchievements = awardXP(xpEarned,achievements);
+  showRewardSummary(activeMode,xpEarned,unlockedAchievements,'You cleared level ' + activeLevel + ' in ' + reaction + ' ms.');
   resultMessage.textContent = activeLevel === TOTAL_LEVELS
     ? 'INCREDIBLE! YOU COMPLETED THIS GAME MODE!'
     : 'Amazing! You passed Level ' + activeLevel + ' in ' + reaction + ' ms!';
@@ -576,6 +645,9 @@ function finishCodeRace() {
   const accuracy = raceKeystrokes ? Math.max(0,(raceKeystrokes-raceMistakes)/raceKeystrokes*100) : 100;
   const botsAhead = raceBots.filter(bot => bot.progress > raceTyped.length/raceCode.length).length;
   const place = botsAhead >= 3 ? '4th Place' : botsAhead === 2 ? '3rd Place' : botsAhead === 1 ? '2nd Place' : '1st Place';
+  const xpEarned = 20 + (place === '1st Place' ? 30 : place === '2nd Place' ? 20 : place === '3rd Place' ? 10 : 0) + (accuracy >= 95 ? 10 : 0);
+  const unlockedAchievements = awardXP(xpEarned,wpm >= 40 ? ['code_master'] : []);
+  const rewardHtml = '<div class="reward-heading">RACE REWARDS</div><div class="reward-xp">+' + xpEarned + ' XP <span>earned</span></div><p class="reward-detail">' + place + ' finish • ' + wpm.toFixed(1) + ' WPM • ' + accuracy.toFixed(1) + '% accuracy</p>' + (unlockedAchievements.length ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlockedAchievements.map(item => '<div class="achievement-unlock"><b>' + item.icon + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>' : '<p class="no-achievement">Keep racing to unlock your next achievement.</p>') + '<div class="reward-progress"><div><b>LEVEL ' + playerLevel() + '</b><span>' + (playerProfile.xp % XP_PER_LEVEL) + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (playerProfile.xp % XP_PER_LEVEL / XP_PER_LEVEL * 100) + '%"></span></div></div>';
   if (!raceBest || wpm > raceBest.wpm) {
     raceBest = {wpm,accuracy};
     localStorage.setItem('rsa-code-best',JSON.stringify(raceBest));
@@ -586,7 +658,7 @@ function finishCodeRace() {
   renderCodeRecord();
   renderRaceTrack();
   raceResult.classList.remove('hidden');
-  raceResult.innerHTML = '<h3>' + place + '</h3><p>Typing speed: <strong>' + wpm.toFixed(1) + ' WPM</strong></p><p>Accuracy: <strong>' + accuracy.toFixed(1) + '%</strong></p><button class="start-button" id="race-again-button" type="button">RACE AGAIN</button>';
+  raceResult.innerHTML = '<h3>' + place + '</h3><p>Typing speed: <strong>' + wpm.toFixed(1) + ' WPM</strong></p><p>Accuracy: <strong>' + accuracy.toFixed(1) + '%</strong></p><div class="reward-summary race-reward-summary">' + rewardHtml + '</div><button class="start-button" id="race-again-button" type="button">RACE AGAIN</button>';
   document.getElementById('race-again-button').addEventListener('click',openCodeRace);
   raceHint.textContent = 'Race complete! You can race again with a new code snippet.';
 }
@@ -622,6 +694,7 @@ document.getElementById('race-home-button').addEventListener('click',leaveCodeRa
 document.getElementById('race-leave-button').addEventListener('click',leaveCodeRace);
 raceStartButton.addEventListener('click',startCodeRace);
 renderCodeRecord();
+renderProfile();
 
 
 // Rotating arena messages make the mode screen feel alive.

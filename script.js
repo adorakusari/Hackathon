@@ -158,6 +158,86 @@ function awardXP(amount, achievementKeys=[]) {
   renderProfile();
   return unlocked;
 }
+
+// DAILY CHALLENGES — three date-based missions, with progress saved locally.
+const DAILY_CHALLENGE_POOL = [
+  {id:'reaction',title:'LIGHTNING REFLEX',description:'Get under 300 ms in Color Reaction.',goal:'< 300 ms',type:'color'},
+  {id:'code',title:'CODE SPRINTER',description:'Reach 40 WPM in Code Race.',goal:'40 WPM',type:'code'},
+  {id:'click',title:'CLICK STORM',description:'Reach 100 clicks in a 30-second test.',goal:'100 clicks',type:'click'},
+  {id:'html',title:'HTML PERFECTIONIST',description:'Complete 3 HTML levels in a row without mistakes.',goal:'3 perfect levels',type:'html'}
+];
+function localDateKey() {
+  const now = new Date();
+  return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+}
+function makeDailyChallenges() {
+  const dayNumber = Math.floor(new Date(localDateKey()+'T00:00:00').getTime()/86400000);
+  const ordered = DAILY_CHALLENGE_POOL.map((item,index)=>({item,sort:Math.sin((dayNumber+1)*(index+3)*12.9898)*43758.5453%1}))
+    .sort((a,b)=>a.sort-b.sort).map(entry=>entry.item);
+  return ordered.slice(0,3);
+}
+function readDailyState() {
+  const today=localDateKey();
+  try {
+    const saved=JSON.parse(localStorage.getItem('rsa-daily-challenges')||'null');
+    if(saved && saved.date===today && Array.isArray(saved.challenges)) return saved;
+  } catch(error) {}
+  return {date:today,challenges:makeDailyChallenges().map(item=>({id:item.id,progress:0,completed:false}))};
+}
+let dailyState=readDailyState();
+function saveDailyState() { localStorage.setItem('rsa-daily-challenges',JSON.stringify(dailyState)); }
+function renderDailyChallenges() {
+  const list=document.getElementById('daily-challenge-list');
+  if(!list) return;
+  const definitions=dailyState.challenges.map(entry=>({...DAILY_CHALLENGE_POOL.find(item=>item.id===entry.id),...entry}));
+  list.innerHTML=definitions.map(item=>{
+    const progressText=item.id==='reaction' ? (item.completed?'PERSONAL BEST REACHED': 'BEST: '+(item.progress?item.progress+' ms':'—')) :
+      item.id==='code' ? (item.completed?'40+ WPM REACHED': 'BEST: '+(item.progress?Number(item.progress).toFixed(1)+' WPM':'—')) :
+      item.id==='click' ? (item.completed?'100+ CLICKS REACHED': 'BEST: '+item.progress+'/100') :
+      (item.completed?'3 PERFECT LEVELS':'STREAK: '+item.progress+'/3');
+    return '<article class="daily-item '+(item.completed?'is-complete':'')+'"><span class="daily-status">'+(item.completed?'✓':'✦')+'</span><div class="daily-copy"><strong>'+item.title+'</strong><p>'+item.description+'</p><small>'+progressText+'</small></div><span class="daily-reward">'+(item.completed?'CLAIMED':'+50 XP')+'</span></article>';
+  }).join('');
+  const completed=dailyState.challenges.filter(item=>item.completed).length;
+  document.getElementById('daily-progress-label').textContent=completed+' / 3 COMPLETE';
+  document.getElementById('daily-bonus-label').textContent=completed===3?'ALL DAILY MISSIONS CLEARED!': 'UP TO +150 BONUS XP';
+}
+function updateDailyChallenge(type,value) {
+  let changed=false;
+  dailyState.challenges.forEach(entry=>{
+    if(entry.completed) return;
+    const definition=DAILY_CHALLENGE_POOL.find(item=>item.id===entry.id);
+    if(!definition || definition.type!==type) return;
+    if(type==='color') {
+      if(value<300 && (!entry.progress || value<entry.progress)) entry.progress=value;
+      if(value<300) entry.completed=true;
+    } else if(type==='code') {
+      if(value>entry.progress) entry.progress=value;
+      if(value>=40) entry.completed=true;
+    } else if(type==='click') {
+      if(value>entry.progress) entry.progress=Math.min(100,value);
+      if(value>=100) entry.completed=true;
+    } else if(type==='html') {
+      entry.progress=value;
+      if(value>=3) entry.completed=true;
+    }
+    if(entry.completed) {
+      changed=true;
+      const unlocked=awardXP(50);
+      showRewardSummary('daily',50,unlocked,'Daily challenge completed: '+definition.title+'.');
+    }
+  });
+  saveDailyState();
+  renderDailyChallenges();
+}
+function resetDailyHtmlStreak() {
+  dailyState.challenges.forEach(entry=>{
+    if(entry.id==='html' && !entry.completed) entry.progress=0;
+  });
+  saveDailyState();
+  renderDailyChallenges();
+}
+renderDailyChallenges();
+
 function showRewardSummary(mode, amount, unlocked, detail) {
   const panel = document.getElementById('reward-summary');
   if (!panel) return;
@@ -302,7 +382,7 @@ function finishClickTest() {
   roundState = 'finished';
   reactionBox.classList.remove('click-active');
   reactionBox.querySelectorAll('.moving-click-target,.golden-powerup').forEach(node => node.style.display='none');
-  const cps = clickCount / clickDuration;
+  if (clickDuration === 30) updateDailyChallenge('click',clickCount);\n  const cps = clickCount / clickDuration;
   const xpEarned = Math.max(10,Math.round(10 + cps * 5));
   const unlockedAchievements = awardXP(xpEarned,cps >= 5 ? ['clicker'] : []);
   showRewardSummary('click',xpEarned,unlockedAchievements,'You scored ' + clickCount + ' clicks at ' + cps.toFixed(2) + ' clicks per second.');
@@ -375,7 +455,7 @@ function openLevel(level) {
   }
   showScreen(gameScreen);
 }
-function completeLevel(reaction) {
+function completeLevel(reaction) {\n  if (activeMode === 'color') updateDailyChallenge('color',reaction);\n  if (activeMode === 'html') { const dailyHtml=dailyState.challenges.find(item=>item.id==='html' && !item.completed); if(dailyHtml) updateDailyChallenge('html',dailyHtml.progress+1); }
   let unlocked = getUnlocked();
   if (activeLevel === unlocked && unlocked < TOTAL_LEVELS) {
     unlocked++;
@@ -493,7 +573,7 @@ function finishHtmlRound(choice) {
     playSound('success');
     completeLevel(reaction);
     resultMessage.textContent = 'Correct! ' + explanation + ' Level cleared!';
-  } else if (choice.toLowerCase() !== question.answer.toLowerCase()) {
+  } else if (choice.toLowerCase() !== question.answer.toLowerCase()) {\n    resetDailyHtmlStreak();
     reactionMessage.textContent = 'NOT QUITE!';
     resultMessage.textContent = 'Not quite. The correct answer is ' + question.answer + '. ' + explanation;
     playSound('error');
@@ -709,7 +789,7 @@ function finishCodeRace() {
   raceLanguage.disabled = false;
   const elapsedMinutes = Math.max((Date.now()-raceStartedAt)/60000,1/60000);
   const wpm = (raceTyped.length/5)/elapsedMinutes;
-  const accuracy = raceKeystrokes ? Math.max(0,(raceKeystrokes-raceMistakes)/raceKeystrokes*100) : 100;
+  const accuracy = raceKeystrokes ? Math.max(0,(raceKeystrokes-raceMistakes)/raceKeystrokes*100) : 100;\n  updateDailyChallenge('code',wpm);
   const botsAhead = raceBots.filter(bot => bot.progress > raceTyped.length/raceCode.length).length;
   const place = botsAhead >= 3 ? '4th Place' : botsAhead === 2 ? '3rd Place' : botsAhead === 1 ? '2nd Place' : '1st Place';
   const xpEarned = 20 + (place === '1st Place' ? 30 : place === '2nd Place' ? 20 : place === '3rd Place' ? 10 : 0) + (accuracy >= 95 ? 10 : 0);

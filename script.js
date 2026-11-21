@@ -372,6 +372,7 @@ let raceCode = '';
 let raceStartedAt = 0;
 let raceTimer = null;
 let raceTyped = '';
+let raceAttempt = '';
 let raceKeystrokes = 0;
 let raceMistakes = 0;
 let raceBots = [];
@@ -392,6 +393,7 @@ function openCodeRace() {
   raceFinished = false;
   raceFinishOrder = 0;
   raceTyped = '';
+  raceAttempt = '';
   raceKeystrokes = 0;
   raceMistakes = 0;
   raceCode = raceSnippets[Math.floor(Math.random() * raceSnippets.length)];
@@ -439,12 +441,13 @@ function currentRaceWpm() {
 }
 function renderRaceCode() {
   const typedLength = raceTyped.length;
+  const attemptedLength = raceAttempt.length;
   let html = '';
   for (let i=0;i<raceCode.length;i++) {
     const ch = raceCode[i];
     const shown = ch === ' ' ? '&nbsp;' : ch === '\n' ? '↵\n' : ch === '\t' ? '⇥' : ch.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     let cls = '';
-    if (i < typedLength) cls = raceTyped[i] === ch ? 'typed' : 'mistake';
+    if (i < attemptedLength) cls = raceAttempt[i] === ch ? 'typed' : 'mistake';
     else if (i === typedLength) cls = 'current';
     html += '<span class="' + cls + '">' + shown + '</span>';
   }
@@ -476,6 +479,7 @@ function startCodeRace() {
 function handleRaceInput() {
   if (!raceStartedAt || raceFinished) return;
   const entered = raceInput.value;
+  raceAttempt = entered;
   raceKeystrokes = Math.max(raceKeystrokes, entered.length);
   let validPrefix = 0;
   for (let i=0;i<Math.min(entered.length,raceCode.length);i++) {

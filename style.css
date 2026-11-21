@@ -73,6 +73,15 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .glow { position:absolute; z-index:0; width:340px; height:340px; border-radius:50%; filter:blur(100px); opacity:.18; pointer-events:none; }
 .glow-one { top:-170px; left:-120px; background:var(--cyan); }
 .glow-two { right:-150px; bottom:-180px; background:#875bff; }
+/* Homepage-only galaxy photograph (NASA/ESA Hubble, spiral galaxy M83). */
+.home:has(#home-screen:not(.hidden)) {
+  background:
+    linear-gradient(rgba(4, 9, 25, .58), rgba(4, 9, 25, .76)),
+    url("https://assets.science.nasa.gov/dynamicimage/assets/science/missions/hubble/releases/2014/01/STScI-01EVT37XAM3KAF51GHW3744Z3D.tif?fit=clip&h=1200&w=2000&format=jpg")
+    center center / cover no-repeat;
+}
+.home:has(#home-screen:not(.hidden)) .glow { opacity:.1; }
+
 @media(max-width:600px) {
   .level-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .mode-grid { grid-template-columns:1fr; }

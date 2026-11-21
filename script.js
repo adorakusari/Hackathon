@@ -663,16 +663,30 @@ function playSound(kind) {
     soundContext = soundContext || new AudioCtx();
     if (soundContext.state === 'suspended') soundContext.resume();
     const now = soundContext.currentTime;
-    const tones = kind === 'success' ? [660,880] : kind === 'go' ? [520,760] : kind === 'error' ? [190,130] : kind === 'finish' ? [520,660,880] : [420];
-    tones.forEach((hz,index) => {
+
+    // A bright, rising three-note chime for correct answers.
+    // A short, descending buzzer for incorrect answers.
+    const patterns = {
+      success: { notes:[{hz:587,at:0,duration:.16,wave:'sine'},{hz:740,at:.09,duration:.18,wave:'sine'},{hz:988,at:.19,duration:.27,wave:'triangle'}], volume:.105 },
+      error: { notes:[{hz:220,at:0,duration:.2,wave:'sawtooth'},{hz:155,at:.12,duration:.26,wave:'triangle'}], volume:.075 },
+      go: { notes:[{hz:520,at:0,duration:.13,wave:'sine'},{hz:760,at:.09,duration:.16,wave:'sine'}], volume:.09 },
+      finish: { notes:[{hz:523,at:0,duration:.16,wave:'sine'},{hz:659,at:.1,duration:.16,wave:'sine'},{hz:784,at:.2,duration:.16,wave:'sine'},{hz:1047,at:.3,duration:.3,wave:'triangle'}], volume:.1 },
+      click: { notes:[{hz:420,at:0,duration:.07,wave:'sine'}], volume:.055 }
+    };
+    const pattern = patterns[kind] || patterns.click;
+    pattern.notes.forEach(note => {
       const osc = soundContext.createOscillator();
       const gain = soundContext.createGain();
-      osc.type = 'sine'; osc.frequency.value = hz;
-      gain.gain.setValueAtTime(.0001,now + index*.075);
-      gain.gain.exponentialRampToValueAtTime(.09,now + index*.075 + .012);
-      gain.gain.exponentialRampToValueAtTime(.0001,now + index*.075 + .13);
-      osc.connect(gain); gain.connect(soundContext.destination);
-      osc.start(now + index*.075); osc.stop(now + index*.075 + .14);
+      const begin = now + note.at;
+      osc.type = note.wave;
+      osc.frequency.setValueAtTime(note.hz,begin);
+      gain.gain.setValueAtTime(.0001,begin);
+      gain.gain.exponentialRampToValueAtTime(pattern.volume,begin+.012);
+      gain.gain.exponentialRampToValueAtTime(.0001,begin+note.duration);
+      osc.connect(gain);
+      gain.connect(soundContext.destination);
+      osc.start(begin);
+      osc.stop(begin+note.duration+.01);
     });
   } catch (error) { /* Audio is optional; gameplay continues without it. */ }
 }

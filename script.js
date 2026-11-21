@@ -27,6 +27,66 @@ const htmlOptions = document.getElementById('html-options');
 const resultMessage = document.getElementById('result-message');
 const targetLabel = document.getElementById('target-label');
 const instructions = document.getElementById('game-instructions');
+let mysteryActive = false;
+let mysteryRound = 0;
+const MYSTERY_TOTAL_ROUNDS = 5;
+let lastMysteryMode = '';
+function finishMysteryRound() {
+  if (!mysteryActive || document.getElementById('mystery-next-button')) return;
+  const completed = mysteryRound >= MYSTERY_TOTAL_ROUNDS;
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.id = 'mystery-next-button';
+  button.className = 'start-button mystery-next-button';
+  button.textContent = completed ? 'CLAIM MYSTERY BONUS' : 'NEXT MYSTERY';
+  button.addEventListener('click', () => {
+    button.remove();
+    if (completed) {
+      const bonus = 75;
+      const unlocked = awardXP(bonus);
+      showRewardSummary('mystery',bonus,unlocked,'You completed all five surprise rounds. The arena rewards your adaptability!');
+      resultMessage.textContent = 'MYSTERY MASTER! You conquered all five surprise rounds.';
+      mysteryActive = false;
+      const back = document.createElement('button');
+      back.type = 'button';
+      back.className = 'back-button';
+      back.textContent = 'BACK TO ARENA';
+      back.addEventListener('click',() => { mysteryActive=false; showScreen(modeScreen); });
+      document.getElementById('target-label').insertAdjacentElement('afterend',back);
+    } else {
+      startMysteryChallenge();
+    }
+  });
+  const anchor = document.getElementById('target-label');
+  anchor.insertAdjacentElement('afterend',button);
+}
+function startMysteryChallenge() {
+  const choices = ['color','html','click','code'].filter(mode => mode !== lastMysteryMode);
+  const chosen = choices[Math.floor(Math.random()*choices.length)];
+  lastMysteryMode = chosen;
+  mysteryRound++;
+  const label = 'MYSTERY ROUND ' + mysteryRound + ' / ' + MYSTERY_TOTAL_ROUNDS;
+  if (chosen === 'color' || chosen === 'html') {
+    openMode(chosen);
+    const unlocked = chosen === 'color' ? colorUnlocked : htmlUnlocked;
+    openLevel(Math.floor(Math.random()*unlocked)+1);
+    document.getElementById('active-level-label').textContent = label + ' • ' + (chosen === 'color' ? 'COLOR REACTION' : 'HTML SPEED');
+  } else if (chosen === 'click') {
+    openClickMode();
+    document.getElementById('active-level-label').textContent = label + ' • CLICK SPEED';
+  } else {
+    raceLanguage.value = 'All';
+    openCodeRace();
+    document.querySelector('#race-screen .eyebrow').textContent = label + ' • SURPRISE CODE RACE';
+  }
+}
+function beginMysteryMode() {
+  mysteryActive = true;
+  mysteryRound = 0;
+  lastMysteryMode = '';
+  startMysteryChallenge();
+}
+
 let activeMode = 'color';
 let activeLevel = 1;
 let colorUnlocked = Math.min(TOTAL_LEVELS, Math.max(1, Number(localStorage.getItem('rsa-unlocked-level')) || 1));
@@ -256,6 +316,7 @@ function finishClickTest() {
   }
   targetLabel.textContent = 'BEST: ' + clickBestCps.toFixed(2) + ' CLICKS / SEC';
   renderStats();
+  if (mysteryActive) finishMysteryRound();
 }
 function openLevel(level) {
   activeLevel = level;
@@ -344,6 +405,10 @@ function completeLevel(reaction) {
     else { renderLevels(); showScreen(levelsScreen); }
   });
   reactionButton.insertAdjacentElement('afterend', next);
+  if (mysteryActive) {
+    next.remove();
+    finishMysteryRound();
+  }
 }
 function beginRound() {
   removeNextButton();
@@ -662,6 +727,27 @@ function finishCodeRace() {
   raceResult.innerHTML = '<h3>' + place + '</h3><p>Typing speed: <strong>' + wpm.toFixed(1) + ' WPM</strong></p><p>Accuracy: <strong>' + accuracy.toFixed(1) + '%</strong></p><div class="reward-summary race-reward-summary">' + rewardHtml + '</div><button class="start-button" id="race-again-button" type="button">RACE AGAIN</button>';
   document.getElementById('race-again-button').addEventListener('click',openCodeRace);
   raceHint.textContent = 'Race complete! You can race again with a new code snippet.';
+  if (mysteryActive) {
+    const again = document.getElementById('race-again-button');
+    if (again) again.remove();
+    const next = document.createElement('button');
+    next.type = 'button';
+    next.id = 'mystery-next-button';
+    next.className = 'start-button mystery-next-button';
+    next.textContent = mysteryRound >= MYSTERY_TOTAL_ROUNDS ? 'CLAIM MYSTERY BONUS' : 'NEXT MYSTERY';
+    next.addEventListener('click',() => {
+      next.remove();
+      if (mysteryRound >= MYSTERY_TOTAL_ROUNDS) {
+        const bonus = 75;
+        const unlocked = awardXP(bonus);
+        raceResult.insertAdjacentHTML('beforeend','<p class="reward-detail">MYSTERY MASTER! +'+bonus+' bonus XP for completing all five surprise rounds.</p>');
+        raceResult.insertAdjacentHTML('beforeend','<button class="back-button" id="mystery-return-button" type="button">BACK TO ARENA</button>');
+        document.getElementById('mystery-return-button').addEventListener('click',() => { mysteryActive=false; showScreen(modeScreen); });
+        mysteryActive=false;
+      } else startMysteryChallenge();
+    });
+    raceResult.appendChild(next);
+  }
 }
 function leaveCodeRace() {
   clearInterval(raceTimer);
@@ -691,6 +777,7 @@ raceInput.addEventListener('keydown',event => {
   }
 });
 document.getElementById('code-mode-button').addEventListener('click',openCodeRace);
+document.getElementById('mystery-mode-button').addEventListener('click',beginMysteryMode);
 document.getElementById('race-home-button').addEventListener('click',leaveCodeRace);
 document.getElementById('race-leave-button').addEventListener('click',leaveCodeRace);
 raceStartButton.addEventListener('click',startCodeRace);

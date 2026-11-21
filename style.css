@@ -460,3 +460,20 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
  .daily-reward { font-size:8px; }
  .daily-footer { align-items:flex-start; flex-direction:column; }
 }
+
+
+/* Distinct accent colors make each daily mission easy to recognize. */
+.daily-item.daily-reaction { border-color:rgba(67,214,255,.42); background:linear-gradient(100deg,rgba(16,83,112,.28),rgba(7,17,39,.68)); }
+.daily-item.daily-reaction .daily-status { color:#65e3ff; background:rgba(67,214,255,.15); }
+.daily-item.daily-reaction .daily-reward { color:#65e3ff; }
+.daily-item.daily-code { border-color:rgba(181,126,255,.42); background:linear-gradient(100deg,rgba(91,48,135,.28),rgba(7,17,39,.68)); }
+.daily-item.daily-code .daily-status { color:#c89aff; background:rgba(181,126,255,.15); }
+.daily-item.daily-code .daily-reward { color:#c89aff; }
+.daily-item.daily-click { border-color:rgba(255,174,91,.42); background:linear-gradient(100deg,rgba(133,75,26,.28),rgba(7,17,39,.68)); }
+.daily-item.daily-click .daily-status { color:#ffc078; background:rgba(255,174,91,.15); }
+.daily-item.daily-click .daily-reward { color:#ffc078; }
+.daily-item.daily-html { border-color:rgba(103,232,163,.42); background:linear-gradient(100deg,rgba(26,111,75,.28),rgba(7,17,39,.68)); }
+.daily-item.daily-html .daily-status { color:#7df0b0; background:rgba(103,232,163,.15); }
+.daily-item.daily-html .daily-reward { color:#7df0b0; }
+.daily-item.is-complete { border-color:rgba(111,231,184,.58); }
+.daily-item.is-complete .daily-reward { color:#7cf0c0; }

@@ -101,7 +101,7 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .click-arena { min-height:240px; cursor:default; user-select:none; }
 .click-arena.click-active { cursor:pointer; border-color:#63ffc2; background:radial-gradient(ellipse at center,#17416c,#241b50 72%,#0c1c34); box-shadow:0 0 35px rgba(78,168,255,.22); }
 .click-arena.click-active:active { transform:scale(.99); }
-@media(min-width:650px) { .mode-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .mode-card { min-height:270px; } }
+@media(min-width:650px) { .mode-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .mode-card { min-height:230px; } .stats-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
 @media(max-width:600px) { .click-settings { flex-direction:column; gap:8px; } }
 
 
@@ -204,4 +204,48 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 @media (prefers-reduced-motion:reduce) {
   .meteor { animation:none; }
   .meteor::after { animation:none; }
+}
+
+
+/* CODE RACE */
+.code-mode:hover { border-color:#8bcaff; box-shadow:0 12px 40px rgba(78,168,255,.2); }
+.code-mode .mode-icon { color:#9dbaff; }
+.code-mode .mode-cta { color:#b8caff; }
+.race-panel { width:min(100%,1000px); max-width:1000px; }
+.race-track { display:grid; gap:0; overflow:hidden; margin:22px 0; border:1px solid #36547c; border-radius:14px; background:rgba(5,14,31,.88); text-align:left; }
+.race-lane { position:relative; display:grid; grid-template-columns:100px minmax(0,1fr) 76px; align-items:center; gap:10px; min-height:76px; padding:9px 14px; border-bottom:1px solid rgba(126,166,220,.16); }
+.race-lane:last-child { border-bottom:0; }
+.race-driver { color:#dce8ff; font-size:12px; font-weight:700; }
+.race-driver.you { color:#8fc7ff; }
+.race-road { position:relative; height:45px; overflow:hidden; border-radius:7px; background:linear-gradient(180deg,rgba(31,47,75,.85),rgba(12,24,46,.95)); }
+.race-road::before,.race-road::after { content:""; position:absolute; left:0; right:0; height:1px; background:rgba(190,211,245,.22); }
+.race-road::before { top:4px; }
+.race-road::after { bottom:4px; }
+.race-road-line { position:absolute; top:50%; left:0; right:0; border-top:2px dashed rgba(194,213,242,.38); }
+.race-car { position:absolute; z-index:1; top:50%; left:0%; width:39px; height:20px; transform:translateY(-50%); transition:left .12s linear; filter:drop-shadow(0 0 6px rgba(95,168,255,.5)); }
+.race-car svg { display:block; width:100%; height:100%; overflow:visible; }
+.race-wpm { color:#9dbaff; font:700 11px 'Orbitron',sans-serif; text-align:right; white-space:nowrap; }
+.race-place { position:absolute; right:12px; top:2px; color:#ffe18b; font-size:9px; font-weight:800; }
+.race-code-card { position:relative; overflow:hidden; padding:16px; border:1px solid #36547c; border-radius:14px; background:rgba(5,12,27,.96); text-align:left; }
+.race-code-heading { display:flex; justify-content:space-between; margin-bottom:12px; color:#9eb8e5; font:700 10px 'Orbitron',sans-serif; letter-spacing:.16em; }
+.race-code-display { min-height:180px; max-height:300px; overflow:auto; margin:0; color:#aebbd2; font:14px/1.75 'Consolas','Courier New',monospace; white-space:pre-wrap; overflow-wrap:anywhere; tab-size:4; }
+.race-code-display .typed { color:#52627d; }
+.race-code-display .current { color:#fff; background:#397bd0; outline:1px solid #82bdff; }
+.race-code-display .mistake { color:#ff718b; background:rgba(255,62,105,.17); text-decoration:underline wavy #ff718b; }
+.race-input { display:block; width:100%; height:52px; margin-top:10px; padding:10px 12px; resize:vertical; border:1px solid #36547c; border-radius:8px; outline:none; background:#0b1a31; color:#eaf2ff; font:14px 'Consolas','Courier New',monospace; }
+.race-input:focus { border-color:#65b5ff; box-shadow:0 0 0 3px rgba(78,168,255,.12); }
+.race-input:disabled { opacity:.55; }
+.race-hint { margin:9px 0 0; color:#879cbd; font-size:11px; line-height:1.5; }
+.race-controls { display:flex; justify-content:center; align-items:center; gap:12px; margin:18px 0; }
+.race-controls .back-button { margin:0; }
+.race-result { margin:14px auto; padding:20px; border:1px solid #5574a8; border-radius:12px; background:rgba(17,35,65,.94); color:#eef4ff; }
+.race-result h3 { margin:0 0 10px; color:#a9caff; font:800 22px 'Orbitron',sans-serif; }
+.race-result p { margin:7px 0; color:#c4d1e8; font-size:13px; }
+@media(max-width:600px) {
+ .race-lane { grid-template-columns:76px minmax(0,1fr) 60px; gap:7px; padding:8px; }
+ .race-driver { font-size:10px; }
+ .race-wpm { font-size:9px; }
+ .race-code-display { font-size:12px; }
+ .race-controls { flex-direction:column; }
+ .race-controls button { width:100%; }
 }

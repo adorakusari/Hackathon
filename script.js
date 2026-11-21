@@ -133,6 +133,7 @@ function openLevel(level) {
   document.getElementById('active-level-label').textContent = (activeMode === 'color' ? 'COLOR REACTION' : 'HTML SPEED') + ' • LEVEL ' + level;
   document.getElementById('game-title-active').textContent = activeMode === 'color' ? 'Ready to react?' : 'HTML QUICKFIRE';
   resultMessage.textContent = '';
+  updateCombo();
   if (activeMode === 'color') {
     instructions.textContent = 'Press START ROUND. Wait for the box to turn green, then click as quickly as possible.';
     reactionMessage.textContent = 'GET READY';
@@ -209,6 +210,7 @@ function finishRound() {
     reactionButton.textContent = 'TRY AGAIN';
     resultMessage.textContent = 'False start! Wait until the box turns green.';
     recordAttempt('color', false, null);
+    registerComboResult(false);
     return;
   }
   if (roundState !== 'go') { beginRound(); return; }
@@ -219,6 +221,7 @@ function finishRound() {
   reactionButton.textContent = 'TRY AGAIN';
   const passed = reaction <= colorThresholds[activeLevel - 1];
   recordAttempt('color', passed, reaction);
+  registerComboResult(passed);
   if (passed) completeLevel(reaction);
   else resultMessage.textContent = reaction + ' ms — you need ' + colorThresholds[activeLevel - 1] + ' ms or faster. Try again!';
 }
@@ -230,6 +233,7 @@ function finishHtmlRound(choice) {
   htmlOptions.querySelectorAll('button').forEach(button => { button.disabled = true; });
   const passed = choice === question.answer && reaction <= htmlThresholds[activeLevel - 1];
   recordAttempt('html', passed, reaction);
+  registerComboResult(passed);
   if (passed) {
     reactionMessage.textContent = question.answer + ' ✓';
     completeLevel(reaction);

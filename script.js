@@ -116,6 +116,29 @@ function registerComboResult(passed) {
 }
 
 const XP_PER_LEVEL = 250;
+const ARENA_CHARACTERS = {
+  nova:{name:'NOVA',role:'THE ALL-ROUNDER',skin:'#e8b995',hair:'#27304d',outfit:'#398cff',accent:'#76d6ff',hairShape:'M25 52 Q18 14 60 15 Q101 14 95 57 L86 43 Q76 32 61 35 Q43 31 32 48 L28 68 Z'},
+  kai:{name:'KAI',role:'THE SPEEDSTER',skin:'#9b6247',hair:'#171c2c',outfit:'#9b65f5',accent:'#c5a1ff',hairShape:'M24 52 Q18 20 42 22 Q44 8 59 17 Q77 7 83 25 Q104 28 95 59 L87 47 Q78 35 66 39 Q51 29 38 44 L30 63 Z'},
+  zara:{name:'ZARA',role:'THE STRATEGIST',skin:'#d69b79',hair:'#633d83',outfit:'#ed6da9',accent:'#ffadd0',hairShape:'M23 55 Q16 12 60 13 Q104 13 97 62 L93 104 Q82 91 85 58 Q79 36 61 36 Q41 34 34 58 L35 104 L24 94 Z'},
+  axel:{name:'AXEL',role:'THE CODE RUNNER',skin:'#f0c9a7',hair:'#c6d5e9',outfit:'#27a99a',accent:'#8af4dc',hairShape:'M25 52 Q17 17 48 21 L58 12 L69 22 Q96 15 96 52 L85 42 Q70 30 59 38 Q42 29 31 48 Z'},
+  luna:{name:'LUNA',role:'THE NIGHT PLAYER',skin:'#b87961',hair:'#192c59',outfit:'#536de5',accent:'#a9b8ff',hairShape:'M23 55 Q15 13 60 14 Q103 13 97 58 L91 91 Q81 81 86 54 Q79 35 61 36 Q40 34 34 57 L31 91 L23 82 Z'},
+  jett:{name:'JETT',role:'THE CHALLENGER',skin:'#754b3b',hair:'#243d35',outfit:'#d58b36',accent:'#ffd28a',hairShape:'M23 53 L17 32 L37 35 L34 16 L53 29 L65 12 L72 31 L94 20 L91 47 L99 58 L85 46 Q72 35 60 39 Q42 31 31 49 Z'}
+};
+function arenaCharacterArt(characterId) {
+  const character = ARENA_CHARACTERS[characterId] || ARENA_CHARACTERS.nova;
+  return '<svg class="arena-character-art" viewBox="0 0 120 120" role="img" aria-label="' + character.name + ' character portrait">' +
+    '<circle cx="60" cy="60" r="57" fill="#101c3b"/><circle cx="60" cy="60" r="49" fill="#172b52"/>' +
+    '<path d="M12 120 Q17 83 44 81 L76 81 Q103 83 108 120Z" fill="' + character.outfit + '"/>' +
+    '<path d="M48 76 L72 76 L76 91 Q60 103 44 91Z" fill="' + character.skin + '"/>' +
+    '<path d="M31 58 Q30 31 60 29 Q90 31 89 58 L85 72 Q78 87 60 88 Q42 87 35 72Z" fill="' + character.skin + '"/>' +
+    '<path d="' + character.hairShape + '" fill="' + character.hair + '"/>' +
+    '<path d="M43 61 Q48 57 53 61 M67 61 Q72 57 77 61" fill="none" stroke="#263047" stroke-width="3" stroke-linecap="round"/>' +
+    '<circle cx="49" cy="64" r="2.2" fill="#17213a"/><circle cx="71" cy="64" r="2.2" fill="#17213a"/>' +
+    '<path d="M57 70 Q60 73 63 70 M53 78 Q60 83 67 78" fill="none" stroke="#8b4f4b" stroke-width="2" stroke-linecap="round"/>' +
+    '<path d="M44 89 L60 101 L76 89" fill="none" stroke="' + character.accent + '" stroke-width="3"/>' +
+    '<circle cx="60" cy="60" r="57" fill="none" stroke="' + character.accent + '" stroke-opacity=".65" stroke-width="2"/>' +
+    '</svg>';
+}
 const achievementCatalog = {
   first_game:{name:'FIRST VICTORY',icon:'🎯',description:'Complete your first challenge.'},
   combo_5:{name:'UNSTOPPABLE',icon:'🔥',description:'Reach a 5x combo.'},
@@ -126,10 +149,12 @@ const achievementCatalog = {
 function readPlayerProfile() {
   try {
     const saved = JSON.parse(localStorage.getItem('rsa-player-profile') || '{}');
-    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : [],username:typeof saved.username === 'string' ? saved.username.slice(0,16) : 'Arena Player',avatar:typeof saved.avatar === 'string' ? saved.avatar : '🚀'};
-  } catch (error) { return {xp:0,games:0,achievements:[],username:'Arena Player',avatar:'🚀'}; }
+    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : [],username:typeof saved.username === 'string' ? saved.username.slice(0,16) : 'Arena Player',avatar:typeof saved.avatar === 'string' ? saved.avatar : 'nova'};
+  } catch (error) { return {xp:0,games:0,achievements:[],username:'Arena Player',avatar:'nova'}; }
 }
 const playerProfile = readPlayerProfile();
+if (!ARENA_CHARACTERS[playerProfile.avatar]) playerProfile.avatar = 'nova';
+let selectedProfileAvatar = playerProfile.avatar;
 function playerLevel() { return Math.floor(playerProfile.xp / XP_PER_LEVEL) + 1; }
 function renderProfile() {
   const level = playerLevel();
@@ -147,15 +172,15 @@ function renderProfile() {
 }
 function renderDetailedProfile() {
   const username = playerProfile.username || 'Arena Player';
-  const avatar = playerProfile.avatar || '🚀';
+  const avatar = ARENA_CHARACTERS[selectedProfileAvatar] ? selectedProfileAvatar : 'nova';
   const name = document.getElementById('profile-display-name');
   if (!name) return;
   name.textContent = username;
-  document.getElementById('profile-display-avatar').textContent = avatar;
+  document.getElementById('profile-display-avatar').innerHTML = arenaCharacterArt(avatar);
   document.getElementById('profile-button-name').textContent = username.toUpperCase();
-  document.getElementById('profile-button-avatar').textContent = avatar;
+  document.getElementById('profile-button-avatar').innerHTML = arenaCharacterArt(avatar);
   document.getElementById('profile-name-input').value = username;
-  document.getElementById('profile-avatar-select').value = avatar;
+  renderCharacterPicker();
   const level = playerLevel();
   const inLevel = playerProfile.xp % XP_PER_LEVEL;
   const rank = level >= 10 ? 'ARENA LEGEND' : level >= 7 ? 'SPEED MASTER' : level >= 4 ? 'QUICK THINKER' : 'ROOKIE';
@@ -180,6 +205,22 @@ function renderDetailedProfile() {
     const unlocked = playerProfile.achievements.includes(key);
     return '<div class="profile-achievement ' + (unlocked ? 'unlocked' : 'locked') + '"><span class="profile-achievement-icon">' + (unlocked ? item.icon : '🔒') + '</span><span><strong>' + item.name + '</strong><small>' + item.description + '</small></span><em>' + (unlocked ? 'UNLOCKED' : 'LOCKED') + '</em></div>';
   }).join('');
+}
+function renderCharacterPicker() {
+  const picker = document.getElementById('profile-character-picker');
+  if (!picker) return;
+  picker.innerHTML = Object.entries(ARENA_CHARACTERS).map(([id,character]) =>
+    '<button type="button" class="character-option ' + (id === selectedProfileAvatar ? 'selected' : '') + '" data-character="' + id + '" aria-pressed="' + (id === selectedProfileAvatar) + '">' +
+    '<span class="character-option-art">' + arenaCharacterArt(id) + '</span><strong>' + character.name + '</strong><small>' + character.role + '</small></button>'
+  ).join('');
+  picker.querySelectorAll('.character-option').forEach(button => {
+    button.addEventListener('click', () => {
+      selectedProfileAvatar = button.dataset.character;
+      document.getElementById('profile-display-avatar').innerHTML = arenaCharacterArt(selectedProfileAvatar);
+      document.getElementById('profile-button-avatar').innerHTML = arenaCharacterArt(selectedProfileAvatar);
+      renderCharacterPicker();
+    });
+  });
 }
 function awardXP(amount, achievementKeys=[]) {
   playerProfile.xp += amount;
@@ -657,7 +698,7 @@ document.getElementById('profile-back-button').addEventListener('click', () => s
 document.getElementById('profile-save-button').addEventListener('click', () => {
   const enteredName = document.getElementById('profile-name-input').value.trim().replace(/\s+/g,' ').slice(0,16);
   playerProfile.username = enteredName || 'Arena Player';
-  playerProfile.avatar = document.getElementById('profile-avatar-select').value || '🚀';
+  playerProfile.avatar = selectedProfileAvatar || 'nova';
   localStorage.setItem('rsa-player-profile',JSON.stringify(playerProfile));
   renderProfile();
   document.getElementById('profile-save-status').textContent = 'PROFILE SAVED ✓';

@@ -16,6 +16,7 @@ const htmlQuestions = [
 
 const homeScreen = document.getElementById('home-screen');
 const modeScreen = document.getElementById('mode-screen');
+const profileScreen = document.getElementById('profile-screen');
 const levelsScreen = document.getElementById('levels-screen');
 const gameScreen = document.getElementById('game-screen');
 const levelGrid = document.getElementById('level-grid');
@@ -125,8 +126,8 @@ const achievementCatalog = {
 function readPlayerProfile() {
   try {
     const saved = JSON.parse(localStorage.getItem('rsa-player-profile') || '{}');
-    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : []};
-  } catch (error) { return {xp:0,games:0,achievements:[]}; }
+    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : [],username:typeof saved.username === 'string' ? saved.username.slice(0,16) : 'Arena Player',avatar:typeof saved.avatar === 'string' ? saved.avatar : '🚀'};
+  } catch (error) { return {xp:0,games:0,achievements:[],username:'Arena Player',avatar:'🚀'}; }
 }
 const playerProfile = readPlayerProfile();
 function playerLevel() { return Math.floor(playerProfile.xp / XP_PER_LEVEL) + 1; }
@@ -142,6 +143,43 @@ function renderProfile() {
   document.getElementById('xp-to-next').textContent = inLevel + ' / ' + XP_PER_LEVEL + ' XP';
   document.getElementById('xp-fill').style.width = (inLevel / XP_PER_LEVEL * 100) + '%';
   document.getElementById('achievement-summary').textContent = '🏅 ' + playerProfile.achievements.length + ' ACHIEVEMENT' + (playerProfile.achievements.length === 1 ? '' : 'S') + ' UNLOCKED';
+  renderDetailedProfile();
+}
+function renderDetailedProfile() {
+  const username = playerProfile.username || 'Arena Player';
+  const avatar = playerProfile.avatar || '🚀';
+  const name = document.getElementById('profile-display-name');
+  if (!name) return;
+  name.textContent = username;
+  document.getElementById('profile-display-avatar').textContent = avatar;
+  document.getElementById('profile-button-name').textContent = username.toUpperCase();
+  document.getElementById('profile-button-avatar').textContent = avatar;
+  document.getElementById('profile-name-input').value = username;
+  document.getElementById('profile-avatar-select').value = avatar;
+  const level = playerLevel();
+  const inLevel = playerProfile.xp % XP_PER_LEVEL;
+  const rank = level >= 10 ? 'ARENA LEGEND' : level >= 7 ? 'SPEED MASTER' : level >= 4 ? 'QUICK THINKER' : 'ROOKIE';
+  document.getElementById('profile-rank-detail').textContent = rank;
+  document.getElementById('profile-level-detail').textContent = String(level).padStart(2,'0');
+  document.getElementById('profile-xp-detail').textContent = playerProfile.xp + ' XP';
+  document.getElementById('profile-xp-fill').style.width = (inLevel / XP_PER_LEVEL * 100) + '%';
+  document.getElementById('profile-xp-level-label').textContent = 'LEVEL ' + level;
+  document.getElementById('profile-xp-next-label').textContent = inLevel + ' / ' + XP_PER_LEVEL + ' XP';
+  const colorBest = stats.color.bestMs === null ? '—' : stats.color.bestMs + ' ms';
+  const htmlBest = stats.html.bestMs === null ? '—' : (stats.html.bestMs / 1000).toFixed(2) + ' s';
+  const clickBest = clickBestCps ? clickBestCps.toFixed(2) : '—';
+  const codeRecord = JSON.parse(localStorage.getItem('rsa-code-best') || 'null');
+  document.getElementById('profile-color-best').textContent = colorBest;
+  document.getElementById('profile-html-best').textContent = htmlBest;
+  document.getElementById('profile-click-best').textContent = clickBest;
+  document.getElementById('profile-code-best').textContent = codeRecord && codeRecord.wpm ? codeRecord.wpm.toFixed(1) : '—';
+  const catalogKeys = Object.keys(achievementCatalog);
+  document.getElementById('profile-achievement-count').textContent = playerProfile.achievements.length + ' / ' + catalogKeys.length + ' UNLOCKED';
+  document.getElementById('profile-achievements').innerHTML = catalogKeys.map(key => {
+    const item = achievementCatalog[key];
+    const unlocked = playerProfile.achievements.includes(key);
+    return '<div class="profile-achievement ' + (unlocked ? 'unlocked' : 'locked') + '"><span class="profile-achievement-icon">' + (unlocked ? item.icon : '🔒') + '</span><span><strong>' + item.name + '</strong><small>' + item.description + '</small></span><em>' + (unlocked ? 'UNLOCKED' : 'LOCKED') + '</em></div>';
+  }).join('');
 }
 function awardXP(amount, achievementKeys=[]) {
   playerProfile.xp += amount;
@@ -307,7 +345,7 @@ function saveProgress() {
   else localStorage.setItem('rsa-html-unlocked-level', String(htmlUnlocked));
 }
 function showScreen(screen) {
-  [homeScreen,modeScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
+  [homeScreen,modeScreen,profileScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
   screen.classList.remove('hidden');
 }
 function removeNextButton() {
@@ -614,6 +652,16 @@ function showHtmlRetry() {
   htmlOptions.insertAdjacentElement('afterend', retry);
 }
 document.getElementById('levels-button').addEventListener('click', () => { renderStats(); showScreen(modeScreen); });
+document.getElementById('open-profile-button').addEventListener('click', () => { renderProfile(); showScreen(profileScreen); });
+document.getElementById('profile-back-button').addEventListener('click', () => showScreen(modeScreen));
+document.getElementById('profile-save-button').addEventListener('click', () => {
+  const enteredName = document.getElementById('profile-name-input').value.trim().replace(/\s+/g,' ').slice(0,16);
+  playerProfile.username = enteredName || 'Arena Player';
+  playerProfile.avatar = document.getElementById('profile-avatar-select').value || '🚀';
+  localStorage.setItem('rsa-player-profile',JSON.stringify(playerProfile));
+  renderProfile();
+  document.getElementById('profile-save-status').textContent = 'PROFILE SAVED ✓';
+});
 document.getElementById('home-button').addEventListener('click', () => showScreen(homeScreen));
 document.getElementById('modes-back-button').addEventListener('click', () => showScreen(modeScreen));
 document.getElementById('color-mode-button').addEventListener('click', () => openMode('color'));

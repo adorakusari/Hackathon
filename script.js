@@ -94,7 +94,7 @@ function saveProgress() {
   else localStorage.setItem('rsa-html-unlocked-level', String(htmlUnlocked));
 }
 function showScreen(screen) {
-  [homeScreen,modeScreen,levelsScreen,gameScreen].forEach(item => item.classList.add('hidden'));
+  [homeScreen,modeScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
   screen.classList.remove('hidden');
 }
 function removeNextButton() {
@@ -375,6 +375,7 @@ let raceTyped = '';
 let raceKeystrokes = 0;
 let raceMistakes = 0;
 let raceBots = [];
+let raceFinishOrder = 0;
 let raceFinished = false;
 let raceBest = JSON.parse(localStorage.getItem('rsa-code-best') || 'null');
 function renderCodeRecord() {
@@ -389,6 +390,7 @@ function carSvg(color) {
 function openCodeRace() {
   clearInterval(raceTimer);
   raceFinished = false;
+  raceFinishOrder = 0;
   raceTyped = '';
   raceKeystrokes = 0;
   raceMistakes = 0;
@@ -456,7 +458,7 @@ function updateRace() {
   raceBots.forEach(bot => {
     if (bot.finished) return;
     bot.progress = Math.min(1, (bot.wpm*5*elapsed)/raceCode.length);
-    if (bot.progress >= 1) { bot.finished=true; bot.finishAt=Date.now(); }
+    if (bot.progress >= 1) { bot.finished=true; bot.finishAt=Date.now(); raceFinishOrder++; bot.place = raceFinishOrder + 'st Place'; }
   });
   renderRaceTrack();
 }
@@ -501,7 +503,7 @@ function finishCodeRace() {
   const elapsedMinutes = Math.max((Date.now()-raceStartedAt)/60000,1/60000);
   const wpm = (raceTyped.length/5)/elapsedMinutes;
   const accuracy = raceKeystrokes ? Math.max(0,(raceKeystrokes-raceMistakes)/raceKeystrokes*100) : 100;
-  const botsAhead = raceBots.filter(bot => bot.finishAt !== null && bot.finishAt <= Date.now() || bot.progress >= raceTyped.length/raceCode.length).length;
+  const botsAhead = raceBots.filter(bot => bot.progress > raceTyped.length/raceCode.length).length;
   const place = botsAhead >= 3 ? '4th Place' : botsAhead === 2 ? '3rd Place' : botsAhead === 1 ? '2nd Place' : '1st Place';
   if (!raceBest || wpm > raceBest.wpm) {
     raceBest = {wpm,accuracy};

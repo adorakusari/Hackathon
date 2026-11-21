@@ -257,3 +257,65 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .race-language-row select:focus { border-color:#78baff; box-shadow:0 0 0 3px rgba(78,168,255,.14); }
 .race-language-row select:disabled { opacity:.6; }
 @media(max-width:600px) { .race-language-row { justify-content:center; flex-wrap:wrap; } .race-language-row select { width:100%; } }
+
+
+/* Upgraded game-mode selection arena */
+.arena-challenge {
+  display:flex; align-items:center; gap:16px; max-width:690px; margin:26px auto 28px;
+  padding:15px 18px; text-align:left; border:1px solid rgba(117,151,255,.35);
+  border-radius:13px; background:linear-gradient(100deg,rgba(15,32,65,.92),rgba(35,24,74,.72));
+  box-shadow:0 0 28px rgba(88,126,255,.12),inset 0 0 24px rgba(99,127,255,.06);
+  animation:challenge-glow 4s ease-in-out infinite;
+}
+.challenge-orbit { flex:0 0 42px; display:grid; place-items:center; width:42px; height:42px; border:1px solid rgba(150,165,255,.45); border-radius:50%; color:#d8c8ff; font-size:23px; box-shadow:0 0 18px rgba(167,139,250,.25); animation:orbit-spin 8s linear infinite; }
+.arena-challenge > div { display:flex; flex:1; min-width:0; flex-direction:column; gap:5px; }
+.challenge-kicker { color:#9bafff; font:700 9px 'Orbitron',sans-serif; letter-spacing:.2em; }
+.arena-challenge strong { color:#eef2ff; font-size:13px; line-height:1.5; font-weight:600; }
+.challenge-live { display:flex; align-items:center; gap:7px; color:#91f4d0; font:700 9px 'Orbitron',sans-serif; letter-spacing:.13em; }
+.challenge-live i { width:7px; height:7px; border-radius:50%; background:#69f2ba; box-shadow:0 0 10px #69f2ba; animation:live-blink 1.4s infinite; }
+@keyframes live-blink { 50% { opacity:.3; } }
+@keyframes orbit-spin { to { transform:rotate(360deg); } }
+@keyframes challenge-glow { 50% { box-shadow:0 0 34px rgba(88,126,255,.2),inset 0 0 24px rgba(99,127,255,.1); } }
+.mode-grid { gap:20px; margin-top:24px; }
+.mode-card {
+  position:relative; min-height:286px; overflow:hidden; padding:21px 23px;
+  border-color:rgba(113,145,208,.36);
+  background:linear-gradient(145deg,rgba(18,39,76,.97),rgba(10,20,48,.97) 65%,rgba(30,24,67,.96));
+}
+.mode-card::before {
+  content:""; position:absolute; width:190px; height:190px; right:-85px; top:-95px;
+  border-radius:50%; background:var(--card-glow,rgba(78,168,255,.2)); filter:blur(38px); opacity:.55; transition:opacity .25s,transform .35s;
+}
+.mode-card::after {
+  content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:linear-gradient(transparent,var(--card-accent,var(--cyan)),transparent); opacity:.55;
+}
+.mode-card > span { position:relative; z-index:1; }
+.mode-card:hover { transform:translateY(-8px) scale(1.015); border-color:var(--card-accent,var(--cyan)); box-shadow:0 18px 46px rgba(44,111,220,.2),0 0 24px var(--card-glow,rgba(78,168,255,.12)); }
+.mode-card:hover::before { opacity:.95; transform:scale(1.35); }
+.mode-topline,.mode-bottomline { width:100%; display:flex; align-items:center; justify-content:space-between; }
+.mode-number { color:rgba(188,207,255,.5); font:800 11px 'Orbitron',sans-serif; letter-spacing:.15em; }
+.mode-level { padding:5px 8px; border:1px solid rgba(119,157,255,.25); border-radius:20px; color:#b7c8ff; background:rgba(87,111,190,.12); font:700 8px 'Orbitron',sans-serif; letter-spacing:.1em; }
+.mode-icon { display:grid; place-items:center; width:52px; height:52px; margin:20px 0 12px; border:1px solid color-mix(in srgb,var(--card-accent,var(--cyan)) 55%,transparent); border-radius:14px; color:var(--card-accent,var(--cyan)); background:color-mix(in srgb,var(--card-accent,var(--cyan)) 12%,transparent); font-size:29px; box-shadow:0 0 22px var(--card-glow,rgba(78,168,255,.15)); }
+.mode-kicker { margin-bottom:6px; color:var(--card-accent,var(--cyan)); font:700 8px 'Orbitron',sans-serif; letter-spacing:.18em; }
+.mode-name { font-size:15px; }
+.mode-description { min-height:42px; margin:9px 0 18px; font-size:12px; }
+.mode-bottomline { margin-top:auto; padding-top:12px; border-top:1px solid rgba(151,173,224,.13); }
+.mode-tag { color:#aab8d8; font:600 8px 'Orbitron',sans-serif; letter-spacing:.1em; }
+.mode-cta { display:flex; align-items:center; gap:8px; color:var(--card-accent,var(--cyan)); font-size:9px; }
+.mode-cta b { font-size:16px; transition:transform .2s; }
+.mode-card:hover .mode-cta b { transform:translate(3px,-3px); }
+.color-mode { --card-accent:#62c9ff; --card-glow:rgba(46,164,255,.22); }
+.html-mode { --card-accent:#c0a0ff; --card-glow:rgba(159,105,255,.22); }
+.click-mode { --card-accent:#70f0c2; --card-glow:rgba(69,229,172,.2); }
+.code-mode { --card-accent:#ffb879; --card-glow:rgba(255,150,89,.2); }
+.html-mode .mode-icon,.click-mode .mode-icon { color:var(--card-accent); }
+@media(max-width:600px) {
+  .arena-challenge { gap:10px; padding:12px; }
+  .challenge-live { font-size:8px; }
+  .mode-card { min-height:260px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .arena-challenge,.challenge-orbit,.challenge-live i { animation:none !important; }
+  .mode-card,.mode-card::before { transition:none !important; }
+}

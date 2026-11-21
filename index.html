@@ -33,31 +33,44 @@
       <button class="back-button" id="home-button" type="button">← HOME</button>
       <p class="eyebrow">CHOOSE YOUR GAME MODE</p>
       <h2 id="mode-title">ENTER THE ARENA</h2>
-      <p class="panel-subtitle">Pick a challenge and work your way through 10 levels.</p>
+      <p class="panel-subtitle">Choose your challenge. Set a new record. Become the arena champion.</p>
+      <div class="arena-challenge" aria-live="polite">
+        <span class="challenge-orbit" aria-hidden="true">✦</span>
+        <div><span class="challenge-kicker">ARENA TRANSMISSION</span><strong id="arena-challenge-text">Your next record is waiting. Choose a mode and make it yours.</strong></div>
+        <span class="challenge-live"><i></i> LIVE</span>
+      </div>
       <div class="mode-grid">
         <button class="mode-card color-mode" id="color-mode-button" type="button">
+          <span class="mode-topline"><span class="mode-number">01</span><span class="mode-level">FAST</span></span>
           <span class="mode-icon" aria-hidden="true">◉</span>
+          <span class="mode-kicker">REFLEX CHALLENGE</span>
           <span class="mode-name">COLOR REACTION</span>
           <span class="mode-description">Test your reflexes. Wait for the color and react at the perfect moment.</span>
-          <span class="mode-cta">PLAY MODE →</span>
+          <span class="mode-bottomline"><span class="mode-tag">REACTION • 10 LEVELS</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
         </button>
         <button class="mode-card html-mode" id="html-mode-button" type="button">
+          <span class="mode-topline"><span class="mode-number">02</span><span class="mode-level">BRAIN</span></span>
           <span class="mode-icon" aria-hidden="true">&lt;/&gt;</span>
+          <span class="mode-kicker">CODE KNOWLEDGE</span>
           <span class="mode-name">HTML SPEED</span>
           <span class="mode-description">Recognize HTML tags, choose the right code, and beat the clock.</span>
-          <span class="mode-cta">PLAY MODE →</span>
+          <span class="mode-bottomline"><span class="mode-tag">QUIZ • 10 LEVELS</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
         </button>
         <button class="mode-card click-mode" id="click-mode-button" type="button">
+          <span class="mode-topline"><span class="mode-number">03</span><span class="mode-level">POWER</span></span>
           <span class="mode-icon" aria-hidden="true">✦</span>
+          <span class="mode-kicker">ENDURANCE TEST</span>
           <span class="mode-name">CLICK SPEED</span>
           <span class="mode-description">Click as many times as you can before the timer runs out. Beat your clicks-per-second record!</span>
-          <span class="mode-cta">PLAY MODE →</span>
+          <span class="mode-bottomline"><span class="mode-tag">30 SEC – 2 MIN</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
         </button>
         <button class="mode-card code-mode" id="code-mode-button" type="button">
+          <span class="mode-topline"><span class="mode-number">04</span><span class="mode-level">PRO</span></span>
           <span class="mode-icon" aria-hidden="true">⌨</span>
+          <span class="mode-kicker">HEAD-TO-HEAD</span>
           <span class="mode-name">CODE RACE</span>
-          <span class="mode-description">Type real code to race other drivers.</span>
-          <span class="mode-cta">PLAY MODE →</span>
+          <span class="mode-description">Type real code, outpace rival drivers, and race to the finish line.</span>
+          <span class="mode-bottomline"><span class="mode-tag">4 DRIVERS • LIVE RACE</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
         </button>
       </div>
       <div class="stats-strip" aria-label="Your personal records">

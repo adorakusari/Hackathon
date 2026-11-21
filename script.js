@@ -396,7 +396,8 @@ function finishClickTest() {
   roundState = 'finished';
   reactionBox.classList.remove('click-active');
   reactionBox.querySelectorAll('.moving-click-target,.golden-powerup').forEach(node => node.style.display='none');
-  if (clickDuration === 30) updateDailyChallenge('click',clickCount);\n  const cps = clickCount / clickDuration;
+  if (clickDuration === 30) updateDailyChallenge('click',clickCount);
+  const cps = clickCount / clickDuration;
   const xpEarned = Math.max(10,Math.round(10 + cps * 5));
   const unlockedAchievements = awardXP(xpEarned,cps >= 5 ? ['clicker'] : []);
   showRewardSummary('click',xpEarned,unlockedAchievements,'You scored ' + clickCount + ' clicks at ' + cps.toFixed(2) + ' clicks per second.');
@@ -469,7 +470,8 @@ function openLevel(level) {
   }
   showScreen(gameScreen);
 }
-function completeLevel(reaction) {\n  if (activeMode === 'color') updateDailyChallenge('color',reaction);\n  if (activeMode === 'html') updateDailyHtmlLevel(activeLevel);
+function completeLevel(reaction) {
+  if (activeMode === 'color') updateDailyChallenge('color',reaction);\n  if (activeMode === 'html') updateDailyHtmlLevel(activeLevel);
   let unlocked = getUnlocked();
   if (activeLevel === unlocked && unlocked < TOTAL_LEVELS) {
     unlocked++;

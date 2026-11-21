@@ -477,3 +477,62 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .daily-item.daily-html .daily-reward { color:#7df0b0; }
 .daily-item.is-complete { border-color:rgba(111,231,184,.58); }
 .daily-item.is-complete .daily-reward { color:#7cf0c0; }
+
+
+/* Dedicated player profile */
+.profile-open-button {
+  display:flex; align-items:center; gap:13px; width:min(100%,360px); margin:0 auto 24px; padding:12px 17px;
+  border:1px solid rgba(78,168,255,.42); border-radius:12px; background:linear-gradient(110deg,rgba(18,43,76,.92),rgba(35,29,73,.9));
+  color:var(--white); text-align:left; cursor:pointer; transition:transform .2s,border-color .2s,box-shadow .2s;
+}
+.profile-open-button:hover { transform:translateY(-2px); border-color:var(--purple); box-shadow:0 8px 28px rgba(78,168,255,.16); }
+.profile-open-avatar { display:grid; place-items:center; width:42px; height:42px; flex:0 0 42px; border:1px solid rgba(167,139,250,.5); border-radius:12px; background:rgba(7,20,38,.8); font-size:23px; }
+.profile-open-button strong,.profile-open-button small { display:block; }
+.profile-open-button strong { font:700 12px 'Orbitron',sans-serif; letter-spacing:.08em; }
+.profile-open-button small { margin-top:5px; color:#8dbfff; font-size:9px; font-weight:700; letter-spacing:.13em; }
+.profile-panel { max-width:760px; }
+.profile-hero-card,.profile-edit-card,.profile-xp-card { margin:20px auto; padding:22px; border:1px solid #30466a; border-radius:15px; background:linear-gradient(135deg,rgba(18,39,70,.94),rgba(17,20,48,.96)); text-align:left; box-shadow:0 12px 34px rgba(0,0,0,.14); }
+.profile-hero-card { display:flex; align-items:center; gap:18px; }
+.profile-avatar-large { display:grid; place-items:center; width:82px; height:82px; flex:0 0 82px; border:1px solid rgba(78,168,255,.55); border-radius:22px; background:radial-gradient(circle,rgba(78,168,255,.2),rgba(167,139,250,.1)); font-size:43px; box-shadow:0 0 28px rgba(78,168,255,.12); }
+.profile-identity { min-width:0; flex:1; }
+.profile-kicker,.profile-section-heading,.profile-edit-fields label { color:#879bc0; font-size:9px; font-weight:800; letter-spacing:.16em; }
+.profile-identity h3 { overflow-wrap:anywhere; margin:6px 0 10px; color:#f4f7ff; font:800 clamp(17px,4vw,24px) 'Orbitron',sans-serif; }
+.profile-rank-pill { display:inline-block; padding:6px 10px; border:1px solid rgba(167,139,250,.48); border-radius:30px; background:rgba(167,139,250,.1); color:#d2c1ff; font-size:9px; font-weight:800; letter-spacing:.12em; }
+.profile-level-mark { display:flex; flex-direction:column; align-items:center; justify-content:center; width:66px; height:66px; flex:0 0 66px; border:1px solid rgba(78,168,255,.45); border-radius:50%; background:rgba(78,168,255,.08); }
+.profile-level-mark strong { color:#8ccaff; font:800 21px 'Orbitron',sans-serif; }
+.profile-level-mark span { margin-top:3px; color:#8999b9; font-size:8px; letter-spacing:.15em; }
+.profile-section-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px; }
+.profile-section-heading strong,.profile-section-heading small { color:#8fa3c8; font-size:9px; font-weight:700; letter-spacing:.1em; }
+.profile-edit-fields { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+.profile-edit-fields label { display:flex; flex-direction:column; gap:8px; }
+.profile-edit-fields input,.profile-edit-fields select { width:100%; min-height:44px; padding:10px 12px; border:1px solid #3a5278; border-radius:8px; outline:none; background:#0a1930; color:#f4f7ff; font:500 13px 'Inter',sans-serif; }
+.profile-edit-fields input:focus,.profile-edit-fields select:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(78,168,255,.12); }
+.profile-save-button { margin-top:15px; padding:11px 17px; border:1px solid rgba(78,168,255,.7); border-radius:7px; background:linear-gradient(100deg,#247ac7,#7965d9); color:white; font:700 10px 'Orbitron',sans-serif; letter-spacing:.12em; cursor:pointer; }
+.profile-save-status { display:inline-block; min-height:15px; margin:0 0 0 12px; color:#77f0bd; font-size:10px; }
+.profile-xp-card .xp-track { height:10px; }
+.profile-xp-foot { display:flex; justify-content:space-between; gap:10px; margin-top:9px; color:#9ca8ca; font-size:10px; }
+.profile-stats-heading,.profile-achievement-heading { margin:27px 0 14px; }
+.profile-stat-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.profile-stat-card { display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:17px; border:1px solid #30466a; border-radius:11px; background:rgba(18,24,49,.8); }
+.profile-stat-card span { color:#9ca8ca; font-size:9px; font-weight:800; letter-spacing:.12em; }
+.profile-stat-card strong { color:var(--cyan); font:800 clamp(19px,4vw,25px) 'Orbitron',sans-serif; }
+.profile-stat-card:nth-child(2) strong,.profile-stat-card:nth-child(4) strong { color:#c2adff; }
+.profile-stat-card small { color:#7f8eaf; font-size:8px; letter-spacing:.14em; }
+.profile-achievement-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.profile-achievement { display:grid; grid-template-columns:36px 1fr; align-items:center; gap:10px; min-width:0; padding:12px; border:1px solid #34415f; border-radius:10px; background:rgba(15,24,48,.8); text-align:left; }
+.profile-achievement.unlocked { border-color:rgba(119,240,189,.45); background:linear-gradient(120deg,rgba(28,77,75,.25),rgba(18,24,49,.8)); }
+.profile-achievement.locked { opacity:.62; }
+.profile-achievement-icon { display:grid; place-items:center; width:34px; height:34px; border-radius:9px; background:rgba(78,168,255,.1); font-size:18px; }
+.profile-achievement strong,.profile-achievement small { display:block; }
+.profile-achievement strong { color:#eaf0ff; font-size:9px; letter-spacing:.05em; }
+.profile-achievement small { margin-top:4px; color:#9ca8ca; font-size:9px; line-height:1.4; }
+.profile-achievement em { grid-column:2; color:#77f0bd; font-size:8px; font-style:normal; font-weight:800; letter-spacing:.1em; }
+.profile-achievement.locked em { color:#8994b1; }
+@media(max-width:600px) {
+  .profile-hero-card { gap:12px; padding:16px; }
+  .profile-avatar-large { width:62px; height:62px; flex-basis:62px; font-size:32px; border-radius:17px; }
+  .profile-level-mark { width:54px; height:54px; flex-basis:54px; }
+  .profile-edit-fields,.profile-achievement-grid { grid-template-columns:1fr; }
+  .profile-stat-grid { grid-template-columns:1fr 1fr; }
+  .profile-section-heading { align-items:flex-start; }
+}

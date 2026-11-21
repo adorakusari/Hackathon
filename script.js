@@ -53,6 +53,8 @@ function openLevel(level) {
   showScreen(gameScreen);
 }
 function beginRound() {
+  const oldNext = document.getElementById('next-level-button');
+  if (oldNext) oldNext.remove();
   roundState = 'waiting';
   reactionBox.className = 'reaction-box waiting';
   reactionMessage.textContent = 'WAIT FOR GREEN...';

@@ -136,7 +136,7 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 }
 .home:has(#mode-screen:not(.hidden)) .glow { opacity:.08; }
 .meteor-field {
-  position:absolute;
+  position:fixed;
   z-index:0;
   inset:0;
   overflow:hidden;
@@ -146,6 +146,7 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 }
 .home:has(#mode-screen:not(.hidden)) .meteor-field { opacity:1; }
 .meteor {
+  --c:120,175,255;
   --orbit-radius: min(38vw, 430px);
   --orbit-speed: 24s;
   --meteor-length: 118px;
@@ -154,39 +155,92 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
   top:50%;
   left:50%;
   width:var(--meteor-length);
-  height:6px;
+  height:8px;
   transform-origin:center;
   animation:meteor-orbit var(--orbit-speed) linear var(--meteor-delay) infinite;
-  filter:drop-shadow(0 0 5px rgba(140,200,255,.9));
   will-change:transform;
 }
+/* wide soft glow of the tail */
 .meteor::before {
   content:"";
   position:absolute;
-  inset:0 6px 0 0;
-  background:linear-gradient(90deg,rgba(120,150,255,0) 0%,rgba(125,160,255,.16) 30%,rgba(165,210,255,.65) 76%,#fff 100%);
-  clip-path:polygon(0 50%,100% 8%,100% 92%);
-  filter:blur(.35px);
+  inset:-3px 8px -3px 0;
+  background:linear-gradient(90deg,rgba(var(--c),0) 0%,rgba(var(--c),.12) 35%,rgba(var(--c),.4) 80%,rgba(var(--c),.55) 100%);
+  clip-path:polygon(0 50%,100% 0,100% 100%);
+  filter:blur(2.2px);
 }
+/* thin bright core of the tail */
+.meteor i {
+  position:absolute;
+  inset:2px 6px 2px 0;
+  background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(var(--c),.55) 55%,#fff 100%);
+  clip-path:polygon(0 50%,100% 22%,100% 78%);
+}
+/* glowing rocky head */
 .meteor::after {
   content:"";
   position:absolute;
-  right:-3px;
+  right:-4px;
   top:50%;
-  width:11px;
-  height:11px;
-  border-radius:50%;
+  width:13px;
+  height:13px;
+  border-radius:46% 54% 50% 50%;
   transform:translateY(-50%);
-  background:radial-gradient(circle,#fff 0 28%,#e2f4ff 44%,#9cc4ff 66%,rgba(140,120,235,0) 100%);
-  box-shadow:0 0 6px 2px rgba(230,246,255,.95),0 0 16px 6px rgba(120,175,255,.7),0 0 34px 12px rgba(150,120,255,.35);
+  background:radial-gradient(circle at 34% 32%,#fff 0 22%,#fff6e6 34%,rgba(var(--c),1) 62%,rgba(var(--c),.15) 100%);
+  box-shadow:0 0 5px 2px rgba(255,255,255,.95),0 0 14px 5px rgba(var(--c),.85),0 0 32px 12px rgba(var(--c),.4);
   animation:meteor-core-spin 1.8s ease-in-out infinite;
 }
 .meteor-one { --orbit-radius:min(34vw,390px); --orbit-speed:29s; --meteor-length:150px; --meteor-delay:-2s; }
-.meteor-two { --orbit-radius:min(27vw,310px); --orbit-speed:21s; --meteor-length:105px; --meteor-delay:-8s; }
-.meteor-three { --orbit-radius:min(43vw,490px); --orbit-speed:36s; --meteor-length:126px; --meteor-delay:-17s; }
-.meteor-four { --orbit-radius:min(20vw,230px); --orbit-speed:18s; --meteor-length:82px; --meteor-delay:-11s; }
+.meteor-two { --c:175,130,255; --orbit-radius:min(27vw,310px); --orbit-speed:21s; --meteor-length:105px; --meteor-delay:-8s; }
+.meteor-three { --c:110,230,255; --orbit-radius:min(43vw,490px); --orbit-speed:36s; --meteor-length:126px; --meteor-delay:-17s; }
+.meteor-four { --c:255,190,110; --orbit-radius:min(20vw,230px); --orbit-speed:18s; --meteor-length:82px; --meteor-delay:-11s; }
 .meteor-five { --orbit-radius:min(47vw,540px); --orbit-speed:42s; --meteor-length:112px; --meteor-delay:-25s; }
-.meteor-six { --orbit-radius:min(15vw,175px); --orbit-speed:16s; --meteor-length:72px; --meteor-delay:-5s; }
+.meteor-six { --c:255,130,200; --orbit-radius:min(15vw,175px); --orbit-speed:16s; --meteor-length:72px; --meteor-delay:-5s; }
+.meteor-seven { --c:255,190,110; --orbit-radius:min(31vw,350px); --orbit-speed:33s; --meteor-length:96px; --meteor-delay:-14s; }
+.meteor-eight { --c:175,130,255; --orbit-radius:min(24vw,275px); --orbit-speed:25s; --meteor-length:70px; --meteor-delay:-19s; }
+.meteor-nine { --c:110,230,255; --orbit-radius:min(39vw,450px); --orbit-speed:47s; --meteor-length:136px; --meteor-delay:-30s; }
+.meteor-ten { --c:255,130,200; --orbit-radius:min(17vw,200px); --orbit-speed:14s; --meteor-length:60px; --meteor-delay:-9s; }
+.meteor-eleven { --c:255,190,110; --orbit-radius:min(45vw,515px); --orbit-speed:31s; --meteor-length:100px; --meteor-delay:-22s; }
+.meteor-twelve { --c:175,130,255; --orbit-radius:min(36vw,410px); --orbit-speed:39s; --meteor-length:88px; --meteor-delay:-33s; }
+/* shooting stars crossing the whole page */
+.shooting-star {
+  position:absolute;
+  width:170px;
+  height:3px;
+  border-radius:3px;
+  rotate:28deg;
+  opacity:0;
+  background:linear-gradient(90deg,rgba(150,200,255,0),rgba(180,215,255,.55) 60%,#fff);
+  box-shadow:0 0 8px 1px rgba(160,205,255,.75),0 0 18px 3px rgba(130,150,255,.35);
+  animation:shoot 9s linear infinite;
+}
+.shooting-star::after {
+  content:"";
+  position:absolute;
+  right:-2px;
+  top:50%;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  transform:translateY(-50%);
+  background:#fff;
+  box-shadow:0 0 6px 3px rgba(255,255,255,.9),0 0 14px 6px rgba(150,200,255,.7);
+}
+.shooting-1 { top:6%; left:4%; animation-delay:0s; }
+.shooting-2 { top:18%; left:38%; animation-delay:-3.2s; animation-duration:11s; width:130px; }
+.shooting-3 { top:2%; left:62%; animation-delay:-6s; animation-duration:8s; width:200px; }
+.shooting-4 { top:34%; left:8%; animation-delay:-1.5s; animation-duration:13s; }
+.shooting-5 { top:12%; left:80%; animation-delay:-8s; animation-duration:10s; width:110px; }
+.shooting-6 { top:46%; left:52%; animation-delay:-4.6s; animation-duration:12s; width:150px; }
+.shooting-7 { top:58%; left:20%; animation-delay:-9.5s; animation-duration:14s; width:120px; }
+.shooting-8 { top:26%; left:70%; animation-delay:-2.4s; animation-duration:9.5s; width:180px; }
+@keyframes shoot {
+  0% { opacity:0; translate:0 0; }
+  2% { opacity:1; }
+  14% { opacity:.9; }
+  18% { opacity:0; translate:min(80vw,1300px) min(43vw,690px); }
+  100% { opacity:0; translate:min(80vw,1300px) min(43vw,690px); }
+}
 @keyframes meteor-orbit {
   from { transform:translate(-50%,-50%) rotate(0deg) translateX(var(--orbit-radius)); }
   to { transform:translate(-50%,-50%) rotate(360deg) translateX(var(--orbit-radius)); }
@@ -197,11 +251,12 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 }
 @media(max-width:600px) {
   .meteor { --orbit-radius:min(39vw,190px); }
-  .meteor-three,.meteor-five { display:none; }
+  .meteor-three,.meteor-five,.meteor-nine,.meteor-eleven,.meteor-twelve,.shooting-6,.shooting-7,.shooting-8 { display:none; }
 }
 @media (prefers-reduced-motion:reduce) {
   .meteor { animation:none; }
   .meteor::after { animation:none; }
+  .shooting-star { animation:none; opacity:0; }
 }
 
 

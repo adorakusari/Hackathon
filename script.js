@@ -67,7 +67,7 @@ function finishMysteryRound() {
   anchor.insertAdjacentElement('afterend',button);
 }
 function startMysteryChallenge() {
-  const choices = ['color','html','click','code'].filter(mode => mode !== lastMysteryMode);
+  const choices = ['color','html','click','code','timing','target'].filter(mode => mode !== lastMysteryMode);
   const chosen = choices[Math.floor(Math.random()*choices.length)];
   lastMysteryMode = chosen;
   mysteryRound++;
@@ -80,11 +80,31 @@ function startMysteryChallenge() {
   } else if (chosen === 'click') {
     openClickMode();
     document.getElementById('active-level-label').textContent = label + ' • CLICK SPEED';
+  } else if (chosen === 'timing') {
+    window.openTimingMode(label + ' • PERFECT TIMING');
+  } else if (chosen === 'target') {
+    window.openTargetLockMode(label + ' • TARGET LOCK');
   } else {
     raceLanguage.value = 'All';
     openCodeRace();
     document.querySelector('#race-screen .eyebrow').textContent = label + ' • SURPRISE CODE RACE';
   }
+}
+function mysteryMiniGameDone(box) {
+  if (!mysteryActive || !box || document.getElementById('mystery-next-button')) return;
+  const completed = mysteryRound >= MYSTERY_TOTAL_ROUNDS;
+  const next = document.createElement('button');
+  next.type = 'button'; next.id = 'mystery-next-button'; next.className = 'start-button mystery-next-button';
+  next.textContent = completed ? 'CLAIM MYSTERY BONUS' : 'NEXT MYSTERY';
+  next.addEventListener('click',() => {
+    next.remove();
+    if (completed) {
+      const bonus = 75; awardXP(bonus); mysteryActive = false;
+      box.insertAdjacentHTML('beforeend','<p class="reward-detail">MYSTERY MASTER! +' + bonus + ' bonus XP for completing all five surprise rounds.</p><button class="back-button" id="mystery-return-button" type="button">BACK TO ARENA</button>');
+      document.getElementById('mystery-return-button').addEventListener('click',() => { showScreen(modeScreen); renderStats(); });
+    } else startMysteryChallenge();
+  });
+  box.appendChild(next);
 }
 function beginMysteryMode() {
   mysteryActive = true;

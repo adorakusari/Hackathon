@@ -345,11 +345,14 @@
     overlayTitle.textContent = 'RANK ' + grade + ' • ' + s.score + ' POINTS';
     overlayText.textContent = isRecord ? 'New personal record! Can you beat it?' : 'Try again to beat your best run.';
     startButton.textContent = 'PLAY AGAIN';
+    startButton.style.display = mysteryActive ? 'none' : '';
     overlay.classList.remove('hidden');
+    mysteryMiniGameDone(resultBox);
   }
   function drawFrameOnce() { try { drawFrame(); } catch (error) { /* final frame is optional */ } }
   function leave() {
     if (state) { state.running = false; cancelAnimationFrame(frame); stopListening(); state = null; }
+    mysteryActive = false;
     showScreen(modeScreen);
     if (typeof renderStats === 'function') renderStats();
   }
@@ -359,6 +362,8 @@
     overlayTitle.textContent = 'PERFECT TIMING';
     overlayText.textContent = 'Press the matching key (Q W E R T) the instant a glowing ring touches the white target. The closer you are, the more points you score. Keep a combo going to raise your multiplier up to ×5!';
     startButton.textContent = 'START';
+    startButton.style.display = '';
+    screen.querySelector('.eyebrow').textContent = 'PRECISION CHALLENGE';
     overlay.classList.remove('hidden');
     showScreen(screen);
     resizeCanvas();
@@ -369,6 +374,7 @@
     button.addEventListener('pointerdown', event => { event.preventDefault(); press(index, event.timeStamp); });
     button.addEventListener('keydown', event => { if (event.key === ' ' || event.key === 'Enter') event.preventDefault(); });
   });
+  window.openTimingMode = function (label) { open(); screen.querySelector('.eyebrow').textContent = label; };
   startButton.addEventListener('click', startRun);
   document.getElementById('timing-back-button').addEventListener('click', leave);
   document.getElementById('timing-mode-button').addEventListener('click', open);

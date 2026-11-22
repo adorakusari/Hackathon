@@ -178,7 +178,8 @@
     resultBox.classList.remove('hidden');
     overlayTitle.textContent = 'RANK ' + grade + ' • ' + s.score + ' POINTS';
     overlayText.textContent = record ? 'New personal record! Can you beat it?' : 'Try again to beat your best run.';
-    startButton.textContent = 'PLAY AGAIN'; overlay.classList.remove('hidden');
+    startButton.textContent = 'PLAY AGAIN'; startButton.style.display = mysteryActive ? 'none' : ''; overlay.classList.remove('hidden');
+    mysteryMiniGameDone(resultBox);
     drawFrame(performance.now());
   }
   function stop() { if (state) { state.running = false; cancelAnimationFrame(frame); document.removeEventListener('visibilitychange', onVisibility); state = null; } }
@@ -186,15 +187,16 @@
     stop(); resultBox.classList.add('hidden'); resultBox.innerHTML = '';
     overlayTitle.textContent = 'TARGET LOCK';
     overlayText.textContent = 'Targets appear on screen. Each round tells you which color to lock onto (PINK or CYAN). Click only that target, as fast as you can. Wrong targets break your streak!';
-    startButton.textContent = 'START'; overlay.classList.remove('hidden');
+    startButton.textContent = 'START'; startButton.style.display = ''; screen.querySelector('.eyebrow').textContent = 'AIM CHALLENGE'; overlay.classList.remove('hidden');
     showScreen(screen); resize(); cancelAnimationFrame(frame);
     const idle = now => { if (state || screen.classList.contains('hidden')) return; drawFrame(now); frame = requestAnimationFrame(idle); }; frame = requestAnimationFrame(idle);
   }
   canvas.addEventListener('pointermove', onMove);
   canvas.addEventListener('pointerleave', () => { mouse.inside = false; });
   canvas.addEventListener('pointerdown', onDown);
+  window.openTargetLockMode = function (label) { open(); screen.querySelector('.eyebrow').textContent = label; };
   startButton.addEventListener('click', start);
-  document.getElementById('targetlock-back-button').addEventListener('click', () => { stop(); cancelAnimationFrame(frame); showScreen(modeScreen); if (typeof renderStats === 'function') renderStats(); });
+  document.getElementById('targetlock-back-button').addEventListener('click', () => { stop(); cancelAnimationFrame(frame); mysteryActive = false; showScreen(modeScreen); if (typeof renderStats === 'function') renderStats(); });
   document.getElementById('targetlock-mode-button').addEventListener('click', open);
   window.addEventListener('resize', () => { if (!screen.classList.contains('hidden')) resize(); });
   window.renderTargetLockBest();

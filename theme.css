@@ -361,3 +361,5 @@ button:focus-visible { outline:2px solid var(--brand); outline-offset:3px; }
 }
 @media (max-width:860px) { .hero-logo { justify-content:center; } #home-screen .intro { text-align:center; } }
 @media (min-width:861px) { .hero-demo { margin-left:-44px; } #home-screen .intro { max-width:520px; } #home-screen .intro strong { white-space:nowrap; } }
+/* headline stays inside its column: no overlap with the demo */
+@media (min-width:861px) { #home-screen h1 { margin-right:0; font-size:clamp(2.8rem,5.4vw,5rem); } .hero-demo { margin-left:0; } }

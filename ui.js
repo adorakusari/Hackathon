@@ -86,4 +86,35 @@
     el.classList.remove('hidden');
   }
   refreshWelcome(); setInterval(refreshWelcome, 1500);
+
+  /* ---------- Code Race: choose a language first, then race ---------- */
+  (function () {
+    const codeButton = document.getElementById('code-mode-button');
+    const select = document.getElementById('race-language');
+    if (!codeButton || !select) return;
+    const picker = document.createElement('div');
+    picker.className = 'auth-modal lang-modal hidden'; picker.setAttribute('role', 'dialog'); picker.setAttribute('aria-modal', 'true'); picker.setAttribute('aria-labelledby', 'lang-title');
+    const TAGS = {'All':'MIX', 'C++':'C++', 'Python':'PY', 'JavaScript':'JS', 'Java':'JAVA', 'HTML':'HTML'};
+    const options = Array.from(select.options).map(o => '<button type="button" class="lang-option" data-lang="' + o.value + '"><b>' + (TAGS[o.value] || o.value) + '</b><span>' + (o.value === 'All' ? 'Random language' : o.textContent) + '</span></button>').join('');
+    picker.innerHTML = '<div class="auth-card lang-card"><span class="tut-kicker">CODE RACE</span><h3 class="tut-title" id="lang-title">WHICH LANGUAGE DO YOU WANT TO CODE?</h3><div class="lang-grid">' + options + '</div><button class="tut-skip" id="lang-cancel" type="button">CANCEL</button></div>';
+    document.body.appendChild(picker);
+    let bypass = false;
+    function closePicker() { picker.classList.add('hidden'); }
+    codeButton.addEventListener('click', event => {
+      if (bypass) { bypass = false; return; }
+      event.stopImmediatePropagation(); event.preventDefault();
+      picker.classList.remove('hidden');
+      const first = picker.querySelector('.lang-option'); if (first) first.focus();
+    }, true);
+    picker.addEventListener('click', event => {
+      const choice = event.target.closest('.lang-option');
+      if (choice) {
+        select.value = choice.dataset.lang; closePicker(); playSound('click');
+        bypass = true; codeButton.click();
+        setTimeout(() => { const start = document.getElementById('race-start-button'); if (start && !start.disabled) start.click(); }, 250);
+      } else if (event.target === picker) closePicker();
+    });
+    document.getElementById('lang-cancel').addEventListener('click', closePicker);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !picker.classList.contains('hidden')) closePicker(); });
+  })();
 })();

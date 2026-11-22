@@ -286,3 +286,13 @@ button:focus-visible { outline:2px solid var(--brand); outline-offset:3px; }
 #home-screen { min-width:0; }
 .hero-ticker { width:100%; max-width:100%; contain:inline-size; }
 @media (max-width:860px) { .home { padding-top:78px; } }
+
+/* language picker */
+.lang-card { max-width:460px; text-align:center; }
+.lang-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:6px 0 16px; }
+.lang-option { display:flex; align-items:center; gap:12px; padding:14px; border:1px solid var(--line-hi); border-left:4px solid var(--c-code); border-radius:var(--r-sm); background:var(--s2); color:var(--tx); text-align:left; cursor:pointer; transition:transform .14s var(--ease),border-color .14s,background .14s; }
+.lang-option:hover,.lang-option:focus-visible { transform:translateY(-2px); border-color:var(--c-code); background:var(--s3); outline:none; }
+.lang-option b { min-width:46px; padding:5px 0; border-radius:2px; background:var(--c-code); color:var(--brand-ink); text-align:center; font:700 11px var(--font-hud); letter-spacing:.08em; }
+.lang-option span { font:600 13px var(--font-hud); letter-spacing:.06em; }
+.lang-option[data-lang="All"] { grid-column:1 / -1; }
+.lang-modal { z-index:90; }

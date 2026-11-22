@@ -424,3 +424,8 @@ button:focus-visible { outline:2px solid var(--brand); outline-offset:3px; }
   .t-code { min-height:0; }
 }
 @media (prefers-reduced-motion:reduce) { .ac-line { width:32ch; animation:none; } .ac-line .caret,.ac-lanes i,.art-rings i { animation:none; } .art-rings i { opacity:.7; } }
+
+/* ---------- "?" help button ---------- */
+.help-button { position:fixed; z-index:30; top:18px; left:20px; width:36px; height:36px; display:grid; place-items:center; border:2px solid var(--line-hi); border-radius:var(--r-sm); background:var(--s1); color:var(--brand); font:400 18px var(--font-win); cursor:pointer; transition:border-color .12s,transform .12s var(--ease),background .12s; }
+.help-button:hover,.help-button:focus-visible { border-color:var(--brand); background:var(--s2); transform:translateY(-2px); outline:none; }
+@media (max-width:600px) { .help-button { top:10px; left:10px; } }

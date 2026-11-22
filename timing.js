@@ -21,7 +21,7 @@
     {key:'t', color:'#ffe533'}
   ];
   const TOTAL_RINGS = 20;
-  const LEAD_IN = 3200;           // ms of "get ready" before the first ring appears
+  const LEAD_IN = 700;            // short pause after the global 3-2-1-GO before the first ring appears
   const JUDGEMENTS = [
     {name:'PERFECT', ms:90, points:100, color:'#ffffff'},
     {name:'GREAT', ms:170, points:70, color:'#7dffb3'},
@@ -248,15 +248,6 @@
       ctx.restore();
     });
     drawHud(s);
-    // get-ready countdown
-    if (t < LEAD_IN - 150) {
-      const number = Math.max(1, Math.ceil((LEAD_IN - 150 - t) / 1000));
-      ctx.save();
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.shadowColor = '#19e6ff'; ctx.shadowBlur = 24;
-      ctx.font = '400 ' + Math.round(geo.target * .9) + 'px \"Bungee\", sans-serif'; ctx.fillText(String(number), geo.cx, geo.cy);
-      ctx.font = '700 ' + (width < 480 ? 13 : 16) + 'px "Chakra Petch", sans-serif'; ctx.fillText('GET READY', geo.cx, geo.cy - geo.target * 1.35);
-      ctx.restore();
-    }
   }
   function loop() {
     if (!state || !state.running) return;

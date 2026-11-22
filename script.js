@@ -796,7 +796,7 @@ function openLevel(level) {
     targetLabel.textContent = 'TARGET: UNDER ' + colorThresholds[level - 1] + ' MS';
   } else {
     const question = htmlQuestions[level - 1];
-    instructions.textContent = 'Type the correct HTML tag yourself, then press ENTER or SUBMIT. Your time starts now!';
+    instructions.textContent = 'Type the correct HTML tag yourself, then press ENTER or SUBMIT. Your time starts at GO!';
     reactionMessage.textContent = question.prompt;
     htmlOptions.classList.remove('hidden');
     const answerInput = document.createElement('input');
@@ -817,9 +817,12 @@ function openLevel(level) {
       if (event.key === 'Enter') submitAnswer();
     });
     htmlOptions.append(answerInput, submit);
-    startTime = performance.now();
     targetLabel.textContent = 'TIME LIMIT: ' + (htmlThresholds[level - 1] / 1000).toFixed(1) + ' SECONDS';
-    answerInput.focus();
+    // 3-2-1-GO first: the question stays hidden and the clock starts at GO
+    reactionMessage.textContent = 'GET READY';
+    answerInput.disabled = true; submit.disabled = true;
+    const goHtml = () => { reactionMessage.textContent = question.prompt; answerInput.disabled = false; submit.disabled = false; startTime = performance.now(); answerInput.focus(); };
+    if (window.arenaCountdown) window.arenaCountdown(goHtml); else goHtml();
   }
   showScreen(gameScreen);
 }

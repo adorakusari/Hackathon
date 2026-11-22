@@ -50,23 +50,51 @@
   function seen(key) { try { return localStorage.getItem('rsa-tut-' + key) === '1'; } catch (e) { return true; } }
   function close(launch) {
     modal.classList.add('hidden');
-    if (pending) { try { localStorage.setItem('rsa-tut-' + pending.info.key, '1'); } catch (e) { } const p = pending; pending = null; if (launch) p.button.click(); }
+    if (pending) { try { localStorage.setItem('rsa-tut-' + pending.info.key, '1'); } catch (e) { } const p = pending; pending = null; if (launch && !p.help) p.button.click(); }
   }
   document.getElementById('tut-go').addEventListener('click', () => close(true));
   document.getElementById('tut-skip').addEventListener('click', () => close(true));
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) close(false); });
+  function openTutorial(id, help) {
+    const info = TUTORIALS[id]; if (!info) return;
+    pending = {button: document.getElementById(id), info, help: !!help};
+    document.getElementById('tut-title').textContent = info.title;
+    document.getElementById('tut-demo').innerHTML = DEMOS[info.demo];
+    document.getElementById('tut-steps').innerHTML = info.steps.map((s, i) => '<li><b>' + (i + 1) + '</b><span>' + s + '</span></li>').join('');
+    document.getElementById('tut-go').textContent = help ? 'GOT IT' : 'GOT IT, LET\'S GO';
+    modal.classList.remove('hidden'); document.getElementById('tut-go').focus();
+  }
+  window.showArenaHelp = id => openTutorial(id, true);
   Object.keys(TUTORIALS).forEach(id => {
     const button = document.getElementById(id); if (!button) return;
     button.addEventListener('click', event => {
-      const info = TUTORIALS[id]; if (seen(info.key)) return;
+      if (seen(TUTORIALS[id].key)) return;
       event.stopImmediatePropagation(); event.preventDefault();
-      pending = {button, info};
-      document.getElementById('tut-title').textContent = info.title;
-      document.getElementById('tut-demo').innerHTML = DEMOS[info.demo];
-      document.getElementById('tut-steps').innerHTML = info.steps.map((s, i) => '<li><b>' + (i + 1) + '</b><span>' + s + '</span></li>').join('');
-      modal.classList.remove('hidden'); document.getElementById('tut-go').focus();
+      openTutorial(id, false);
     }, true);
   });
+
+  /* ---------- "?" help button: reopens the how-to-play for the mode you are in ---------- */
+  (function () {
+    const help = document.createElement('button');
+    help.type = 'button'; help.id = 'help-button'; help.className = 'help-button hidden'; help.setAttribute('aria-label', 'How to play this mode'); help.title = 'How to play'; help.textContent = '?';
+    document.body.appendChild(help);
+    function currentModeButton() {
+      const vis = id => { const el = document.getElementById(id); return el && !el.classList.contains('hidden'); };
+      if (vis('timing-screen')) return 'timing-mode-button';
+      if (vis('targetlock-screen')) return 'targetlock-mode-button';
+      if (vis('race-screen')) return 'code-mode-button';
+      if (vis('game-screen')) return ({color:'color-mode-button', html:'html-mode-button', click:'click-mode-button'})[typeof activeMode !== 'undefined' ? activeMode : 'color'];
+      return null;
+    }
+    function sync() {
+      const id = currentModeButton();
+      help.classList.toggle('hidden', !id || !!document.querySelector('.cd-overlay'));
+      help.dataset.mode = id || '';
+    }
+    help.addEventListener('click', () => { if (help.dataset.mode) { playSound('click'); openTutorial(help.dataset.mode, true); } });
+    setInterval(sync, 300);
+  })();
 
   /* ---------- home screen extras ---------- */
   const MODES = [['COLOR REACTION','bolt','--c-color'],['HTML SPEED','code','--c-html'],['CLICK SPEED','pointer','--c-click'],['CODE RACE','keyboard','--c-code'],['PERFECT TIMING','timer','--c-timing'],['TARGET LOCK','crosshair','--c-target'],['MYSTERY MODE','question','--c-mystery']];

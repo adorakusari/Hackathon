@@ -424,6 +424,7 @@ function savePlayerProfile() {
   const accounts = readAccounts();
   accounts[key] = {username:accounts[key].username, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), custom:playerProfile.custom, streak:playerProfile.streak, updated:Date.now()};
   writeAccounts(accounts);
+  scheduleOnlineSync();
 }
 (function restoreSession() {
   const key = currentAccountKey();
@@ -507,6 +508,8 @@ function renderCharacterPicker() {
 }
 function awardXP(amount, achievementKeys=[]) {
   const levelBefore = playerLevel();
+  const rankBefore = rankSnapshot();
+  levelBeforeForToast = levelBefore;
   playerProfile.xp += amount;
   playerProfile.games++;
   const unlocked = [];
@@ -521,6 +524,7 @@ function awardXP(amount, achievementKeys=[]) {
   renderProfile();
   refreshAuthUI();
   if (unlocked.length) setTimeout(() => { playSound('unlock'); launchConfetti(70); }, 350);
+  announceRankChange(rankBefore);
   if (playerLevel() > levelBefore) {
     setTimeout(() => { playSound('levelup'); launchConfetti(190); shakeScreen('sm'); }, 450);
     announceLevelUp(levelBefore, playerLevel());
@@ -983,7 +987,7 @@ function showHtmlRetry() {
   retry.addEventListener('click', () => openLevel(activeLevel));
   htmlOptions.insertAdjacentElement('afterend', retry);
 }
-document.getElementById('levels-button').addEventListener('click', () => { renderStats(); renderStreak(); showScreen(modeScreen); });
+document.getElementById('levels-button').addEventListener('click', () => { renderStats(); renderStreak(); showScreen(modeScreen); checkRankDrop(); refreshOnlineLeaderboard(false); });
 document.getElementById('open-profile-button').addEventListener('click', () => { renderProfile(); showScreen(profileScreen); });
 document.getElementById('profile-back-button').addEventListener('click', () => showScreen(modeScreen));
 document.getElementById('profile-save-button').addEventListener('click', () => {
@@ -1555,11 +1559,155 @@ function claimStreakReward() {
   if (unlockedNow.length) setTimeout(() => { playSound('unlock'); showGameToast('🔥 STREAK REWARD!', '🔓 Unlocked: ' + unlockedNow.join(' and ') + '. Equip it in Customize!', '🎨 CUSTOMIZE NOW', openCustomize); }, 700);
 }
 
+/* ---- Arena bots and online ranking ---- */
+const BOT_EPOCH = Date.UTC(2026, 10, 1);
+const BOT_ROSTER = [
+  {name:'ApexNova', avatar:'nova', start:2600, perDay:55, seed:1, title:'THE CHAMPION', look:{style:'mohawk', hairColor:'neon', eyes:'cyan', outfit:'cosmic', emblem:'crown', accessory:'crown', frame:'rainbow'}},
+  {name:'ZaraBlitz', avatar:'zara', start:2100, perDay:48, seed:2, title:'LIGHTNING QUEEN', look:{style:'long', hairColor:'pink', outfit:'rose', emblem:'bolt', accessory:'halo', frame:'neon'}},
+  {name:'KaiStorm', avatar:'kai', start:1700, perDay:42, seed:3, title:'THE STORM', look:{style:'afro', outfit:'royal', emblem:'star', frame:'gold'}},
+  {name:'LunaNight', avatar:'luna', start:1350, perDay:36, seed:4, title:'NIGHT OWL', look:{hairColor:'violet', outfit:'amethyst', emblem:'flame', accessory:'domino', frame:'gold'}},
+  {name:'RexRunner', avatar:'rex', start:1000, perDay:30, seed:5, title:'THE SPRINTER', look:{outfit:'emerald', emblem:'bolt', frame:'neon'}},
+  {name:'MiraMind', avatar:'mira', start:800, perDay:26, seed:6, title:'BIG BRAIN', look:{outfit:'glacier', emblem:'shield'}},
+  {name:'SolFlare', avatar:'sol', start:620, perDay:22, seed:7, title:'RISING STAR', look:{outfit:'solar', emblem:'flame', accessory:'headband'}},
+  {name:'NyxByte', avatar:'nyx', start:480, perDay:18, seed:8, title:'CODE GHOST', look:{eyes:'violet', emblem:'star'}},
+  {name:'PixelPete', avatar:'nova', start:340, perDay:15, seed:9, title:'THE GRINDER', look:{style:'spiky', hairColor:'ice', outfit:'sunset'}},
+  {name:'TurboTom', avatar:'axel', start:250, perDay:12, seed:10, title:'FAST FINGERS', look:{outfit:'teal', emblem:'bolt'}},
+  {name:'SleepyOwl', avatar:'luna', start:160, perDay:9, seed:11, title:'SLOW BUT SURE', look:{style:'bob', outfit:'midnight'}},
+  {name:'CodeCat', avatar:'zara', start:100, perDay:7, seed:12, title:'KEYBOARD KITTEN', look:{hairColor:'blonde', emblem:'heart'}},
+  {name:'NoobNinja', avatar:'jett', start:60, perDay:5, seed:13, title:'STILL LEARNING', look:{outfit:'crimson'}},
+  {name:'RookieRay', avatar:'kai', start:30, perDay:3, seed:14, title:'FRESH RECRUIT', look:{}}
+];
+function botXp(bot, now) {
+  const days = Math.max(0, ((now || Date.now()) - BOT_EPOCH) / 86400000);
+  return Math.max(0, Math.round(bot.start + bot.perDay * (days + 0.9 * Math.sin(days * 0.9 + bot.seed * 2.1))));
+}
+function botEntries() {
+  const now = Date.now();
+  return BOT_ROSTER.map(bot => {
+    const xp = botXp(bot, now);
+    return {key:'bot:' + bot.name.toLowerCase(), username:bot.name, avatar:bot.avatar, xp, level:Math.floor(xp / XP_PER_LEVEL) + 1, achievements:Math.min(5, 1 + Math.floor(xp / 450)), custom:sanitizeCustom({[bot.avatar]: bot.look})[bot.avatar] || {}, isBot:true, title:bot.title};
+  });
+}
+const ONLINE_CONFIG = window.ARENA_ONLINE || {};
+const ONLINE_ENABLED = !!(ONLINE_CONFIG.url && ONLINE_CONFIG.anonKey);
+const onlineState = {list:[], status:ONLINE_ENABLED ? 'idle' : 'off', updated:0, loading:false};
+function randomToken() {
+  const bytes = new Uint8Array(24);
+  (window.crypto || window.msCrypto).getRandomValues(bytes);
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+function onlineToken(key) {
+  let tokens = {};
+  try { tokens = JSON.parse(localStorage.getItem('rsa-online-tokens') || '{}') || {}; } catch (error) { tokens = {}; }
+  if (!tokens[key]) { tokens[key] = randomToken(); localStorage.setItem('rsa-online-tokens', JSON.stringify(tokens)); }
+  return tokens[key];
+}
+async function onlineRequest(path, options) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetch(ONLINE_CONFIG.url.replace(/\/+$/, '') + path, Object.assign({headers:{apikey:ONLINE_CONFIG.anonKey, Authorization:'Bearer ' + ONLINE_CONFIG.anonKey, 'Content-Type':'application/json'}, signal:controller.signal}, options));
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    return await response.json();
+  } finally { clearTimeout(timer); }
+}
+async function onlineSubmit(key, data) {
+  if (!ONLINE_ENABLED) return {ok:true, skipped:true};
+  try {
+    const result = await onlineRequest('/rest/v1/rpc/submit_score', {method:'POST', body:JSON.stringify({p_name:data.username, p_token:onlineToken(key), p_xp:Math.floor(data.xp), p_avatar:data.avatar, p_custom:(data.custom && data.custom[data.avatar]) || {}, p_achievements:data.achievements.length, p_best_streak:data.streak.best})});
+    return result && typeof result === 'object' ? result : {ok:true};
+  } catch (error) { return {ok:false, error:'network'}; }
+}
+async function refreshOnlineLeaderboard(force) {
+  if (!ONLINE_ENABLED || onlineState.loading) return;
+  if (!force && Date.now() - onlineState.updated < 20000) return;
+  onlineState.loading = true;
+  renderLeaderboardStatus();
+  try {
+    const rows = await onlineRequest('/rest/v1/leaderboard?select=name_key,name,xp,avatar,custom,achievements,best_streak&order=xp.desc&limit=100');
+    onlineState.list = (Array.isArray(rows) ? rows : []).map(row => {
+      const avatar = ARENA_CHARACTERS[row.avatar] ? row.avatar : 'nova';
+      const xp = Math.max(0, Number(row.xp) || 0);
+      return {key:String(row.name_key), username:String(row.name), avatar, xp, level:Math.floor(xp / XP_PER_LEVEL) + 1, achievements:Math.max(0, Number(row.achievements) || 0), custom:sanitizeCustom({[avatar]: row.custom})[avatar] || {}, online:true};
+    });
+    onlineState.status = 'ok';
+    onlineState.updated = Date.now();
+  } catch (error) { onlineState.status = 'error'; }
+  onlineState.loading = false;
+  refreshAuthUI();
+  if (!leaderboardScreen.classList.contains('hidden')) renderLeaderboard();
+}
+function scheduleOnlineSync() {
+  if (!ONLINE_ENABLED || !currentAccountKey()) return;
+  clearTimeout(scheduleOnlineSync.timer);
+  scheduleOnlineSync.timer = setTimeout(async () => {
+    const key = currentAccountKey();
+    if (!key) return;
+    const result = await onlineSubmit(key, {username:playerProfile.username, xp:playerProfile.xp, avatar:playerProfile.avatar, custom:playerProfile.custom, achievements:playerProfile.achievements, streak:playerProfile.streak});
+    if (result.ok) refreshOnlineLeaderboard(true);
+  }, 1500);
+}
+function leaderboardEntries() {
+  const own = currentAccountKey();
+  const merged = new Map();
+  botEntries().forEach(entry => merged.set(entry.key, entry));
+  onlineState.list.forEach(entry => merged.set(entry.key, entry));
+  localLeaderboardEntries().forEach(entry => { if (!merged.has(entry.key) || entry.key === own) merged.set(entry.key, entry); });
+  return Array.from(merged.values()).sort((a, b) => b.xp - a.xp || b.achievements - a.achievements || a.username.localeCompare(b.username));
+}
+function entryLabel(entry) { return entry.username.toUpperCase() + (entry.isBot ? ' 🤖' : ''); }
+function rankSnapshot() {
+  const key = currentAccountKey();
+  return key ? {key, order:leaderboardEntries().map(entry => entry.key)} : null;
+}
+function announceRankChange(snapshot) {
+  if (!snapshot) return;
+  const entries = leaderboardEntries();
+  const after = entries.findIndex(entry => entry.key === snapshot.key);
+  const before = snapshot.order.indexOf(snapshot.key);
+  if (after < 0) return;
+  localStorage.setItem('rsa-last-rank-' + snapshot.key, String(after + 1));
+  if (before < 0 || after >= before) return;
+  const passed = snapshot.order.slice(0, before).map(key => entries.find(entry => entry.key === key)).filter(entry => entry && entries.indexOf(entry) > after);
+  if (!passed.length) return;
+  setTimeout(() => {
+    playSound('unlock'); launchConfetti(90);
+    showGameToast('🏆 YOU PASSED ' + passed.slice(0, 2).map(entryLabel).join(' & ') + (passed.length > 2 ? ' +' + (passed.length - 2) : '') + '!', 'You are now rank #' + (after + 1) + ' of ' + entries.length + '. Keep climbing!', '🏆 LEADERBOARD', openLeaderboard);
+  }, playerLevel() > levelBeforeForToast ? 3600 : 1300);
+}
+let levelBeforeForToast = 0;
+function checkRankDrop() {
+  const key = currentAccountKey();
+  if (!key) return;
+  const entries = leaderboardEntries();
+  const rank = entries.findIndex(entry => entry.key === key) + 1;
+  const storageKey = 'rsa-last-rank-' + key;
+  const last = Number(localStorage.getItem(storageKey)) || 0;
+  if (last && rank > last) {
+    const ahead = entries[rank - 2];
+    showGameToast('😤 YOU DROPPED TO #' + rank, (ahead ? entryLabel(ahead) + ' is now ahead of you. ' : '') + 'Play a round to fight back!', '🏆 LEADERBOARD', openLeaderboard);
+  }
+  localStorage.setItem(storageKey, String(rank));
+}
+function renderLeaderboardStatus() {
+  const node = document.getElementById('lb-status');
+  if (!node) return;
+  const humans = onlineState.list.length;
+  if (onlineState.status === 'off') node.textContent = '📴 OFFLINE MODE';
+  else if (onlineState.loading) node.textContent = '⏳ UPDATING…';
+  else if (onlineState.status === 'ok') node.textContent = '🌐 ONLINE • ' + humans + ' PLAYER' + (humans === 1 ? '' : 'S');
+  else if (onlineState.status === 'error') node.textContent = '⚠ ONLINE RANKING UNREACHABLE';
+  else node.textContent = '🌐 CONNECTING…';
+  node.className = 'lb-status ' + (onlineState.status === 'ok' ? 'ok' : onlineState.status === 'error' ? 'bad' : '');
+  const note = document.getElementById('lb-note');
+  if (note) note.textContent = ONLINE_ENABLED ? 'Players from all over the world compete here. 🤖 are arena bots that train every day.' : 'Offline mode: rankings show the 🤖 arena bots and players signed in on this device.';
+}
+
 /* ---- Sign in, sign out and leaderboard ---- */
 const authModal = document.getElementById('auth-modal');
 const authToggle = document.getElementById('auth-toggle');
 function rankTitleForLevel(level) { return level >= 10 ? 'ARENA LEGEND' : level >= 7 ? 'SPEED MASTER' : level >= 4 ? 'QUICK THINKER' : 'ROOKIE'; }
-function leaderboardEntries() {
+function localLeaderboardEntries() {
   return Object.entries(readAccounts()).map(([key, account]) => {
     const xp = Math.max(0, Number(account.xp) || 0);
     return {key, username:String(account.username || 'Player'), avatar:ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova', xp, level:Math.floor(xp / XP_PER_LEVEL) + 1, achievements:Array.isArray(account.achievements) ? account.achievements.length : 0, custom:sanitizeCustom(account.custom)[ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova'] || {}};
@@ -1585,40 +1733,37 @@ function renderLeaderboard() {
   const entries = leaderboardEntries();
   const youCard = document.getElementById('lb-you-card');
   const list = document.getElementById('lb-list');
+  renderLeaderboardStatus();
   youCard.innerHTML = '';
   list.innerHTML = '';
   const position = key ? entries.findIndex(entry => entry.key === key) + 1 : 0;
   const title = document.createElement('strong');
   const detail = document.createElement('span');
   if (key) {
-    title.textContent = 'YOUR RANK: #' + position;
+    title.textContent = 'YOUR RANK: #' + position + ' OF ' + entries.length;
     const ahead = position > 1 ? entries[position - 2] : null;
-    detail.textContent = ahead ? Math.max(1, ahead.xp - playerProfile.xp + 1) + ' XP to pass ' + ahead.username.toUpperCase() : position === 1 && entries.length > 1 ? 'You are the champion. Keep your lead!' : 'You are the first champion. Invite friends to challenge you!';
+    const behind = position < entries.length ? entries[position] : null;
+    detail.textContent = ahead ? '🎯 ' + Math.max(1, ahead.xp - playerProfile.xp + 1) + ' XP to pass ' + entryLabel(ahead) + (behind ? ' • ' + entryLabel(behind) + ' is ' + Math.max(0, playerProfile.xp - behind.xp) + ' XP behind you' : '') : '👑 You are the champion! ' + (behind ? entryLabel(behind) + ' is ' + Math.max(0, playerProfile.xp - behind.xp) + ' XP behind you.' : '');
     youCard.append(title, detail);
   } else {
-    title.textContent = 'YOU ARE PLAYING AS A GUEST';
-    detail.textContent = 'Sign in to save your progress and enter the ranking.';
+    const guestRank = entries.filter(entry => entry.xp > playerProfile.xp).length + 1;
+    title.textContent = 'YOU WOULD BE RANK #' + guestRank + ' RIGHT NOW';
+    detail.textContent = 'You are playing as a guest. Sign in to save your progress and claim your spot!';
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'lb-signin-button'; button.textContent = 'SIGN IN';
     button.addEventListener('click', openAuthModal);
     youCard.append(title, detail, button);
   }
-  if (!entries.length) {
-    const empty = document.createElement('li');
-    empty.className = 'lb-empty';
-    empty.textContent = 'No champions yet. Sign in, play a few rounds and take the #1 spot!';
-    list.appendChild(empty);
-    return;
-  }
   const medals = ['🥇', '🥈', '🥉'];
-  entries.slice(0, 20).forEach((entry, index) => {
+  const buildRow = (entry, index) => {
     const row = document.createElement('li');
-    row.className = 'lb-row' + (index < 3 ? ' top-' + (index + 1) : '') + (entry.key === key ? ' you' : '');
+    row.className = 'lb-row' + (index < 3 ? ' top-' + (index + 1) : '') + (entry.key === key ? ' you' : '') + (entry.isBot ? ' bot' : '');
     const rank = document.createElement('span'); rank.className = 'lb-rank'; rank.textContent = index < 3 ? medals[index] : '#' + (index + 1);
     const avatar = document.createElement('span'); avatar.className = 'lb-avatar'; avatar.innerHTML = arenaCharacterArt(entry.avatar, entry.custom);
     const who = document.createElement('span'); who.className = 'lb-name';
     const name = document.createElement('strong'); name.textContent = entry.username + (entry.key === key ? ' (YOU)' : '');
-    const meta = document.createElement('small'); meta.textContent = rankTitleForLevel(entry.level) + ' • LEVEL ' + entry.level;
+    if (entry.isBot) { const tag = document.createElement('i'); tag.className = 'lb-bot-tag'; tag.textContent = '🤖 BOT'; name.appendChild(tag); }
+    const meta = document.createElement('small'); meta.textContent = (entry.isBot ? entry.title : rankTitleForLevel(entry.level)) + ' • LEVEL ' + entry.level;
     who.append(name, meta);
     const xp = document.createElement('span'); xp.className = 'lb-xp';
     const xpValue = document.createElement('strong'); xpValue.textContent = entry.xp;
@@ -1626,8 +1771,26 @@ function renderLeaderboard() {
     xp.append(xpValue, xpLabel);
     const ach = document.createElement('span'); ach.className = 'lb-ach'; ach.textContent = '🏅 ' + entry.achievements; ach.title = entry.achievements + ' achievements';
     row.append(rank, avatar, who, xp, ach);
-    list.appendChild(row);
-  });
+    return row;
+  };
+  entries.slice(0, 20).forEach((entry, index) => list.appendChild(buildRow(entry, index)));
+  if (position > 20) {
+    const gap = document.createElement('li'); gap.className = 'lb-gap'; gap.textContent = '⋯'; list.appendChild(gap);
+    list.appendChild(buildRow(entries[position - 1], position - 1));
+  }
+}
+function openLeaderboard() {
+  renderLeaderboard();
+  showScreen(leaderboardScreen);
+  refreshOnlineLeaderboard(true);
+}
+async function shareArena() {
+  const status = document.getElementById('lb-status');
+  const data = {title:'Reaction Speed Arena', text:'Think you can beat me on the Reaction Speed Arena leaderboard?', url:location.href};
+  try {
+    if (navigator.share) await navigator.share(data);
+    else { await navigator.clipboard.writeText(location.href); status.textContent = '✓ LINK COPIED — SEND IT TO A FRIEND'; status.className = 'lb-status ok'; setTimeout(renderLeaderboardStatus, 3000); }
+  } catch (error) { /* sharing was cancelled */ }
 }
 function openAuthModal() {
   const key = currentAccountKey();
@@ -1649,6 +1812,7 @@ function signIn(rawName) {
   if (name.length < 2) return 'Enter a name with at least 2 characters.';
   if (!/^[\p{L}\p{N} _.\-]+$/u.test(name)) return 'Use only letters, numbers, spaces, - _ or .';
   const key = name.toLowerCase();
+  if (BOT_ROSTER.some(bot => bot.name.toLowerCase() === key)) return 'That name belongs to an arena bot. Choose another name.';
   const accounts = readAccounts();
   if (accounts[key]) {
     loadAccountIntoProfile(accounts[key]);
@@ -1675,15 +1839,32 @@ authToggle.addEventListener('click', openAuthModal);
 document.getElementById('auth-close').addEventListener('click', closeAuthModal);
 authModal.addEventListener('click', event => { if (event.target === authModal) closeAuthModal(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && !authModal.classList.contains('hidden')) closeAuthModal(); });
-document.getElementById('auth-form').addEventListener('submit', event => {
+document.getElementById('auth-form').addEventListener('submit', async event => {
   event.preventDefault();
-  const error = signIn(document.getElementById('auth-name-input').value);
-  document.getElementById('auth-error').textContent = error;
-  if (!error) { document.getElementById('auth-name-input').value = ''; closeAuthModal(); }
+  const input = document.getElementById('auth-name-input');
+  const submit = document.querySelector('#auth-form .auth-submit');
+  const errorNode = document.getElementById('auth-error');
+  const rawName = input.value;
+  const name = rawName.trim().replace(/\s+/g, ' ').slice(0, 16);
+  errorNode.textContent = '';
+  const key = name.toLowerCase();
+  if (ONLINE_ENABLED && name.length >= 2 && !BOT_ROSTER.some(bot => bot.name.toLowerCase() === key)) {
+    submit.disabled = true; const label = submit.textContent; submit.textContent = 'CHECKING NAME…';
+    const known = readAccounts()[key];
+    const source = known ? {username:known.username, xp:known.xp, avatar:known.avatar, custom:sanitizeCustom(known.custom), achievements:known.achievements || [], streak:sanitizeStreak(known.streak)} : {username:name, xp:playerProfile.xp, avatar:playerProfile.avatar, custom:playerProfile.custom, achievements:playerProfile.achievements, streak:playerProfile.streak};
+    const result = await onlineSubmit(key, source);
+    submit.disabled = false; submit.textContent = label;
+    if (!result.ok && result.error === 'taken') { errorNode.textContent = 'That name is already used online by someone else. Please choose another one.'; return; }
+  }
+  const error = signIn(rawName);
+  errorNode.textContent = error;
+  if (!error) { input.value = ''; closeAuthModal(); refreshOnlineLeaderboard(true); }
 });
 document.getElementById('auth-signout-button').addEventListener('click', () => { signOut(); closeAuthModal(); });
-document.getElementById('auth-leaderboard-button').addEventListener('click', () => { authModal.classList.add('hidden'); renderLeaderboard(); showScreen(leaderboardScreen); });
-document.getElementById('open-leaderboard-button').addEventListener('click', () => { renderLeaderboard(); showScreen(leaderboardScreen); });
+document.getElementById('auth-leaderboard-button').addEventListener('click', () => { authModal.classList.add('hidden'); openLeaderboard(); });
+document.getElementById('open-leaderboard-button').addEventListener('click', openLeaderboard);
+document.getElementById('lb-refresh').addEventListener('click', () => { renderLeaderboard(); refreshOnlineLeaderboard(true); });
+document.getElementById('lb-share').addEventListener('click', shareArena);
 document.getElementById('leaderboard-back-button').addEventListener('click', () => { refreshAuthUI(); showScreen(modeScreen); });
 refreshAuthUI();
 document.getElementById('streak-claim').addEventListener('click', claimStreakReward);
@@ -1813,3 +1994,5 @@ document.getElementById('customize-reset').addEventListener('click', () => {
   savePlayerProfile(); renderProfile(); refreshAuthUI(); renderCustomize(); customHint('↺ ORIGINAL LOOK RESTORED');
 });
 updateCustomizeButtons();
+renderLeaderboardStatus();
+if (ONLINE_ENABLED) refreshOnlineLeaderboard(true);

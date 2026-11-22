@@ -7,6 +7,7 @@
   <meta name="description" content="Test your reflexes and coding speed in Reaction Speed Arena.">
   <title>Reaction Speed Arena</title>
   <link rel="stylesheet" href="style.css">
+  <script src="config.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -194,9 +195,10 @@
       <p class="eyebrow">HALL OF CHAMPIONS</p>
       <h2 id="leaderboard-title">LEADERBOARD</h2>
       <p class="panel-subtitle">Earn XP in every mode to climb the ranking and show the arena who is the best.</p>
+      <div class="lb-tools"><span class="lb-status" id="lb-status" aria-live="polite"></span><button type="button" id="lb-refresh">↻ REFRESH</button><button type="button" id="lb-share">🔗 INVITE FRIENDS</button></div>
       <div class="lb-you-card" id="lb-you-card" aria-live="polite"></div>
       <ol class="lb-list" id="lb-list" aria-label="Top players"></ol>
-      <p class="lb-note">Rankings include every player who signed in on this device.</p>
+      <p class="lb-note" id="lb-note">Beat the 🤖 arena bots and climb to the top!</p>
     </section>
 
     <section class="panel levels-panel hidden" id="levels-screen" aria-labelledby="levels-title">

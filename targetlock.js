@@ -1,6 +1,7 @@
 /* TARGET LOCK: many targets appear; click only the correct one, as fast as you can. */
 (function () {
   'use strict';
+  if (document.fonts) ['700 20px "Chakra Petch"','400 20px "Bungee"'].forEach(font => document.fonts.load(font));
   const screen = document.getElementById('targetlock-screen');
   const canvas = document.getElementById('targetlock-canvas');
   if (!screen || !canvas) return;
@@ -65,22 +66,22 @@
   function drawHud(now) {
     const s = state; if (!s) return;
     ctx.save(); ctx.textAlign = 'center'; ctx.fillStyle = '#19d8e6'; ctx.shadowColor = '#19d8e6'; ctx.shadowBlur = 10;
-    ctx.font = '800 ' + (width < 480 ? 12 : 15) + 'px Orbitron, sans-serif';
+    ctx.font = '700 ' + (width < 480 ? 12 : 15) + 'px "Chakra Petch", sans-serif';
     ctx.fillText('ROUND ' + Math.min(ROUNDS, s.round + 1) + ' / ' + ROUNDS, width / 2, 38);
-    ctx.font = '900 ' + (width < 480 ? 22 : 30) + 'px Orbitron, sans-serif'; ctx.fillText(String(s.score), width / 2, 38 + (width < 480 ? 28 : 36));
-    ctx.textAlign = 'left'; ctx.font = '800 ' + (width < 480 ? 11 : 13) + 'px Orbitron, sans-serif';
+    ctx.font = '700 ' + (width < 480 ? 22 : 30) + 'px "Chakra Petch", sans-serif'; ctx.fillText(String(s.score), width / 2, 38 + (width < 480 ? 28 : 36));
+    ctx.textAlign = 'left'; ctx.font = '700 ' + (width < 480 ? 11 : 13) + 'px "Chakra Petch", sans-serif';
     ctx.fillText('LOCK ONTO', 34, 44);
-    ctx.fillStyle = COLORS[s.rule]; ctx.shadowColor = COLORS[s.rule]; ctx.font = '900 ' + (width < 480 ? 16 : 22) + 'px Orbitron, sans-serif'; ctx.fillText(s.rule.toUpperCase(), 34, 44 + (width < 480 ? 22 : 28));
-    ctx.textAlign = 'right'; ctx.fillStyle = '#19d8e6'; ctx.shadowColor = '#19d8e6'; ctx.font = '800 ' + (width < 480 ? 11 : 13) + 'px Orbitron, sans-serif';
+    ctx.fillStyle = COLORS[s.rule]; ctx.shadowColor = COLORS[s.rule]; ctx.font = '700 ' + (width < 480 ? 16 : 22) + 'px "Chakra Petch", sans-serif'; ctx.fillText(s.rule.toUpperCase(), 34, 44 + (width < 480 ? 22 : 28));
+    ctx.textAlign = 'right'; ctx.fillStyle = '#19d8e6'; ctx.shadowColor = '#19d8e6'; ctx.font = '700 ' + (width < 480 ? 11 : 13) + 'px "Chakra Petch", sans-serif';
     ctx.fillText('COMBO ×' + Math.max(1, Math.min(5, 1 + Math.floor(s.combo / 3))), width - 34, 44);
-    ctx.font = '700 ' + (width < 480 ? 10 : 12) + 'px Orbitron, sans-serif'; ctx.fillText(s.combo + ' STREAK', width - 34, 44 + (width < 480 ? 18 : 22));
+    ctx.font = '700 ' + (width < 480 ? 10 : 12) + 'px "Chakra Petch", sans-serif'; ctx.fillText(s.combo + ' STREAK', width - 34, 44 + (width < 480 ? 18 : 22));
     if (s.live) { // time bar
       const left = Math.max(0, 1 - (now - s.roundStart) / s.limit);
       ctx.fillStyle = 'rgba(25,216,230,.15)'; ctx.fillRect(width * .2, height - 30, width * .6, 5);
       ctx.fillStyle = left < .3 ? '#ff3d7a' : '#19d8e6'; ctx.fillRect(width * .2, height - 30, width * .6 * left, 5);
     }
     s.popups = s.popups.filter(p => now - p.t0 < 800);
-    s.popups.forEach(p => { const k = (now - p.t0) / 800; ctx.globalAlpha = 1 - k; ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.textAlign = 'center'; ctx.font = '900 ' + (width < 480 ? 14 : 18) + 'px Orbitron, sans-serif'; ctx.fillText(p.text, p.x, p.y - k * 28); });
+    s.popups.forEach(p => { const k = (now - p.t0) / 800; ctx.globalAlpha = 1 - k; ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.textAlign = 'center'; ctx.font = '400 ' + (width < 480 ? 14 : 18) + 'px \"Bungee\", sans-serif'; ctx.fillText(p.text, p.x, p.y - k * 28); });
     ctx.restore();
   }
   function drawFrame(now) {

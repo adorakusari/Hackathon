@@ -32,8 +32,8 @@
       if (withText) {
         const t = document.createElementNS(NS, 'text');
         t.setAttribute('transform', 'rotate(' + (i * SEG) + ') translate(0 -66)');
-        t.setAttribute('text-anchor', 'middle'); t.setAttribute('fill', '#fff'); t.setAttribute('font-weight', '900'); t.setAttribute('font-size', '15');
-        t.setAttribute('font-family', 'Orbitron, sans-serif'); t.textContent = '+' + p.xp;
+        t.setAttribute('text-anchor', 'middle'); t.setAttribute('fill', '#fff'); t.setAttribute('font-weight', '400'); t.setAttribute('font-size', '15');
+        t.setAttribute('font-family', 'Bungee, sans-serif'); t.textContent = '+' + p.xp;
         svg.appendChild(t);
         const s = document.createElementNS(NS, 'text');
         s.setAttribute('transform', 'rotate(' + (i * SEG) + ') translate(0 -50)'); s.setAttribute('text-anchor', 'middle'); s.setAttribute('fill', 'rgba(255,255,255,.8)');

@@ -1,6 +1,7 @@
 /* PERFECT TIMING: press the matching key exactly when a glowing ring touches the target. */
 (function () {
   'use strict';
+  if (document.fonts) ['700 20px "Chakra Petch"','400 20px "Bungee"'].forEach(font => document.fonts.load(font));
   const screen = document.getElementById('timing-screen');
   const canvas = document.getElementById('timing-canvas');
   const overlay = document.getElementById('timing-overlay');
@@ -124,8 +125,8 @@
     }
     ctx.save();
     ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 10; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.font = '800 ' + Math.round(radius * .62) + 'px Orbitron, sans-serif'; ctx.fillText(big, x, y - (small ? radius * .12 : 0));
-    if (small) { ctx.font = '700 ' + Math.round(radius * .25) + 'px Orbitron, sans-serif'; ctx.globalAlpha = .8; ctx.fillText(small, x, y + radius * .46); }
+    ctx.font = '700 ' + Math.round(radius * .62) + 'px "Chakra Petch", sans-serif'; ctx.fillText(big, x, y - (small ? radius * .12 : 0));
+    if (small) { ctx.font = '700 ' + Math.round(radius * .25) + 'px "Chakra Petch", sans-serif'; ctx.globalAlpha = .8; ctx.fillText(small, x, y + radius * .46); }
     ctx.restore();
   }
   function drawHud(s) {
@@ -137,9 +138,9 @@
     drawBadge(width - margin, margin, radius, s.multiplier >= 5 ? 1 : (s.combo % 4) / 4, s.multiplier >= 4 ? '#ffe533' : '#19e6ff', '×' + s.multiplier, s.combo ? s.combo + ' COMBO' : '');
     ctx.save();
     ctx.textAlign = 'center'; ctx.fillStyle = '#19e6ff'; ctx.shadowColor = '#19e6ff'; ctx.shadowBlur = 12;
-    ctx.font = '800 ' + (width < 480 ? 13 : 17) + 'px Orbitron, sans-serif';
+    ctx.font = '700 ' + (width < 480 ? 13 : 17) + 'px "Chakra Petch", sans-serif';
     ctx.fillText('ROUND ' + Math.min(TOTAL_RINGS, s.resolved + 1) + ' / ' + TOTAL_RINGS, width / 2, 28);
-    ctx.font = '900 ' + (width < 480 ? 26 : 36) + 'px Orbitron, sans-serif';
+    ctx.font = '700 ' + (width < 480 ? 26 : 36) + 'px "Chakra Petch", sans-serif';
     ctx.fillText(String(s.score), width / 2, 28 + (width < 480 ? 34 : 44));
     ctx.restore();
   }
@@ -239,9 +240,9 @@
       const progress = (t - p.t0) / 950;
       ctx.save();
       ctx.globalAlpha = 1 - progress * progress; ctx.textAlign = 'center'; ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.shadowBlur = 16;
-      ctx.font = '900 ' + (width < 480 ? 18 : 26) + 'px Orbitron, sans-serif';
+      ctx.font = '400 ' + (width < 480 ? 18 : 26) + 'px \"Bungee\", sans-serif';
       ctx.fillText(p.text, geo.cx, geo.cy + geo.target + 38 - progress * 30);
-      ctx.font = '700 ' + (width < 480 ? 11 : 14) + 'px Orbitron, sans-serif'; ctx.fillText(p.sub, geo.cx, geo.cy + geo.target + 60 - progress * 30);
+      ctx.font = '700 ' + (width < 480 ? 11 : 14) + 'px "Chakra Petch", sans-serif'; ctx.fillText(p.sub, geo.cx, geo.cy + geo.target + 60 - progress * 30);
       ctx.restore();
     });
     drawHud(s);
@@ -250,8 +251,8 @@
       const number = Math.max(1, Math.ceil((LEAD_IN - 150 - t) / 1000));
       ctx.save();
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.shadowColor = '#19e6ff'; ctx.shadowBlur = 24;
-      ctx.font = '900 ' + Math.round(geo.target * .9) + 'px Orbitron, sans-serif'; ctx.fillText(String(number), geo.cx, geo.cy);
-      ctx.font = '800 ' + (width < 480 ? 13 : 16) + 'px Orbitron, sans-serif'; ctx.fillText('GET READY', geo.cx, geo.cy - geo.target * 1.35);
+      ctx.font = '400 ' + Math.round(geo.target * .9) + 'px \"Bungee\", sans-serif'; ctx.fillText(String(number), geo.cx, geo.cy);
+      ctx.font = '700 ' + (width < 480 ? 13 : 16) + 'px "Chakra Petch", sans-serif'; ctx.fillText('GET READY', geo.cx, geo.cy - geo.target * 1.35);
       ctx.restore();
     }
   }

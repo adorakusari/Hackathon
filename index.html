@@ -12,6 +12,7 @@
   <script src="timing.js" defer></script>
   <script src="targetlock.js" defer></script>
   <script src="spin.js" defer></script>
+  <script src="ui.js" defer></script>
 </head>
 <body>
   <main class="home">
@@ -59,35 +60,8 @@
       <button class="leaderboard-open-button" id="open-leaderboard-button" type="button"><span class="leaderboard-open-icon" aria-hidden="true">🏆</span><span><strong>LEADERBOARD</strong><small id="leaderboard-button-sub">SIGN IN TO JOIN THE RANKING ↗</small></span></button>
       <button class="customize-quick-button" id="open-customize-quick" type="button"><span class="customize-quick-icon" aria-hidden="true">🎨</span><span><strong>CUSTOMIZE</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS ↗</small></span></button>
     </div>
-      <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary">🏅 0 ACHIEVEMENTS UNLOCKED</div></section>
-      <section class="streak-card" id="streak-card" aria-label="Daily login streak">
-        <div class="streak-head"><div><span class="streak-kicker">DAILY LOGIN REWARD</span><strong id="streak-title">🔥 0 DAY STREAK</strong></div><span class="streak-best" id="streak-best">BEST: 0</span></div>
-        <div class="streak-days" id="streak-days"></div>
-        <div class="streak-foot"><p id="streak-message"></p><button class="streak-claim" id="streak-claim" type="button">CLAIM REWARD</button></div>
-      </section>
-      <section class="spin-banner" aria-label="Daily spin">
-        <div class="spin-copy">
-          <span class="spin-kicker">🎁 FREE DAILY SPIN</span>
-          <h3>Spin the Wheel and Win Exciting Rewards Every Day</h3>
-          <p id="spin-banner-note">1 free spin ready — win up to +100 XP!</p>
-          <button class="spin-now" id="spin-now-button" type="button"><span id="spin-now-label">SPIN NOW</span></button>
-        </div>
-        <div class="spin-art" aria-hidden="true">
-          <svg id="spin-mini-wheel" class="spin-mini-wheel"></svg>
-          <span class="coin c1"></span><span class="coin c2"></span><span class="coin c3"></span><span class="coin c4"></span>
-        </div>
-      </section>
-      <section class="daily-challenges" aria-label="Daily challenges">
-        <div class="daily-heading"><div><span class="daily-kicker">FRESH EVERY DAY</span><h3>DAILY CHALLENGES</h3></div><span class="daily-reset" id="daily-reset">RESETS AT MIDNIGHT</span></div>
-        <p class="daily-intro">Complete all three missions to earn bonus XP. Your progress is saved on this device.</p>
-        <div class="daily-list" id="daily-challenge-list" aria-live="polite"></div>
-        <div class="daily-footer"><span id="daily-progress-label">0 / 3 COMPLETE</span><strong id="daily-bonus-label">UP TO +150 BONUS XP</strong></div>
-      </section>
-      <div class="arena-challenge" aria-live="polite">
-        <span class="challenge-orbit" aria-hidden="true">✦</span>
-        <div><span class="challenge-kicker">ARENA TRANSMISSION</span><strong id="arena-challenge-text">Your next record is waiting. Choose a mode and make it yours.</strong></div>
-        <span class="challenge-live"><i></i> LIVE</span>
-      </div>
+      <nav class="arena-tabs" id="arena-tabs" aria-label="Arena sections"><button class="arena-tab active" id="tab-play" type="button" data-pane="play">🎮 PLAY</button><button class="arena-tab" id="tab-daily" type="button" data-pane="daily">🎁 DAILY REWARDS<i class="tab-dot hidden" id="daily-dot"></i></button></nav>
+      <div class="arena-pane" id="pane-play">
       <div class="mode-grid">
         <button class="mode-card color-mode" id="color-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">01</span><span class="mode-level">FAST</span></span>
@@ -146,6 +120,7 @@
           <span class="mode-bottomline"><span class="mode-tag">5 ROUNDS • BONUS XP</span><span class="mode-cta">REVEAL CHALLENGE <b>↗</b></span></span>
         </button>
       </div>
+      <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary">🏅 0 ACHIEVEMENTS UNLOCKED</div></section>
       <div class="stats-strip" aria-label="Your personal records">
         <h3 class="stats-heading">YOUR PERSONAL RECORDS</h3>
         <div class="stats-grid">
@@ -156,6 +131,37 @@
           <div class="stat-card"><span class="stat-mode">PERFECT TIMING</span><strong id="timing-best">—</strong><span class="stat-caption">BEST SCORE</span><span class="stat-detail" id="timing-detail">Your best precision run</span></div>
           <div class="stat-card"><span class="stat-mode">TARGET LOCK</span><strong id="targetlock-best">—</strong><span class="stat-caption">BEST SCORE</span><span class="stat-detail" id="targetlock-detail">Your best lock-on run</span></div>
         </div>
+      </div>
+      </div>
+      <div class="arena-pane hidden" id="pane-daily">
+      <section class="streak-card" id="streak-card" aria-label="Daily login streak">
+        <div class="streak-head"><div><span class="streak-kicker">DAILY LOGIN REWARD</span><strong id="streak-title">🔥 0 DAY STREAK</strong></div><span class="streak-best" id="streak-best">BEST: 0</span></div>
+        <div class="streak-days" id="streak-days"></div>
+        <div class="streak-foot"><p id="streak-message"></p><button class="streak-claim" id="streak-claim" type="button">CLAIM REWARD</button></div>
+      </section>
+      <section class="spin-banner" aria-label="Daily spin">
+        <div class="spin-copy">
+          <span class="spin-kicker">🎁 FREE DAILY SPIN</span>
+          <h3>Spin the Wheel and Win Exciting Rewards Every Day</h3>
+          <p id="spin-banner-note">1 free spin ready — win up to +100 XP!</p>
+          <button class="spin-now" id="spin-now-button" type="button"><span id="spin-now-label">SPIN NOW</span></button>
+        </div>
+        <div class="spin-art" aria-hidden="true">
+          <svg id="spin-mini-wheel" class="spin-mini-wheel"></svg>
+          <span class="coin c1"></span><span class="coin c2"></span><span class="coin c3"></span><span class="coin c4"></span>
+        </div>
+      </section>
+      <section class="daily-challenges" aria-label="Daily challenges">
+        <div class="daily-heading"><div><span class="daily-kicker">FRESH EVERY DAY</span><h3>DAILY CHALLENGES</h3></div><span class="daily-reset" id="daily-reset">RESETS AT MIDNIGHT</span></div>
+        <p class="daily-intro">Complete all three missions to earn bonus XP. Your progress is saved on this device.</p>
+        <div class="daily-list" id="daily-challenge-list" aria-live="polite"></div>
+        <div class="daily-footer"><span id="daily-progress-label">0 / 3 COMPLETE</span><strong id="daily-bonus-label">UP TO +150 BONUS XP</strong></div>
+      </section>
+      <div class="arena-challenge" aria-live="polite">
+        <span class="challenge-orbit" aria-hidden="true">✦</span>
+        <div><span class="challenge-kicker">ARENA TRANSMISSION</span><strong id="arena-challenge-text">Your next record is waiting. Choose a mode and make it yours.</strong></div>
+        <span class="challenge-live"><i></i> LIVE</span>
+      </div>
       </div>
     </section>
 

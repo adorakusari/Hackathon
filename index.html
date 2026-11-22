@@ -53,6 +53,7 @@
       <div class="mode-quick-row">
       <button class="profile-open-button" id="open-profile-button" type="button"><span class="profile-open-avatar" id="profile-button-avatar">🚀</span><span><strong id="profile-button-name">ARENA PLAYER</strong><small>VIEW PLAYER PROFILE ↗</small></span></button>
       <button class="leaderboard-open-button" id="open-leaderboard-button" type="button"><span class="leaderboard-open-icon" aria-hidden="true">🏆</span><span><strong>LEADERBOARD</strong><small id="leaderboard-button-sub">SIGN IN TO JOIN THE RANKING ↗</small></span></button>
+      <button class="customize-quick-button" id="open-customize-quick" type="button"><span class="customize-quick-icon" aria-hidden="true">🎨</span><span><strong>CUSTOMIZE</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS ↗</small></span></button>
     </div>
       <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary">🏅 0 ACHIEVEMENTS UNLOCKED</div></section>
       <section class="daily-challenges" aria-label="Daily challenges">
@@ -133,6 +134,7 @@
         </div>
         <div class="profile-level-mark"><strong id="profile-level-detail">01</strong><span>LEVEL</span></div>
       </div>
+      <button class="customize-open-button" id="open-customize-button" type="button"><span class="customize-open-icon" aria-hidden="true">🎨</span><span class="customize-open-text"><strong>CUSTOMIZE YOUR CHARACTER</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS</small></span><span class="customize-open-arrow" aria-hidden="true">↗</span></button>
       <div class="profile-edit-card">
         <div class="profile-section-heading"><span>PERSONALIZE YOUR PROFILE</span><small>SAVED ON THIS DEVICE</small></div>
         <div class="profile-edit-fields">
@@ -156,6 +158,30 @@
       </div>
       <div class="profile-section-heading profile-achievement-heading"><span>ACHIEVEMENT COLLECTION</span><strong id="profile-achievement-count">0 / 5 UNLOCKED</strong></div>
       <div class="profile-achievement-grid" id="profile-achievements"></div>
+    </section>
+
+    <section class="panel customize-panel hidden" id="customize-screen" aria-labelledby="customize-title">
+      <button class="back-button" id="customize-back-button" type="button">← BACK TO PROFILE</button>
+      <p class="eyebrow">MAKE IT YOURS</p>
+      <h2 id="customize-title">CUSTOMIZE</h2>
+      <p class="panel-subtitle">Level up to unlock new hairstyles, colors, suits, emblems, extras and frames.</p>
+      <div class="customize-layout">
+        <aside class="customize-preview">
+          <div class="customize-stage" id="customize-stage" aria-live="polite"></div>
+          <strong class="customize-char-name" id="customize-char-name">NOVA</strong>
+          <span class="customize-char-role" id="customize-char-role"></span>
+          <span class="customize-level-info" id="customize-level-info"></span>
+          <div class="customize-actions">
+            <button type="button" id="customize-random">🎲 RANDOM</button>
+            <button type="button" id="customize-reset">↺ RESET</button>
+          </div>
+        </aside>
+        <div class="customize-options">
+          <div class="customize-tabs" id="customize-tabs" role="tablist" aria-label="Customization categories"></div>
+          <div class="customize-grid" id="customize-grid" role="group"></div>
+          <p class="customize-hint" id="customize-hint" aria-live="polite">Pick an option to change your look. Changes save automatically.</p>
+        </div>
+      </div>
     </section>
 
     <section class="panel leaderboard-panel hidden" id="leaderboard-screen" aria-labelledby="leaderboard-title">

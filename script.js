@@ -18,6 +18,7 @@ const homeScreen = document.getElementById('home-screen');
 const modeScreen = document.getElementById('mode-screen');
 const profileScreen = document.getElementById('profile-screen');
 const leaderboardScreen = document.getElementById('leaderboard-screen');
+const customizeScreen = document.getElementById('customize-screen');
 const levelsScreen = document.getElementById('levels-screen');
 const gameScreen = document.getElementById('game-screen');
 const levelGrid = document.getElementById('level-grid');
@@ -118,14 +119,130 @@ function registerComboResult(passed) {
 
 const XP_PER_LEVEL = 250;
 const ARENA_CHARACTERS = {
-  nova:{name:'NOVA',role:'THE ALL-ROUNDER',female:false,skin:'#e6b794',hair:'#4b3425',iris:'#4f86c6',cape:'#2f6aa3',suit:'#1b2230',accent:'#5a9bd4',trim:'#9cc6ec',style:'swept'},
-  kai:{name:'KAI',role:'THE SPEEDSTER',female:false,skin:'#8c5b40',hair:'#14161d',iris:'#3a281d',cape:'#a42b47',suit:'#1d1a26',accent:'#c24560',trim:'#f0a0b0',style:'crop'},
-  zara:{name:'ZARA',role:'THE STRATEGIST',female:true,skin:'#e3ab8c',hair:'#c4622f',iris:'#4c8a68',cape:'#b3382b',suit:'#1b2030',accent:'#d95a3e',trim:'#f4b58a',style:'pixie'},
-  axel:{name:'AXEL',role:'THE CODE RUNNER',female:false,skin:'#f0c9a7',hair:'#1c1e27',iris:'#6c7f93',cape:'#323a49',suit:'#151922',accent:'#8697ad',trim:'#c4d2e4',style:'hood'},
-  luna:{name:'LUNA',role:'THE NIGHT PLAYER',female:true,skin:'#8b5a42',hair:'#15121a',iris:'#3d2a1f',cape:'#1f8f96',suit:'#16222a',accent:'#2fb6bd',trim:'#e0b765',style:'bob'},
-  jett:{name:'JETT',role:'THE CHALLENGER',female:false,skin:'#6a4231',hair:'#16120f',iris:'#2e1d14',cape:'#b9822f',suit:'#1e1a17',accent:'#d6a043',trim:'#f4d48f',style:'locs'}
+  nova:{unlock:1,name:'NOVA',role:'THE ALL-ROUNDER',female:false,skin:'#e6b794',hair:'#4b3425',iris:'#4f86c6',cape:'#2f6aa3',suit:'#1b2230',accent:'#5a9bd4',trim:'#9cc6ec',style:'swept'},
+  kai:{unlock:1,name:'KAI',role:'THE SPEEDSTER',female:false,skin:'#8c5b40',hair:'#14161d',iris:'#3a281d',cape:'#a42b47',suit:'#1d1a26',accent:'#c24560',trim:'#f0a0b0',style:'crop'},
+  zara:{unlock:1,name:'ZARA',role:'THE STRATEGIST',female:true,skin:'#e3ab8c',hair:'#c4622f',iris:'#4c8a68',cape:'#b3382b',suit:'#1b2030',accent:'#d95a3e',trim:'#f4b58a',style:'pixie'},
+  axel:{unlock:1,name:'AXEL',role:'THE CODE RUNNER',female:false,skin:'#f0c9a7',hair:'#1c1e27',iris:'#6c7f93',cape:'#323a49',suit:'#151922',accent:'#8697ad',trim:'#c4d2e4',style:'hood'},
+  luna:{unlock:1,name:'LUNA',role:'THE NIGHT PLAYER',female:true,skin:'#8b5a42',hair:'#15121a',iris:'#3d2a1f',cape:'#1f8f96',suit:'#16222a',accent:'#2fb6bd',trim:'#e0b765',style:'bob'},
+  jett:{unlock:1,name:'JETT',role:'THE CHALLENGER',female:false,skin:'#6a4231',hair:'#16120f',iris:'#2e1d14',cape:'#b9822f',suit:'#1e1a17',accent:'#d6a043',trim:'#f4d48f',style:'locs'},
+  rex:{unlock:3,name:'REX',role:'THE TRAILBLAZER',female:false,skin:'#c68a5e',hair:'#c9d3e0',iris:'#2fa07a',cape:'#2f9a62',suit:'#14211c',accent:'#43c98a',trim:'#b8f5d6',style:'mohawk'},
+  mira:{unlock:5,name:'MIRA',role:'THE MYSTIC',female:true,skin:'#f2d3b8',hair:'#d9d2f2',iris:'#9a62e0',cape:'#7a4bd0',suit:'#1a1630',accent:'#a98aff',trim:'#e4d6ff',style:'long'},
+  sol:{unlock:8,name:'SOL',role:'THE LEGEND',female:false,skin:'#4a2f24',hair:'#14161d',iris:'#d9a52a',cape:'#c78a24',suit:'#241a0e',accent:'#ffc94d',trim:'#fff0b8',style:'afro'},
+  nyx:{unlock:12,name:'NYX',role:'THE SHADOW',female:true,skin:'#d69b79',hair:'#ff6fb0',iris:'#d8303f',cape:'#2a2f3c',suit:'#101218',accent:'#ff4f93',trim:'#ffc2dc',style:'spiky'}
 };
 let arenaArtCounter = 0;
+const CUSTOM_SKINS = [
+  {id:'porcelain',name:'Porcelain',color:'#f2d3b8',lvl:1},{id:'fair',name:'Fair',color:'#e6b794',lvl:1},{id:'sand',name:'Sand',color:'#d69b79',lvl:1},
+  {id:'golden',name:'Golden',color:'#c68a5e',lvl:1},{id:'bronze',name:'Bronze',color:'#8c5b40',lvl:1},{id:'mocha',name:'Mocha',color:'#6a4231',lvl:1},{id:'deep',name:'Deep',color:'#4a2f24',lvl:1}
+];
+const CUSTOM_HAIR_STYLES = [
+  {id:'swept',name:'Swept',lvl:1},{id:'crop',name:'Crop',lvl:1},{id:'pixie',name:'Pixie',lvl:1},{id:'bob',name:'Bob',lvl:1},{id:'locs',name:'Locs',lvl:2},
+  {id:'hood',name:'Hooded',lvl:2},{id:'spiky',name:'Spiky',lvl:3},{id:'long',name:'Long',lvl:4},{id:'afro',name:'Afro',lvl:6},{id:'mohawk',name:'Mohawk',lvl:8}
+];
+const CUSTOM_HAIR_COLORS = [
+  {id:'black',name:'Black',color:'#14161d',lvl:1},{id:'brown',name:'Brown',color:'#4b3425',lvl:1},{id:'chestnut',name:'Chestnut',color:'#7a4a2a',lvl:1},{id:'auburn',name:'Auburn',color:'#c4622f',lvl:1},
+  {id:'blonde',name:'Blonde',color:'#d9b45a',lvl:1},{id:'silver',name:'Silver',color:'#c9d3e0',lvl:2},{id:'ice',name:'Ice Blue',color:'#5ab4ff',lvl:4},{id:'violet',name:'Violet',color:'#8a5be0',lvl:5},
+  {id:'pink',name:'Hot Pink',color:'#ff6fb0',lvl:6},{id:'crimson',name:'Crimson',color:'#d8303f',lvl:7},{id:'neon',name:'Neon Green',color:'#43e08a',lvl:9}
+];
+const CUSTOM_EYES = [
+  {id:'brown',name:'Brown',color:'#3a281d',lvl:1},{id:'hazel',name:'Hazel',color:'#7a5a2a',lvl:1},{id:'green',name:'Green',color:'#4c8a68',lvl:1},{id:'blue',name:'Blue',color:'#4f86c6',lvl:1},
+  {id:'gray',name:'Gray',color:'#6c7f93',lvl:1},{id:'violet',name:'Violet',color:'#9a62e0',lvl:3},{id:'gold',name:'Gold',color:'#d9a52a',lvl:5},{id:'cyan',name:'Cyan',color:'#2fd0e0',lvl:7},{id:'red',name:'Ruby',color:'#d8303f',lvl:9}
+];
+const CUSTOM_OUTFITS = [
+  {id:'steel',name:'Steel Blue',cape:'#2f6aa3',accent:'#5a9bd4',trim:'#9cc6ec',suit:'#1b2230',lvl:1},
+  {id:'crimson',name:'Crimson',cape:'#a42b47',accent:'#c24560',trim:'#f0a0b0',suit:'#1d1a26',lvl:1},
+  {id:'teal',name:'Teal',cape:'#1f8f96',accent:'#2fb6bd',trim:'#e0b765',suit:'#16222a',lvl:1},
+  {id:'emerald',name:'Emerald',cape:'#2f9a62',accent:'#43c98a',trim:'#b8f5d6',suit:'#14211c',lvl:1},
+  {id:'midnight',name:'Midnight',cape:'#323a49',accent:'#8697ad',trim:'#c4d2e4',suit:'#151922',lvl:2},
+  {id:'amethyst',name:'Amethyst',cape:'#7a4bd0',accent:'#a98aff',trim:'#e4d6ff',suit:'#1a1630',lvl:2},
+  {id:'sunset',name:'Sunset',cape:'#d9692a',accent:'#ff9a4d',trim:'#ffd9a8',suit:'#241710',lvl:3},
+  {id:'gold',name:'Golden',cape:'#b9822f',accent:'#d6a043',trim:'#f4d48f',suit:'#1e1a17',lvl:4},
+  {id:'rose',name:'Rose',cape:'#c0407a',accent:'#ff6fb0',trim:'#ffd0e6',suit:'#241322',lvl:5},
+  {id:'glacier',name:'Glacier',cape:'#5aa8c8',accent:'#8fe0ff',trim:'#e6fbff',suit:'#12212b',lvl:6},
+  {id:'royal',name:'Royal',cape:'#8d1f36',accent:'#e0b24a',trim:'#fff0b8',suit:'#1d1016',lvl:8},
+  {id:'cosmic',name:'Cosmic',cape:'#4a3bd0',accent:'#46e6ff',trim:'#c9f7ff',suit:'#0f1030',lvl:10},
+  {id:'solar',name:'Solar',cape:'#e6a526',accent:'#fff0a0',trim:'#ffffff',suit:'#2a1c08',lvl:12}
+];
+const CUSTOM_EMBLEMS = [
+  {id:'diamond',name:'Diamond',lvl:1},{id:'star',name:'Star',lvl:2},{id:'heart',name:'Heart',lvl:3},{id:'bolt',name:'Bolt',lvl:4},
+  {id:'shield',name:'Shield',lvl:5},{id:'flame',name:'Flame',lvl:6},{id:'crown',name:'Crown',lvl:9}
+];
+const CUSTOM_EXTRAS = [
+  {id:'none',name:'None',lvl:1},{id:'headband',name:'Headband',lvl:3},{id:'earring',name:'Earring',lvl:4},{id:'domino',name:'Hero Mask',lvl:5},
+  {id:'halo',name:'Halo',lvl:8},{id:'crown',name:'Crown',lvl:10}
+];
+const CUSTOM_FRAMES = [
+  {id:'default',name:'Classic',lvl:1},{id:'gold',name:'Gold',lvl:3},{id:'neon',name:'Neon',lvl:6},{id:'rainbow',name:'Rainbow',lvl:9},{id:'fire',name:'Inferno',lvl:12}
+];
+const CUSTOM_CATEGORIES = [
+  {key:'skin',label:'SKIN',icon:'🧑',list:CUSTOM_SKINS,swatch:'color'},
+  {key:'style',label:'HAIR',icon:'💇',list:CUSTOM_HAIR_STYLES},
+  {key:'hairColor',label:'HAIR COLOR',icon:'🎨',list:CUSTOM_HAIR_COLORS,swatch:'color'},
+  {key:'eyes',label:'EYES',icon:'👁️',list:CUSTOM_EYES,swatch:'color'},
+  {key:'outfit',label:'HERO SUIT',icon:'🦸',list:CUSTOM_OUTFITS},
+  {key:'emblem',label:'EMBLEM',icon:'⭐',list:CUSTOM_EMBLEMS},
+  {key:'accessory',label:'EXTRAS',icon:'👑',list:CUSTOM_EXTRAS},
+  {key:'frame',label:'FRAME',icon:'💠',list:CUSTOM_FRAMES}
+];
+function resolveArenaLook(characterId, custom) {
+  const base = ARENA_CHARACTERS[characterId] || ARENA_CHARACTERS.nova;
+  const look = Object.assign({}, base);
+  const choice = custom && typeof custom === 'object' ? custom : {};
+  const find = (list, id) => list.find(item => item.id === id);
+  const skin = find(CUSTOM_SKINS, choice.skin); if (skin) look.skin = skin.color;
+  const style = find(CUSTOM_HAIR_STYLES, choice.style); if (style) look.style = style.id;
+  const hairColor = find(CUSTOM_HAIR_COLORS, choice.hairColor); if (hairColor) look.hair = hairColor.color;
+  const eyes = find(CUSTOM_EYES, choice.eyes); if (eyes) look.iris = eyes.color;
+  const outfit = find(CUSTOM_OUTFITS, choice.outfit); if (outfit) Object.assign(look, {cape:outfit.cape, accent:outfit.accent, trim:outfit.trim, suit:outfit.suit});
+  look.emblem = find(CUSTOM_EMBLEMS, choice.emblem) ? choice.emblem : 'diamond';
+  look.accessory = find(CUSTOM_EXTRAS, choice.accessory) ? choice.accessory : 'none';
+  look.frame = find(CUSTOM_FRAMES, choice.frame) ? choice.frame : 'default';
+  return look;
+}
+function sanitizeCustom(custom) {
+  const clean = {};
+  if (!custom || typeof custom !== 'object') return clean;
+  Object.keys(custom).forEach(characterId => {
+    if (!ARENA_CHARACTERS[characterId] || !custom[characterId] || typeof custom[characterId] !== 'object') return;
+    const entry = {};
+    CUSTOM_CATEGORIES.forEach(category => { if (category.list.some(item => item.id === custom[characterId][category.key])) entry[category.key] = custom[characterId][category.key]; });
+    clean[characterId] = entry;
+  });
+  return clean;
+}
+function arenaEmblem(look) {
+  const fill = look.trim, dark = arenaShade(look.accent, -.45);
+  const shapes = {
+    diamond:'<path d="M60 105 L67 113 L60 121 L53 113Z" fill="' + fill + '" opacity=".92"/><path d="M60 108 L64 113 L60 118 L56 113Z" fill="' + dark + '"/>',
+    star:'<path d="M60 104 L62.8 110.6 L70 111.2 L64.5 115.8 L66.2 122.8 L60 119 L53.8 122.8 L55.5 115.8 L50 111.2 L57.2 110.6Z" fill="' + fill + '" opacity=".95"/>',
+    heart:'<path d="M60 122 C47 113 51 104 56.5 105.6 C58.6 106.3 60 108 60 109.4 C60 108 61.4 106.3 63.5 105.6 C69 104 73 113 60 122Z" fill="' + fill + '" opacity=".95"/>',
+    bolt:'<path d="M63 103 L53.5 114.4 L59 114.4 L56.6 123 L67 111 L61.2 111Z" fill="' + fill + '" opacity=".95"/>',
+    shield:'<path d="M60 104 L68.5 107.4 L67.4 116 Q60 124 52.6 116 L51.5 107.4Z" fill="' + fill + '" opacity=".92"/><path d="M60 108 L65 110 L64.4 115 Q60 119.6 55.6 115 L55 110Z" fill="' + dark + '"/>',
+    flame:'<path d="M60 103 C63 108 69 111 67.4 117 C66.4 121.4 63.2 123 60 123 C56.4 123 53.4 120.6 53.8 116.4 C54 113.4 57 111.8 57.8 108.6 C58.8 110.6 59.6 110.2 60 103Z" fill="' + fill + '" opacity=".95"/><path d="M60 112 C62 115 63.6 116 62.6 119 C62 120.6 61 121 60 121 C58.8 121 57.8 120 58 118.6 C58.2 116.6 59.6 116 60 112Z" fill="' + dark + '"/>',
+    crown:'<path d="M51.5 119 L51.5 108 L55.8 112 L60 105 L64.2 112 L68.5 108 L68.5 119Z" fill="' + fill + '" opacity=".95"/><rect x="51.5" y="119" width="17" height="2.6" rx="1" fill="' + dark + '"/>'
+  };
+  return '<g transform="translate(60 109.4) scale(.72) translate(-60 -113)">' + (shapes[look.emblem] || shapes.diamond) + '</g>';
+}
+function arenaFrame(look, p) {
+  const accent = look.accent;
+  const spin = (dur) => '<animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="' + dur + 's" repeatCount="indefinite"/>';
+  if (look.frame === 'gold') return '<circle cx="60" cy="60" r="56" fill="none" stroke="url(#' + p + 'fgold)" stroke-width="3.6"/><circle cx="60" cy="60" r="52.6" fill="none" stroke="#fff3b8" stroke-opacity=".5" stroke-width=".8"/>';
+  if (look.frame === 'neon') return '<circle cx="60" cy="60" r="56" fill="none" stroke="#3df0ff" stroke-width="2.4" filter="url(#' + p + 'glowf)"/><circle cx="60" cy="60" r="52.6" fill="none" stroke="#ff4fd8" stroke-width="1.6" stroke-dasharray="6 5" opacity=".9">' + spin(14) + '</circle>';
+  if (look.frame === 'rainbow') return '<circle cx="60" cy="60" r="56" fill="none" stroke="url(#' + p + 'frainbow)" stroke-width="3.8"/><circle cx="60" cy="60" r="52.4" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".8" stroke-dasharray="2 5">' + spin(18) + '</circle>';
+  if (look.frame === 'fire') return '<circle cx="60" cy="60" r="56" fill="none" stroke="url(#' + p + 'ffire)" stroke-width="4" filter="url(#' + p + 'glowf)"/><circle cx="60" cy="60" r="52.4" fill="none" stroke="#ffd36a" stroke-width="1.8" stroke-dasharray="3 6" stroke-linecap="round">' + spin(8) + '</circle>';
+  return '<circle cx="60" cy="60" r="57" fill="none" stroke="' + accent + '" stroke-opacity=".75" stroke-width="2"/>';
+}
+function arenaAccessoryBack(look) {
+  if (look.accessory === 'domino') return '<path d="M37.5 55.5 Q49 49 60 56 Q71 49 82.5 55.5 Q83.5 66.6 72.5 66.6 Q65.5 66.6 60 61 Q54.5 66.6 47.5 66.6 Q36.5 66.6 37.5 55.5Z" fill="#12151f" opacity=".93"/><path d="M37.5 55.5 Q49 49 60 56 Q71 49 82.5 55.5" fill="none" stroke="' + look.accent + '" stroke-width=".9" opacity=".8"/>';
+  return '';
+}
+function arenaAccessoryFront(look) {
+  if (look.accessory === 'headband') return '<path d="M33.6 48 Q60 36.6 86.4 48 L86.2 53 Q60 42 33.8 53Z" fill="' + look.accent + '"/><path d="M33.6 48 Q60 36.6 86.4 48" fill="none" stroke="' + look.trim + '" stroke-opacity=".7" stroke-width=".8"/><circle cx="60" cy="42.6" r="3" fill="' + look.trim + '"/>';
+  if (look.accessory === 'earring') return '<circle cx="34.4" cy="68" r="2.3" fill="none" stroke="' + look.trim + '" stroke-width="1.3"/><circle cx="34.4" cy="71" r="1.8" fill="' + look.trim + '"/>';
+  if (look.accessory === 'halo') return '<ellipse cx="60" cy="17" rx="22" ry="5.4" fill="none" stroke="#ffe27a" stroke-width="2.6"/><ellipse cx="60" cy="17" rx="22" ry="5.4" fill="none" stroke="#fff8d0" stroke-width=".9" opacity=".9"/>';
+  if (look.accessory === 'crown') return '<path d="M41 31 L43 16 L51.5 24 L60 11 L68.5 24 L77 16 L79 31Z" fill="#e8b93e" stroke="#fff0b0" stroke-width=".9"/><circle cx="60" cy="19" r="2.2" fill="#ff5a7a"/><circle cx="47" cy="24" r="1.5" fill="#6ae0ff"/><circle cx="73" cy="24" r="1.5" fill="#6ae0ff"/>';
+  return '';
+}
 function arenaShade(hex, amount) {
   const value = parseInt(hex.slice(1), 16);
   const target = amount < 0 ? 0 : 255;
@@ -137,6 +254,22 @@ function arenaHair(character) {
   const hair = character.hair, light = arenaShade(hair, .28);
   const shine = d => '<path d="' + d + '" fill="none" stroke="' + light + '" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>';
   const cap = d => '<path d="' + d + '" fill="' + hair + '"/>';
+  if (character.style === 'spiky') return {
+    back: '',
+    front: cap('M33 58 Q29 32 37 28 L39 14 L47 26 L53 9 L60 25 L67 9 L73 26 L81 14 L83 28 Q91 32 87 58 Q85 43 77 39 Q60 34 43 39 Q35 43 33 58Z') + shine('M44 34 Q60 28 76 34')
+  };
+  if (character.style === 'long') return {
+    back: cap('M27 104 Q15 24 60 17 Q105 24 93 104 L84 108 Q80 72 85 52 L35 52 Q40 72 36 108Z'),
+    front: cap('M34 62 Q27 26 60 20 Q93 26 86 62 Q85 43 72 38 Q64 45 60 36 Q56 45 48 38 Q35 43 34 62Z') + shine('M42 31 Q60 23 78 31 M33 70 Q28 52 33 40')
+  };
+  if (character.style === 'afro') return {
+    back: '<ellipse cx="60" cy="40" rx="37" ry="31" fill="' + hair + '"/><circle cx="30" cy="46" r="9" fill="' + hair + '"/><circle cx="90" cy="46" r="9" fill="' + hair + '"/>',
+    front: cap('M35 57 Q33 34 60 31 Q87 34 85 57 Q81 43 60 40 Q39 43 35 57Z') + shine('M42 22 Q60 13 78 22 M32 38 Q30 30 38 24')
+  };
+  if (character.style === 'mohawk') return {
+    back: '',
+    front: '<path d="M36 56 Q34 36 60 32 Q86 36 84 56 Q82 44 60 40 Q38 44 36 56Z" fill="' + hair + '" opacity=".4"/>' + cap('M51 42 Q47 18 60 6 Q73 18 69 42 Q60 36 51 42Z') + shine('M56 28 Q60 14 64 28')
+  };
   if (character.style === 'swept') return {
     back: '',
     front: cap('M34 63 Q24 25 59 20 Q92 20 87 58 Q86 43 78 38 Q70 42 62 37 Q52 44 40 42 Q36 50 36 64Z') + shine('M45 33 Q60 25 78 34 M50 38 Q62 32 76 40')
@@ -176,9 +309,9 @@ function arenaEye(cx, character) {
     '<path d="M' + (cx - 6.5) + ' 60.2 Q' + cx + ' 54 ' + (cx + 6.5) + ' 60.2" fill="none" stroke="#1b1a24" stroke-width="' + lid + '" stroke-linecap="round"/>' +
     (character.female ? '<path d="M' + (cx + 6.2 * side) + ' 59.8 L' + (cx + 8 * side) + ' 58.2" stroke="#1b1a24" stroke-width="1.1" stroke-linecap="round"/>' : '');
 }
-function arenaCharacterArt(characterId) {
+function arenaCharacterArt(characterId, custom) {
   const id = ARENA_CHARACTERS[characterId] ? characterId : 'nova';
-  const c = ARENA_CHARACTERS[id], p = 'ac-' + id + '-' + (++arenaArtCounter) + '-';
+  const c = resolveArenaLook(id, custom), p = 'ac-' + id + '-' + (++arenaArtCounter) + '-';
   const hair = arenaHair(c);
   const skinDark = arenaShade(c.skin, -.28), skinLight = arenaShade(c.skin, .2);
   const lips = arenaShade(c.skin, c.female ? -.24 : -.2), capeDark = arenaShade(c.cape, -.45), capeLight = arenaShade(c.cape, .18);
@@ -192,6 +325,10 @@ function arenaCharacterArt(characterId) {
     '<linearGradient id="' + p + 'cape" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + capeLight + '"/><stop offset="1" stop-color="' + capeDark + '"/></linearGradient>' +
     '<linearGradient id="' + p + 'suit" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + arenaShade(c.suit, .22) + '"/><stop offset="1" stop-color="' + arenaShade(c.suit, -.5) + '"/></linearGradient>' +
     '<linearGradient id="' + p + 'plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + arenaShade(c.accent, .15) + '"/><stop offset="1" stop-color="' + arenaShade(c.accent, -.5) + '"/></linearGradient>' +
+    '<linearGradient id="' + p + 'fgold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b8"/><stop offset=".5" stop-color="#d9a52a"/><stop offset="1" stop-color="#fff3b8"/></linearGradient>' +
+    '<linearGradient id="' + p + 'frainbow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a7a"/><stop offset=".25" stop-color="#ffd24a"/><stop offset=".5" stop-color="#5aff9a"/><stop offset=".75" stop-color="#4ab8ff"/><stop offset="1" stop-color="#b06aff"/></linearGradient>' +
+    '<linearGradient id="' + p + 'ffire" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d2e"/><stop offset=".6" stop-color="#ff9a2e"/><stop offset="1" stop-color="#ffe27a"/></linearGradient>' +
+    '<filter id="' + p + 'glowf" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
     '</defs>' +
     '<g clip-path="url(#' + p + 'clip)">' +
     '<rect width="120" height="120" fill="url(#' + p + 'bg)"/>' +
@@ -200,7 +337,7 @@ function arenaCharacterArt(characterId) {
     '<path d="M10 120 Q13 98 38 93 L50 99 L70 99 L82 93 Q107 98 110 120Z" fill="url(#' + p + 'suit)"/>' +
     '<path d="M14 112 Q17 96 36 92 L42 100 Q28 101 24 114Z M106 112 Q103 96 84 92 L78 100 Q92 101 96 114Z" fill="url(#' + p + 'plate)" stroke="' + c.trim + '" stroke-opacity=".6" stroke-width=".8"/>' +
     '<path d="M44 102 L76 102 L84 120 L36 120Z" fill="url(#' + p + 'plate)" stroke="' + c.trim + '" stroke-opacity=".7" stroke-width=".9"/>' +
-    '<path d="M60 105 L67 113 L60 121 L53 113Z" fill="' + c.trim + '" opacity=".9"/><path d="M60 108 L64 113 L60 118 L56 113Z" fill="' + arenaShade(c.accent, -.4) + '"/>' +
+    arenaEmblem(c) +
     '<path d="M50 84 L50 101 Q60 108 70 101 L70 84Z" fill="url(#' + p + 'skin)"/><path d="M50 84 L50 101 Q60 108 70 101 L70 84Z" fill="url(#' + p + 'shade)"/>' +
     '<path d="M49 85 Q60 97 71 85 Q60 92 49 85Z" fill="#000" opacity=".3"/>' +
     '<path d="M28 100 Q23 76 35 66 Q45 68 51 79 L53 104Z" fill="url(#' + p + 'cape)" stroke="' + c.trim + '" stroke-opacity=".55" stroke-width=".9"/>' +
@@ -212,6 +349,7 @@ function arenaCharacterArt(characterId) {
     '<circle cx="44" cy="71" r="6.5" fill="#ff8a8a" opacity="' + (c.female ? '.06' : '.04') + '"/><circle cx="76" cy="71" r="6.5" fill="#ff8a8a" opacity="' + (c.female ? '.05' : '.03') + '"/>' +
     '<path d="M57.6 74.2 Q60 76.2 62.4 74.2" fill="none" stroke="' + skinDark + '" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>' +
     '<path d="M59 67 Q60.6 70 60 72.6" fill="none" stroke="' + skinLight + '" stroke-width="1.6" stroke-linecap="round" opacity=".35"/>' +
+    arenaAccessoryBack(c) +
     arenaEye(49, c) + arenaEye(71, c) +
     '<path d="M51.8 80 Q60 84 68.2 80 Q64.6 86.2 60 86.2 Q55.4 86.2 51.8 80Z" fill="' + arenaShade(lips, .08) + '"/>' +
     '<path d="M51.4 79.4 Q55.4 77 58.8 78.2 Q60 77.4 61.2 78.2 Q64.6 77 68.6 79.4 Q60 83.6 51.4 79.4Z" fill="' + lips + '"/>' +
@@ -219,8 +357,9 @@ function arenaCharacterArt(characterId) {
     '<path d="M51 78.8 Q60 85.2 69 78.8" fill="none" stroke="' + arenaShade(lips, -.5) + '" stroke-width="1" stroke-linecap="round"/>' +
     '<path d="M56.4 83.4 Q60 84.6 63.6 83.4" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".3"/>' +
     hair.front +
+    arenaAccessoryFront(c) +
     '</g>' +
-    '<circle cx="60" cy="60" r="57" fill="none" stroke="' + c.accent + '" stroke-opacity=".75" stroke-width="2"/>' +
+    arenaFrame(c, p) +
     '</svg>';
 }
 const achievementCatalog = {
@@ -233,8 +372,8 @@ const achievementCatalog = {
 function readPlayerProfile() {
   try {
     const saved = JSON.parse(localStorage.getItem('rsa-player-profile') || '{}');
-    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : [],username:typeof saved.username === 'string' ? saved.username.slice(0,16) : 'Arena Player',avatar:typeof saved.avatar === 'string' ? saved.avatar : 'nova'};
-  } catch (error) { return {xp:0,games:0,achievements:[],username:'Arena Player',avatar:'nova'}; }
+    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : [],username:typeof saved.username === 'string' ? saved.username.slice(0,16) : 'Arena Player',avatar:typeof saved.avatar === 'string' ? saved.avatar : 'nova',custom:sanitizeCustom(saved.custom)};
+  } catch (error) { return {xp:0,games:0,achievements:[],username:'Arena Player',avatar:'nova',custom:{}}; }
 }
 const playerProfile = readPlayerProfile();
 if (!ARENA_CHARACTERS[playerProfile.avatar]) playerProfile.avatar = 'nova';
@@ -260,7 +399,8 @@ function loadAccountIntoProfile(account) {
     avatar: ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova',
     xp: Math.max(0, Number(account.xp) || 0),
     games: Math.max(0, Number(account.games) || 0),
-    achievements: Array.isArray(account.achievements) ? account.achievements.slice() : []
+    achievements: Array.isArray(account.achievements) ? account.achievements.slice() : [],
+    custom: sanitizeCustom(account.custom)
   });
   selectedProfileAvatar = playerProfile.avatar;
 }
@@ -269,7 +409,7 @@ function savePlayerProfile() {
   const key = currentAccountKey();
   if (!key) return;
   const accounts = readAccounts();
-  accounts[key] = {username:accounts[key].username, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), updated:Date.now()};
+  accounts[key] = {username:accounts[key].username, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), custom:playerProfile.custom, updated:Date.now()};
   writeAccounts(accounts);
 }
 (function restoreSession() {
@@ -297,9 +437,9 @@ function renderDetailedProfile() {
   const name = document.getElementById('profile-display-name');
   if (!name) return;
   name.textContent = username;
-  document.getElementById('profile-display-avatar').innerHTML = arenaCharacterArt(avatar);
+  document.getElementById('profile-display-avatar').innerHTML = arenaCharacterArt(avatar, playerProfile.custom[avatar]);
   document.getElementById('profile-button-name').textContent = username.toUpperCase();
-  document.getElementById('profile-button-avatar').innerHTML = arenaCharacterArt(avatar);
+  document.getElementById('profile-button-avatar').innerHTML = arenaCharacterArt(avatar, playerProfile.custom[avatar]);
   document.getElementById('profile-name-input').value = username;
   renderCharacterPicker();
   const level = playerLevel();
@@ -330,20 +470,30 @@ function renderDetailedProfile() {
 function renderCharacterPicker() {
   const picker = document.getElementById('profile-character-picker');
   if (!picker) return;
-  picker.innerHTML = Object.entries(ARENA_CHARACTERS).map(([id,character]) =>
-    '<button type="button" class="character-option ' + (id === selectedProfileAvatar ? 'selected' : '') + '" data-character="' + id + '" aria-pressed="' + (id === selectedProfileAvatar) + '">' +
-    '<span class="character-option-art">' + arenaCharacterArt(id) + '</span><strong>' + character.name + '</strong><small>' + character.role + '</small></button>'
-  ).join('');
+  const level = playerLevel();
+  picker.innerHTML = Object.entries(ARENA_CHARACTERS).map(([id,character]) => {
+    const need = character.unlock || 1, locked = level < need;
+    return '<button type="button" class="character-option ' + (id === selectedProfileAvatar ? 'selected ' : '') + (locked ? 'locked' : '') + '" data-character="' + id + '" aria-pressed="' + (id === selectedProfileAvatar) + '"' + (locked ? ' aria-disabled="true" title="Reach level ' + need + ' to unlock"' : '') + '>' +
+      '<span class="character-option-art">' + arenaCharacterArt(id, playerProfile.custom[id]) + (locked ? '<span class="lock-badge">🔒 LV ' + need + '</span>' : '') + '</span><strong>' + character.name + '</strong><small>' + (locked ? 'REACH LEVEL ' + need : character.role) + '</small></button>';
+  }).join('');
   picker.querySelectorAll('.character-option').forEach(button => {
     button.addEventListener('click', () => {
+      const character = ARENA_CHARACTERS[button.dataset.character];
+      const need = character.unlock || 1;
+      if (playerLevel() < need) {
+        const status = document.getElementById('profile-save-status');
+        if (status) status.textContent = character.name + ' UNLOCKS AT LEVEL ' + need + ' • ' + Math.max(0, (need - 1) * XP_PER_LEVEL - playerProfile.xp) + ' XP TO GO';
+        return;
+      }
       selectedProfileAvatar = button.dataset.character;
-      document.getElementById('profile-display-avatar').innerHTML = arenaCharacterArt(selectedProfileAvatar);
-      document.getElementById('profile-button-avatar').innerHTML = arenaCharacterArt(selectedProfileAvatar);
+      document.getElementById('profile-display-avatar').innerHTML = arenaCharacterArt(selectedProfileAvatar, playerProfile.custom[selectedProfileAvatar]);
+      document.getElementById('profile-button-avatar').innerHTML = arenaCharacterArt(selectedProfileAvatar, playerProfile.custom[selectedProfileAvatar]);
       renderCharacterPicker();
     });
   });
 }
 function awardXP(amount, achievementKeys=[]) {
+  const levelBefore = playerLevel();
   playerProfile.xp += amount;
   playerProfile.games++;
   const unlocked = [];
@@ -357,6 +507,7 @@ function awardXP(amount, achievementKeys=[]) {
   savePlayerProfile();
   renderProfile();
   refreshAuthUI();
+  if (playerLevel() > levelBefore) announceLevelUp(levelBefore, playerLevel());
   return unlocked;
 }
 
@@ -508,7 +659,7 @@ function saveProgress() {
   else localStorage.setItem('rsa-html-unlocked-level', String(htmlUnlocked));
 }
 function showScreen(screen) {
-  [homeScreen,modeScreen,profileScreen,leaderboardScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
+  [homeScreen,modeScreen,profileScreen,customizeScreen,leaderboardScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
   screen.classList.remove('hidden');
 }
 function removeNextButton() {
@@ -1230,10 +1381,11 @@ function rankTitleForLevel(level) { return level >= 10 ? 'ARENA LEGEND' : level 
 function leaderboardEntries() {
   return Object.entries(readAccounts()).map(([key, account]) => {
     const xp = Math.max(0, Number(account.xp) || 0);
-    return {key, username:String(account.username || 'Player'), avatar:ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova', xp, level:Math.floor(xp / XP_PER_LEVEL) + 1, achievements:Array.isArray(account.achievements) ? account.achievements.length : 0};
+    return {key, username:String(account.username || 'Player'), avatar:ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova', xp, level:Math.floor(xp / XP_PER_LEVEL) + 1, achievements:Array.isArray(account.achievements) ? account.achievements.length : 0, custom:sanitizeCustom(account.custom)[ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova'] || {}};
   }).sort((a, b) => b.xp - a.xp || b.achievements - a.achievements || a.username.localeCompare(b.username));
 }
 function refreshAuthUI() {
+  updateCustomizeButtons();
   const key = currentAccountKey();
   authToggle.textContent = key ? '👤 ' + playerProfile.username.toUpperCase() : '👤 SIGN IN';
   authToggle.setAttribute('aria-label', key ? 'Signed in as ' + playerProfile.username + '. Open account menu' : 'Sign in');
@@ -1281,7 +1433,7 @@ function renderLeaderboard() {
     const row = document.createElement('li');
     row.className = 'lb-row' + (index < 3 ? ' top-' + (index + 1) : '') + (entry.key === key ? ' you' : '');
     const rank = document.createElement('span'); rank.className = 'lb-rank'; rank.textContent = index < 3 ? medals[index] : '#' + (index + 1);
-    const avatar = document.createElement('span'); avatar.className = 'lb-avatar'; avatar.innerHTML = arenaCharacterArt(entry.avatar);
+    const avatar = document.createElement('span'); avatar.className = 'lb-avatar'; avatar.innerHTML = arenaCharacterArt(entry.avatar, entry.custom);
     const who = document.createElement('span'); who.className = 'lb-name';
     const name = document.createElement('strong'); name.textContent = entry.username + (entry.key === key ? ' (YOU)' : '');
     const meta = document.createElement('small'); meta.textContent = rankTitleForLevel(entry.level) + ' • LEVEL ' + entry.level;
@@ -1301,7 +1453,7 @@ function openAuthModal() {
   document.getElementById('auth-user-view').classList.toggle('hidden', !key);
   document.getElementById('auth-error').textContent = '';
   if (key) {
-    document.getElementById('auth-user-avatar').innerHTML = arenaCharacterArt(playerProfile.avatar);
+    document.getElementById('auth-user-avatar').innerHTML = arenaCharacterArt(playerProfile.avatar, playerProfile.custom[playerProfile.avatar]);
     document.getElementById('auth-user-name').textContent = playerProfile.username;
     const entries = leaderboardEntries();
     document.getElementById('auth-user-detail').textContent = 'LEVEL ' + playerLevel() + ' • ' + playerProfile.xp + ' XP • RANK #' + (entries.findIndex(entry => entry.key === key) + 1);
@@ -1319,7 +1471,7 @@ function signIn(rawName) {
   if (accounts[key]) {
     loadAccountIntoProfile(accounts[key]);
   } else {
-    accounts[key] = {username:name, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), updated:Date.now()};
+    accounts[key] = {username:name, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), custom:playerProfile.custom, updated:Date.now()};
     writeAccounts(accounts);
     playerProfile.username = name;
   }
@@ -1331,7 +1483,7 @@ function signIn(rawName) {
 }
 function signOut() {
   localStorage.removeItem(SESSION_KEY);
-  Object.assign(playerProfile, {xp:0, games:0, achievements:[], username:'Arena Player', avatar:'nova'});
+  Object.assign(playerProfile, {xp:0, games:0, achievements:[], username:'Arena Player', avatar:'nova', custom:{}});
   selectedProfileAvatar = 'nova';
   savePlayerProfile();
   renderProfile();
@@ -1352,3 +1504,140 @@ document.getElementById('auth-leaderboard-button').addEventListener('click', () 
 document.getElementById('open-leaderboard-button').addEventListener('click', () => { renderLeaderboard(); showScreen(leaderboardScreen); });
 document.getElementById('leaderboard-back-button').addEventListener('click', () => { refreshAuthUI(); showScreen(modeScreen); });
 refreshAuthUI();
+
+/* ---- Customization ---- */
+let customizeTab = 'skin';
+function itemLevel(item) { return item.lvl || 1; }
+function allCustomItems() {
+  const items = [];
+  CUSTOM_CATEGORIES.forEach(category => category.list.forEach(item => items.push({category:category.label, name:item.name, lvl:itemLevel(item)})));
+  Object.values(ARENA_CHARACTERS).forEach(character => items.push({category:'CHARACTER', name:character.name, lvl:character.unlock || 1}));
+  return items;
+}
+function unlockedCustomCount() { return allCustomItems().filter(item => item.lvl <= playerLevel()).length; }
+function updateCustomizeButtons() {
+  const text = unlockedCustomCount() + ' / ' + allCustomItems().length + ' ITEMS UNLOCKED';
+  document.querySelectorAll('.customize-progress-sub').forEach(node => { node.textContent = text; });
+}
+function currentCustom() { return playerProfile.custom[selectedProfileAvatar] || {}; }
+function setCustomChoice(key, value) {
+  const entry = Object.assign({}, currentCustom());
+  if (value === null) delete entry[key]; else entry[key] = value;
+  playerProfile.custom[selectedProfileAvatar] = entry;
+  playerProfile.avatar = selectedProfileAvatar;
+  savePlayerProfile();
+  renderProfile();
+  refreshAuthUI();
+  renderCustomize();
+}
+function customHint(message) { document.getElementById('customize-hint').textContent = message; }
+function lockedMessage(item) {
+  const need = itemLevel(item);
+  return item.name.toUpperCase() + ' UNLOCKS AT LEVEL ' + need + ' • ' + Math.max(0, (need - 1) * XP_PER_LEVEL - playerProfile.xp) + ' XP TO GO';
+}
+function renderCustomize() {
+  const level = playerLevel();
+  const base = ARENA_CHARACTERS[selectedProfileAvatar] || ARENA_CHARACTERS.nova;
+  const choice = currentCustom();
+  document.getElementById('customize-stage').innerHTML = arenaCharacterArt(selectedProfileAvatar, choice);
+  document.getElementById('customize-char-name').textContent = base.name;
+  document.getElementById('customize-char-role').textContent = base.role;
+  const nextLevel = allCustomItems().map(item => item.lvl).filter(value => value > level).sort((a, b) => a - b)[0];
+  const nextNames = nextLevel ? allCustomItems().filter(item => item.lvl === nextLevel).map(item => item.name) : [];
+  document.getElementById('customize-level-info').textContent = nextLevel ? 'LEVEL ' + level + ' • NEXT UNLOCK AT LEVEL ' + nextLevel + ': ' + nextNames.slice(0, 3).join(', ') + (nextNames.length > 3 ? '…' : '') : 'LEVEL ' + level + ' • EVERYTHING UNLOCKED!';
+  const tabs = document.getElementById('customize-tabs');
+  tabs.innerHTML = '';
+  CUSTOM_CATEGORIES.forEach(category => {
+    const open = category.list.filter(item => itemLevel(item) <= level).length;
+    const tab = document.createElement('button');
+    tab.type = 'button'; tab.setAttribute('role', 'tab');
+    tab.className = 'customize-tab' + (category.key === customizeTab ? ' active' : '');
+    tab.setAttribute('aria-selected', String(category.key === customizeTab));
+    const label = document.createElement('span'); label.textContent = category.icon + ' ' + category.label;
+    const count = document.createElement('small'); count.textContent = open + '/' + category.list.length;
+    tab.append(label, count);
+    tab.addEventListener('click', () => { customizeTab = category.key; customHint('Pick an option to change your look. Changes save automatically.'); renderCustomize(); });
+    tabs.appendChild(tab);
+  });
+  const category = CUSTOM_CATEGORIES.find(entry => entry.key === customizeTab) || CUSTOM_CATEGORIES[0];
+  const grid = document.getElementById('customize-grid');
+  grid.innerHTML = '';
+  const defaults = {emblem:'diamond', accessory:'none', frame:'default'};
+  const baseColor = {skin:base.skin, hairColor:base.hair, eyes:base.iris, outfit:base.cape};
+  const options = [];
+  if (!(category.key in defaults)) options.push({id:null, name:'Original', lvl:1, color:baseColor[category.key]});
+  category.list.forEach(item => options.push(item));
+  options.forEach(item => {
+    const locked = itemLevel(item) > level;
+    const selected = item.id === null ? !(category.key in choice) : (choice[category.key] || defaults[category.key]) === item.id;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'customize-option' + (selected ? ' selected' : '') + (locked ? ' locked' : '');
+    button.setAttribute('aria-pressed', String(selected));
+    if (locked) button.setAttribute('aria-disabled', 'true');
+    const art = document.createElement('span'); art.className = 'customize-option-art';
+    const swatchColor = item.color || (category.key === 'outfit' ? item.cape : null);
+    if (category.swatch || (category.key === 'outfit' && item.id === null)) {
+      art.classList.add('swatch'); art.style.background = swatchColor;
+    } else {
+      const previewChoice = Object.assign({}, choice);
+      if (item.id === null) delete previewChoice[category.key]; else previewChoice[category.key] = item.id;
+      art.innerHTML = arenaCharacterArt(selectedProfileAvatar, previewChoice);
+    }
+    if (category.key === 'outfit' && item.id !== null) { art.innerHTML = arenaCharacterArt(selectedProfileAvatar, Object.assign({}, choice, {outfit:item.id})); }
+    if (locked) { const lock = document.createElement('span'); lock.className = 'customize-lock'; lock.textContent = '🔒 LV ' + itemLevel(item); art.appendChild(lock); }
+    const name = document.createElement('small'); name.textContent = item.name;
+    button.append(art, name);
+    button.addEventListener('click', () => {
+      if (locked) { customHint('🔒 ' + lockedMessage(item)); return; }
+      setCustomChoice(category.key, item.id);
+      customHint('✓ ' + (item.id === null ? 'ORIGINAL ' + category.label : item.name.toUpperCase()) + ' EQUIPPED');
+    });
+    grid.appendChild(button);
+  });
+}
+function randomizeCustom() {
+  const level = playerLevel();
+  const entry = {};
+  CUSTOM_CATEGORIES.forEach(category => {
+    const open = category.list.filter(item => itemLevel(item) <= level);
+    entry[category.key] = open[Math.floor(Math.random() * open.length)].id;
+  });
+  playerProfile.custom[selectedProfileAvatar] = entry;
+  playerProfile.avatar = selectedProfileAvatar;
+  savePlayerProfile(); renderProfile(); refreshAuthUI(); renderCustomize();
+  customHint('🎲 NEW RANDOM LOOK!');
+}
+function openCustomize() {
+  if (!ARENA_CHARACTERS[selectedProfileAvatar] || playerLevel() < (ARENA_CHARACTERS[selectedProfileAvatar].unlock || 1)) selectedProfileAvatar = playerProfile.avatar;
+  customHint('Pick an option to change your look. Changes save automatically.');
+  renderCustomize();
+  showScreen(customizeScreen);
+}
+function announceLevelUp(before, after) {
+  const names = allCustomItems().filter(item => item.lvl > before && item.lvl <= after).map(item => item.name);
+  let toast = document.getElementById('level-toast');
+  if (!toast) { toast = document.createElement('div'); toast.id = 'level-toast'; toast.className = 'level-toast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast); }
+  toast.innerHTML = '';
+  const title = document.createElement('strong'); title.textContent = '⬆ LEVEL UP! LEVEL ' + after;
+  const detail = document.createElement('span');
+  detail.textContent = names.length ? '🔓 Unlocked: ' + names.slice(0, 4).join(', ') + (names.length > 4 ? ' +' + (names.length - 4) + ' more' : '') : 'Keep playing to unlock more looks!';
+  toast.append(title, detail);
+  if (names.length) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = '🎨 CUSTOMIZE NOW';
+    button.addEventListener('click', () => { toast.classList.remove('show'); openCustomize(); });
+    toast.appendChild(button);
+  }
+  toast.classList.add('show');
+  clearTimeout(announceLevelUp.timer);
+  announceLevelUp.timer = setTimeout(() => toast.classList.remove('show'), 8000);
+}
+document.getElementById('open-customize-button').addEventListener('click', openCustomize);
+document.getElementById('open-customize-quick').addEventListener('click', openCustomize);
+document.getElementById('customize-back-button').addEventListener('click', () => { renderProfile(); showScreen(profileScreen); });
+document.getElementById('customize-random').addEventListener('click', randomizeCustom);
+document.getElementById('customize-reset').addEventListener('click', () => {
+  delete playerProfile.custom[selectedProfileAvatar];
+  savePlayerProfile(); renderProfile(); refreshAuthUI(); renderCustomize(); customHint('↺ ORIGINAL LOOK RESTORED');
+});
+updateCustomizeButtons();

@@ -43,7 +43,7 @@
   function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
     width = Math.max(280, Math.round(rect.width || 800));
-    height = Math.max(260, Math.min(540, Math.round(width * (width < 520 ? .86 : .56))));
+    height = Math.max(260, Math.min(Math.max(380, window.innerHeight - 340), 760, Math.round(width * (width < 520 ? .95 : .62))));
     canvas.style.height = height + 'px';
     dpr = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.round(width * dpr);
@@ -88,12 +88,18 @@
       if (t.double) drawTriangle(t.x * width, t.y * height, t.size * .62, t.rot, stroke);
     });
   }
+  function nextColor() {
+    if (!state || !state.running) return '#ffffff';
+    const upcoming = state.rings.find(ring => !ring.done);
+    return upcoming ? LANES[upcoming.lane].color : '#ffffff';
+  }
   function drawArena(time, multiplier) {
     const geo = geometry();
+    const cue = nextColor();
     const pulse = Math.sin(time / 320);
-    glowRing(geo.cx, geo.cy, geo.start, '#ff2e4d', 5, 26, .9);
+    glowRing(geo.cx, geo.cy, geo.start, cue, 6, 28, .95);
     glowRing(geo.cx, geo.cy, geo.start, '#ffffff', 1.6, 6, .8);
-    const decor = [{f:.9, c:'#ffe533'}, {f:.72, c:'#b455ff'}, {f:.56, c:'#ffe533'}, {f:.42, c:'#b455ff'}, {f:.3, c:'#ff3b4e'}];
+    const decor = [{f:.9, c:'#ffe533'}, {f:.72, c:'#b455ff'}, {f:.56, c:'#ffe533'}, {f:.42, c:'#b455ff'}, {f:.3, c:'#4fd8ff'}];
     decor.forEach((ring, index) => glowRing(geo.cx, geo.cy, geo.target * ring.f, ring.c, 2.2, 14, .32 + .14 * Math.sin(time / 380 + index)));
     const spin = time / 900 * (1 + multiplier * .5);
     ctx.save();
@@ -102,7 +108,7 @@
     for (let i = 0; i < 8; i++) { ctx.rotate(Math.PI / 4); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(geo.target * .26, 0); ctx.stroke(); }
     ctx.restore();
     glowRing(geo.cx, geo.cy, geo.target * .26, '#ffe533', 2, 12, .9);
-    glowRing(geo.cx, geo.cy, geo.target * (1.0 + .02 * pulse), '#ff2e4d', 12, 30, .5);
+    glowRing(geo.cx, geo.cy, geo.target * (1.0 + .02 * pulse), '#8a6bff', 12, 30, .4);
     glowRing(geo.cx, geo.cy, geo.target, '#ffffff', 5, 22, 1);
   }
   function drawBadge(x, y, radius, progress, color, big, small) {

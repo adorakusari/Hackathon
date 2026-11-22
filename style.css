@@ -863,3 +863,6 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .mode-card.targetlock-mode { background:radial-gradient(ellipse at 90% 10%,rgba(25,216,230,.18),transparent 45%),linear-gradient(115deg,rgba(8,30,44,.98),rgba(10,16,40,.98)); }
 .targetlock-stage { border-color:rgba(25,216,230,.5); box-shadow:0 0 36px rgba(25,216,230,.22); }
 #targetlock-canvas { display:block; width:100%; touch-action:none; cursor:none; }
+
+.timing-panel { width:min(100%,1200px); max-width:1200px; }
+.timing-stage { max-width:1150px; }

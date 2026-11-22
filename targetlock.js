@@ -19,7 +19,7 @@
   function resize() {
     const rect = canvas.getBoundingClientRect();
     width = Math.max(280, Math.round(rect.width || 800));
-    height = Math.round(Math.max(300, Math.min(520, width * (width < 520 ? .85 : .6))));
+    height = Math.round(Math.max(300, Math.min(Math.max(380, window.innerHeight - 340), 760, width * (width < 520 ? .95 : .62))));
     canvas.style.height = height + 'px';
     dpr = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);

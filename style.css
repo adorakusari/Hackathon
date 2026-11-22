@@ -127,12 +127,12 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 }
 
 
-/* Game-mode page: galaxy backdrop with a looping orbiting meteor. */
+/* Game-mode page: crisp vector galaxy backdrop with orbiting meteors. */
 .home:has(#mode-screen:not(.hidden)) {
   background:
-    linear-gradient(rgba(4, 9, 25, .48), rgba(4, 9, 25, .68)),
-    url("https://assets.science.nasa.gov/dynamicimage/assets/science/missions/hubble/releases/2014/01/STScI-01EVT37XAM3KAF51GHW3744Z3D.tif?fit=clip&h=1200&w=2000&format=jpg")
-    center center / cover no-repeat;
+    radial-gradient(ellipse at 50% 50%,rgba(3,8,24,.5) 0%,rgba(3,8,24,.18) 46%,transparent 74%),
+    url("arena-bg.svg") center center / cover no-repeat,
+    #040916;
 }
 .home:has(#mode-screen:not(.hidden)) .glow { opacity:.08; }
 .meteor-field {
@@ -154,33 +154,32 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
   top:50%;
   left:50%;
   width:var(--meteor-length);
-  height:7px;
-  border-radius:50%;
+  height:6px;
   transform-origin:center;
   animation:meteor-orbit var(--orbit-speed) linear var(--meteor-delay) infinite;
-  filter:drop-shadow(0 0 7px rgba(112,183,255,.85));
+  filter:drop-shadow(0 0 5px rgba(140,200,255,.9));
+  will-change:transform;
 }
 .meteor::before {
   content:"";
   position:absolute;
-  inset:1px 9px 1px 0;
-  border-radius:100% 0 0 100%;
-  background:linear-gradient(90deg,transparent 0%,rgba(106,147,255,.08) 25%,rgba(132,183,255,.48) 72%,#e7f5ff 100%);
-  box-shadow:0 0 12px rgba(104,169,255,.7),0 0 28px rgba(145,111,255,.38);
-  transform:skewX(-22deg);
+  inset:0 6px 0 0;
+  background:linear-gradient(90deg,rgba(120,150,255,0) 0%,rgba(125,160,255,.16) 30%,rgba(165,210,255,.65) 76%,#fff 100%);
+  clip-path:polygon(0 50%,100% 8%,100% 92%);
+  filter:blur(.35px);
 }
 .meteor::after {
   content:"";
   position:absolute;
-  right:0;
+  right:-3px;
   top:50%;
-  width:10px;
-  height:10px;
-  border-radius:42% 58% 48% 52%;
-  transform:translateY(-50%) rotate(28deg);
-  background:radial-gradient(circle at 32% 28%,#fff 0 12%,#d8f2ff 18%,#91baff 42%,#8065df 68%,rgba(129,101,223,0) 76%);
-  box-shadow:0 0 7px 3px #b7dfff,0 0 19px 8px rgba(112,159,255,.78),0 0 34px 13px rgba(167,139,250,.42);
-  animation:meteor-core-spin 1.8s linear infinite;
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  transform:translateY(-50%);
+  background:radial-gradient(circle,#fff 0 28%,#e2f4ff 44%,#9cc4ff 66%,rgba(140,120,235,0) 100%);
+  box-shadow:0 0 6px 2px rgba(230,246,255,.95),0 0 16px 6px rgba(120,175,255,.7),0 0 34px 12px rgba(150,120,255,.35);
+  animation:meteor-core-spin 1.8s ease-in-out infinite;
 }
 .meteor-one { --orbit-radius:min(34vw,390px); --orbit-speed:29s; --meteor-length:150px; --meteor-delay:-2s; }
 .meteor-two { --orbit-radius:min(27vw,310px); --orbit-speed:21s; --meteor-length:105px; --meteor-delay:-8s; }
@@ -193,9 +192,8 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
   to { transform:translate(-50%,-50%) rotate(360deg) translateX(var(--orbit-radius)); }
 }
 @keyframes meteor-core-spin {
-  from { transform:translateY(-50%) rotate(0deg) scale(.88); }
-  50% { transform:translateY(-50%) rotate(180deg) scale(1.14); }
-  to { transform:translateY(-50%) rotate(360deg) scale(.88); }
+  0%,100% { transform:translateY(-50%) scale(.9); opacity:.92; }
+  50% { transform:translateY(-50%) scale(1.15); opacity:1; }
 }
 @media(max-width:600px) {
   .meteor { --orbit-radius:min(39vw,190px); }

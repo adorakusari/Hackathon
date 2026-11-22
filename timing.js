@@ -361,7 +361,7 @@
     if (state) { state.running = false; cancelAnimationFrame(frame); stopListening(); state = null; }
     resultBox.classList.add('hidden'); resultBox.innerHTML = '';
     overlayTitle.textContent = 'PERFECT TIMING';
-    overlayText.textContent = 'Press the matching key (Q W E R T) the instant a glowing ring touches the white target. The closer you are, the more points you score. Keep a combo going to raise your multiplier up to ×5!';
+    overlayText.textContent = 'Press the ring\'s key (Q W E R T) the moment it touches the white target. Closer = more points. Chain hits for ×5!';
     startButton.textContent = 'START';
     startButton.style.display = '';
     screen.querySelector('.eyebrow').textContent = 'PRECISION CHALLENGE';

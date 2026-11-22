@@ -187,7 +187,7 @@
   function open() {
     stop(); resultBox.classList.add('hidden'); resultBox.innerHTML = '';
     overlayTitle.textContent = 'TARGET LOCK';
-    overlayText.textContent = 'Targets appear on screen. Each round tells you which color to lock onto (PINK or CYAN). Click only that target, as fast as you can. Wrong targets break your streak!';
+    overlayText.textContent = 'Each round names a color (PINK or CYAN). Click only that target, fast. A wrong click breaks your streak!';
     startButton.textContent = 'START'; startButton.style.display = ''; screen.querySelector('.eyebrow').textContent = 'AIM CHALLENGE'; overlay.classList.remove('hidden');
     showScreen(screen); resize(); cancelAnimationFrame(frame);
     const idle = now => { if (state || screen.classList.contains('hidden')) return; drawFrame(now); frame = requestAnimationFrame(idle); }; frame = requestAnimationFrame(idle);

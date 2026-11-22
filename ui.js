@@ -29,8 +29,8 @@
     'html-mode-button':{key:'html', title:'HTML SPEED', demo:'html', steps:['A tag description appears on screen.', 'Type or pick the matching HTML tag before the clock runs out.', 'Finish levels quickly and without mistakes to climb the ranks.']},
     'click-mode-button':{key:'click', title:'CLICK SPEED', demo:'click', steps:['Choose how long you want to play: 30 seconds up to 2 minutes.', 'Click the glowing target as many times as you can.', 'Your clicks per second becomes your record to beat.']},
     'code-mode-button':{key:'code', title:'CODE RACE', demo:'race', steps:['Pick a language and press start.', 'Type the code snippet exactly as shown. Mistakes slow you down.', 'Outrun the rival drivers to the finish line to win.']},
-    'timing-mode-button':{key:'timing', title:'PERFECT TIMING', demo:'timing', steps:['Rings shrink toward the white target. The big outer ring shows which key is next.', 'Press that key (Q W E R T) the instant the ring touches the target.', 'The closer you are, the more points. Chain hits for a ×5 multiplier.']},
-    'targetlock-mode-button':{key:'target', title:'TARGET LOCK', demo:'target', steps:['Every round tells you a color to lock onto: PINK or CYAN.', 'Many targets appear. Click only the one with the right color.', 'Wrong clicks break your streak. Fast, clean locks score the most.']},
+    'timing-mode-button':{key:'timing', title:'PERFECT TIMING', demo:'timing', steps:['Rings shrink toward the white target. The big outer ring shows the next key.', 'Press that key (Q W E R T) as the ring touches the target.', 'Closer = more points. Chain hits for ×5.']},
+    'targetlock-mode-button':{key:'target', title:'TARGET LOCK', demo:'target', steps:['Each round names a color: PINK or CYAN.', 'Click only the target with that color.', 'Wrong clicks break your streak. Fast, clean locks score most.']},
     'mystery-mode-button':{key:'mystery', title:'MYSTERY MODE', demo:'mystery', steps:['You get five surprise rounds in a row.', 'Each round is a random game mode you have never been warned about.', 'Finish all five to claim a bonus of 75 XP.']}
   };
   const DEMOS = {

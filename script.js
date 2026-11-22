@@ -180,7 +180,7 @@ function arenaCharacterArt(characterId) {
   const c = ARENA_CHARACTERS[id], p = 'ac-' + id + '-' + (++arenaArtCounter) + '-';
   const hair = arenaHair(c);
   const skinDark = arenaShade(c.skin, -.28), skinLight = arenaShade(c.skin, .2);
-  const lips = arenaShade(c.skin, c.female ? -.38 : -.3), capeDark = arenaShade(c.cape, -.45), capeLight = arenaShade(c.cape, .18);
+  const lips = arenaShade(c.skin, c.female ? -.24 : -.2), capeDark = arenaShade(c.cape, -.45), capeLight = arenaShade(c.cape, .18);
   const face = 'M34 54 Q34 31 60 30 Q86 31 86 54 L85 66 Q82 87 60 92 Q38 87 35 66Z';
   return '<svg class="arena-character-art" viewBox="0 0 120 120" role="img" aria-label="' + c.name + ' character portrait">' +
     '<defs>' +
@@ -212,9 +212,11 @@ function arenaCharacterArt(characterId) {
     '<path d="M57.6 74.2 Q60 76.2 62.4 74.2" fill="none" stroke="' + skinDark + '" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>' +
     '<path d="M59 67 Q60.6 70 60 72.6" fill="none" stroke="' + skinLight + '" stroke-width="1.6" stroke-linecap="round" opacity=".35"/>' +
     arenaEye(49, c) + arenaEye(71, c) +
-    '<path d="M51.6 79.8 Q60 89 68.4 79.8 Q60 83.4 51.6 79.8Z" fill="' + arenaShade(lips, .1) + '"/>' +
-    '<path d="M51.2 79.6 Q56 78.6 60 79.8 Q64 78.6 68.8 79.6" fill="none" stroke="' + lips + '" stroke-width="1.8" stroke-linecap="round"/>' +
-    '<path d="M51.2 79.6 Q60 85.6 68.8 79.6" fill="none" stroke="' + arenaShade(lips, -.4) + '" stroke-width=".9" stroke-linecap="round"/>' +
+    '<path d="M51.8 80 Q60 84 68.2 80 Q64.6 86.2 60 86.2 Q55.4 86.2 51.8 80Z" fill="' + arenaShade(lips, .08) + '"/>' +
+    '<path d="M51.4 79.4 Q55.4 77 58.8 78.2 Q60 77.4 61.2 78.2 Q64.6 77 68.6 79.4 Q60 83.6 51.4 79.4Z" fill="' + lips + '"/>' +
+    '<path d="M51.4 79.4 Q55.4 77 58.8 78.2 Q60 77.4 61.2 78.2 Q64.6 77 68.6 79.4 Q60 83.6 51.4 79.4Z M51.8 80 Q60 84 68.2 80 Q64.6 86.2 60 86.2 Q55.4 86.2 51.8 80Z" fill="#e0536c" opacity="' + (c.female ? '.42' : '.3') + '"/>' +
+    '<path d="M51 78.8 Q60 85.2 69 78.8" fill="none" stroke="' + arenaShade(lips, -.5) + '" stroke-width="1" stroke-linecap="round"/>' +
+    '<path d="M56.4 83.4 Q60 84.6 63.6 83.4" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".3"/>' +
     hair.front +
     '</g>' +
     '<circle cx="60" cy="60" r="57" fill="none" stroke="' + c.accent + '" stroke-opacity=".75" stroke-width="2"/>' +

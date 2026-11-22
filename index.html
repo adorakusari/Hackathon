@@ -10,6 +10,7 @@
   <script src="config.js" defer></script>
   <script src="script.js" defer></script>
   <script src="timing.js" defer></script>
+  <script src="targetlock.js" defer></script>
 </head>
 <body>
   <main class="home">
@@ -123,6 +124,14 @@
           <span class="mode-description">Press the key exactly when the glowing ring hits the target. The closer you are, the higher your score.</span>
           <span class="mode-bottomline"><span class="mode-tag">20 RINGS • COMBO ×5</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
         </button>
+        <button class="mode-card targetlock-mode" id="targetlock-mode-button" type="button">
+          <span class="mode-topline"><span class="mode-number">07</span><span class="mode-level">FOCUS</span></span>
+          <span class="mode-icon" aria-hidden="true">⌖</span>
+          <span class="mode-kicker">AIM CHALLENGE</span>
+          <span class="mode-name">TARGET LOCK</span>
+          <span class="mode-description">Targets appear at random. Click only the correct one, as quickly as you can.</span>
+          <span class="mode-bottomline"><span class="mode-tag">15 ROUNDS • STREAK ×5</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
+        </button>
       </div>
       <div class="stats-strip" aria-label="Your personal records">
         <h3 class="stats-heading">YOUR PERSONAL RECORDS</h3>
@@ -132,6 +141,7 @@
           <div class="stat-card"><span class="stat-mode">CLICK SPEED</span><strong id="click-best">—</strong><span class="stat-caption">BEST CLICKS / SECOND</span><span class="stat-detail">Your fastest click test</span></div>
           <div class="stat-card"><span class="stat-mode">CODE RACE</span><strong id="code-best">—</strong><span class="stat-caption">BEST WPM</span><span class="stat-detail" id="code-accuracy">Accuracy: —</span></div>
           <div class="stat-card"><span class="stat-mode">PERFECT TIMING</span><strong id="timing-best">—</strong><span class="stat-caption">BEST SCORE</span><span class="stat-detail" id="timing-detail">Your best precision run</span></div>
+          <div class="stat-card"><span class="stat-mode">TARGET LOCK</span><strong id="targetlock-best">—</strong><span class="stat-caption">BEST SCORE</span><span class="stat-detail" id="targetlock-detail">Your best lock-on run</span></div>
         </div>
       </div>
     </section>
@@ -172,6 +182,7 @@
         <div class="profile-stat-card"><span>CLICK SPEED</span><strong id="profile-click-best">—</strong><small>BEST CLICKS / SEC</small></div>
         <div class="profile-stat-card"><span>CODE RACE</span><strong id="profile-code-best">—</strong><small>BEST WPM</small></div>
         <div class="profile-stat-card"><span>PERFECT TIMING</span><strong id="profile-timing-best">—</strong><small>BEST SCORE</small></div>
+        <div class="profile-stat-card"><span>TARGET LOCK</span><strong id="profile-targetlock-best">—</strong><small>BEST SCORE</small></div>
       </div>
       <div class="profile-section-heading profile-achievement-heading"><span>ACHIEVEMENT COLLECTION</span><strong id="profile-achievement-count">0 / 5 UNLOCKED</strong></div>
       <div class="profile-achievement-grid" id="profile-achievements"></div>
@@ -264,6 +275,21 @@
         <button class="timing-key key-t" type="button" data-key="t">T</button>
       </div>
       <section class="reward-summary timing-result hidden" id="timing-result" aria-live="polite"></section>
+    </section>
+
+    <section class="panel timing-panel hidden" id="targetlock-screen" aria-labelledby="targetlock-title">
+      <button class="back-button" id="targetlock-back-button" type="button">← BACK TO ARENA</button>
+      <p class="eyebrow">AIM CHALLENGE</p>
+      <h2 id="targetlock-title">TARGET LOCK</h2>
+      <div class="timing-stage targetlock-stage">
+        <canvas id="targetlock-canvas" aria-label="Target Lock game canvas"></canvas>
+        <div class="timing-overlay" id="targetlock-overlay">
+          <h3 id="targetlock-overlay-title">TARGET LOCK</h3>
+          <p id="targetlock-overlay-text"></p>
+          <button class="start-button timing-start" id="targetlock-start-button" type="button">START</button>
+        </div>
+      </div>
+      <section class="reward-summary timing-result hidden" id="targetlock-result" aria-live="polite"></section>
     </section>
 
     <section class="panel race-panel hidden" id="race-screen" aria-labelledby="race-title">

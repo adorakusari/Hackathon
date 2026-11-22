@@ -21,6 +21,7 @@ const leaderboardScreen = document.getElementById('leaderboard-screen');
 const customizeScreen = document.getElementById('customize-screen');
 const levelsScreen = document.getElementById('levels-screen');
 const timingScreen = document.getElementById('timing-screen');
+const targetLockScreen = document.getElementById('targetlock-screen');
 const gameScreen = document.getElementById('game-screen');
 const levelGrid = document.getElementById('level-grid');
 const progressLabel = document.getElementById('progress-label');
@@ -381,6 +382,7 @@ const achievementCatalog = {
   lightning:{name:'LIGHTNING REFLEX',icon:'⚡',description:'React in 250 ms or less.'},
   clicker:{name:'CLICK MACHINE',icon:'🖱️',description:'Reach 5 clicks per second.'},
   code_master:{name:'CODE MASTER',icon:'💻',description:'Reach 40 WPM in Code Race.'},
+  target_lock:{name:'DEAD EYE',icon:'⌖',description:'Lock onto all 15 targets in one Target Lock run.'},
   perfect_timing:{name:'SHARPSHOOTER',icon:'🎯',description:'Land 8 PERFECT hits in one Perfect Timing run.'}
 };
 function readPlayerProfile() {
@@ -663,6 +665,7 @@ function recordAttempt(mode, isCorrect, timeMs) {
 }
 function renderStats() {
   if (window.renderTimingBest) window.renderTimingBest();
+  if (window.renderTargetLockBest) window.renderTargetLockBest();
   renderProfile();
   const clickBest = document.getElementById('click-best');
   if (clickBest) clickBest.textContent = clickBestCps ? clickBestCps.toFixed(2) : '—';
@@ -684,7 +687,7 @@ function saveProgress() {
   else localStorage.setItem('rsa-html-unlocked-level', String(htmlUnlocked));
 }
 function showScreen(screen) {
-  [homeScreen,modeScreen,profileScreen,customizeScreen,leaderboardScreen,levelsScreen,gameScreen,raceScreen,timingScreen].forEach(item => item.classList.add('hidden'));
+  [homeScreen,modeScreen,profileScreen,customizeScreen,leaderboardScreen,levelsScreen,gameScreen,raceScreen,timingScreen,targetLockScreen].forEach(item => item.classList.add('hidden'));
   screen.classList.remove('hidden');
 }
 function removeNextButton() {

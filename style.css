@@ -835,8 +835,8 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 /* ===== PERFECT TIMING (mode 06) ===== */
 .timing-mode { --card-accent:#ff4d8d; --card-glow:rgba(255,60,120,.24); }
 .timing-mode .mode-icon { color:var(--card-accent); }
-.mode-card.timing-mode { grid-column:1 / -1; min-height:210px; background:radial-gradient(ellipse at 90% 10%,rgba(255,60,110,.2),transparent 45%),linear-gradient(115deg,rgba(40,12,45,.98),rgba(18,12,46,.98)); }
-@media(min-width:650px) { .stats-grid { grid-template-columns:repeat(5,minmax(0,1fr)); } }
+.mode-card.timing-mode { min-height:230px; background:radial-gradient(ellipse at 90% 10%,rgba(255,60,110,.2),transparent 45%),linear-gradient(115deg,rgba(40,12,45,.98),rgba(18,12,46,.98)); }
+@media(min-width:650px) { .stats-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media(min-width:650px) { .profile-stat-grid:has(#profile-timing-best) { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 .timing-panel { text-align:center; }
 .timing-stage { position:relative; max-width:860px; margin:16px auto 0; border:1px solid rgba(180,85,255,.5); border-radius:14px; overflow:hidden; background:#04010a; box-shadow:0 0 36px rgba(180,85,255,.25); }
@@ -856,3 +856,10 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 .timing-stats div { padding:10px 6px; border-radius:8px; background:rgba(255,255,255,.06); }
 .timing-stats b { display:block; font:800 16px Orbitron,sans-serif; color:#fff; }
 .timing-stats span { font-size:9px; letter-spacing:.14em; color:#aab; }
+
+/* ===== TARGET LOCK (mode 07) ===== */
+.targetlock-mode { --card-accent:#19d8e6; --card-glow:rgba(25,216,230,.24); }
+.targetlock-mode .mode-icon { color:var(--card-accent); }
+.mode-card.targetlock-mode { background:radial-gradient(ellipse at 90% 10%,rgba(25,216,230,.18),transparent 45%),linear-gradient(115deg,rgba(8,30,44,.98),rgba(10,16,40,.98)); }
+.targetlock-stage { border-color:rgba(25,216,230,.5); box-shadow:0 0 36px rgba(25,216,230,.22); }
+#targetlock-canvas { display:block; width:100%; touch-action:none; cursor:none; }

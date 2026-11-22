@@ -17,6 +17,7 @@
   <script src="spin.js" defer></script>
   <script src="ui.js" defer></script>
   <script src="brand.js" defer></script>
+  <script src="hero.js" defer></script>
 </head>
 <body>
   <main class="home">
@@ -50,21 +51,19 @@
     <section class="hero" id="home-screen" aria-labelledby="game-title">
       <div class="hero-grid">
         <div class="hero-main">
-          <p class="eyebrow">TEST YOUR REFLEXES AND YOUR MIND</p>
           <h1 id="game-title">REACTION SPEED <span>ARENA</span></h1>
           <div class="hero-stripe" aria-hidden="true"><i style="--c:var(--c-color)"></i><i style="--c:var(--c-html)"></i><i style="--c:var(--c-click)"></i><i style="--c:var(--c-code)"></i><i style="--c:var(--c-timing)"></i><i style="--c:var(--c-target)"></i><i style="--c:var(--c-mystery)"></i></div>
-          <p class="intro">Seven game modes. One leaderboard. Think fast, react faster and prove your skills against the arena bots and your friends.</p>
+          <p class="intro"><strong>Average human reaction: 250 ms. Beat it.</strong>Seven modes, one leaderboard, and bots that won't go easy on you.</p>
           <p class="hero-welcome hidden" id="hero-welcome"></p>
           <div class="hero-actions">
             <button class="start-button" id="levels-button" type="button">PLAY</button>
             <button class="ghost-button" id="hero-leaderboard" type="button">VIEW LEADERBOARD</button>
           </div>
-          <ul class="hero-facts"><li><b>7</b><span>GAME MODES</span></li><li><b>10</b><span>LEVELS PER MODE</span></li><li><b>DAILY</b><span>REWARDS & SPIN</span></li></ul>
         </div>
         <div class="hero-demo" aria-hidden="true">
-          <div class="demo-head"><span>REACTION TEST</span><em>DEMO</em></div>
-          <div class="demo-screen"><span class="d-wait">WAIT…</span><span class="d-go">CLICK!</span></div>
-          <div class="demo-foot"><span>EXAMPLE ROUND</span><strong>247 MS</strong></div>
+          <div class="demo-head"><span>PERFECT TIMING</span><em><i class="live-dot"></i>LIVE</em></div>
+          <canvas id="hero-canvas" width="420" height="260"></canvas>
+          <div class="demo-foot"><span id="hd-label">COMBO ×1</span><strong id="hd-score">0</strong></div>
           <div class="hero-chips" id="hero-chips"></div>
         </div>
       </div>

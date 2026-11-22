@@ -19,7 +19,7 @@
   if (hero && !document.querySelector('.hero-logo')) {
     const lock = document.createElement('div');
     lock.className = 'hero-logo';
-    lock.innerHTML = logoMark(84) + '<div class="hero-logo-text"><b>RSA</b><span>REFLEX LEAGUE</span></div>';
+    lock.innerHTML = logoMark(112);
     hero.insertBefore(lock, hero.firstChild);
   }
   const tabs = document.getElementById('arena-tabs');

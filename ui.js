@@ -67,4 +67,23 @@
       modal.classList.remove('hidden'); document.getElementById('tut-go').focus();
     }, true);
   });
+
+  /* ---------- home screen extras ---------- */
+  const MODES = [['COLOR REACTION','bolt','--c-color'],['HTML SPEED','code','--c-html'],['CLICK SPEED','pointer','--c-click'],['CODE RACE','keyboard','--c-code'],['PERFECT TIMING','timer','--c-timing'],['TARGET LOCK','crosshair','--c-target'],['MYSTERY MODE','question','--c-mystery']];
+  const chips = document.getElementById('hero-chips');
+  if (chips) chips.innerHTML = MODES.map(m => '<span class="hero-chip" style="--c:var(' + m[2] + ')" title="' + m[0] + '">' + ICON(m[1]) + '</span>').join('');
+  const track = document.getElementById('ticker-track');
+  if (track) { const row = MODES.map(m => '<span class="tick" style="--c:var(' + m[2] + ')"><i></i>' + m[0] + '</span>').join(''); track.innerHTML = row + row + row + row; }
+  const lbButton = document.getElementById('hero-leaderboard');
+  if (lbButton) lbButton.addEventListener('click', () => { const real = document.getElementById('open-leaderboard-button'); if (real) real.click(); });
+  function refreshWelcome() {
+    const el = document.getElementById('hero-welcome'); if (!el || typeof playerProfile === 'undefined') return;
+    const toggle = document.getElementById('auth-toggle');
+    const signedIn = !!(toggle && toggle.textContent.trim() && !/SIGN IN/i.test(toggle.textContent));
+    if (!signedIn) { el.classList.add('hidden'); return; }
+    const streak = playerProfile.streak && playerProfile.streak.count ? ' • ' + playerProfile.streak.count + ' DAY STREAK' : '';
+    el.textContent = 'WELCOME BACK, ' + String(playerProfile.username || 'PLAYER').toUpperCase() + ' • LEVEL ' + playerLevel() + streak;
+    el.classList.remove('hidden');
+  }
+  refreshWelcome(); setInterval(refreshWelcome, 1500);
 })();

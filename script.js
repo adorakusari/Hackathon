@@ -17,6 +17,7 @@ const htmlQuestions = [
 const homeScreen = document.getElementById('home-screen');
 const modeScreen = document.getElementById('mode-screen');
 const profileScreen = document.getElementById('profile-screen');
+const leaderboardScreen = document.getElementById('leaderboard-screen');
 const levelsScreen = document.getElementById('levels-screen');
 const gameScreen = document.getElementById('game-screen');
 const levelGrid = document.getElementById('level-grid');
@@ -238,6 +239,43 @@ function readPlayerProfile() {
 const playerProfile = readPlayerProfile();
 if (!ARENA_CHARACTERS[playerProfile.avatar]) playerProfile.avatar = 'nova';
 let selectedProfileAvatar = playerProfile.avatar;
+
+/* Local player accounts and leaderboard (saved on this device) */
+const ACCOUNTS_KEY = 'rsa-accounts';
+const SESSION_KEY = 'rsa-session';
+function readAccounts() {
+  try {
+    const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}');
+    return accounts && typeof accounts === 'object' && !Array.isArray(accounts) ? accounts : {};
+  } catch (error) { return {}; }
+}
+function writeAccounts(accounts) { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)); }
+function currentAccountKey() {
+  const key = localStorage.getItem(SESSION_KEY);
+  return key && readAccounts()[key] ? key : null;
+}
+function loadAccountIntoProfile(account) {
+  Object.assign(playerProfile, {
+    username: String(account.username || 'Player').slice(0,16),
+    avatar: ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova',
+    xp: Math.max(0, Number(account.xp) || 0),
+    games: Math.max(0, Number(account.games) || 0),
+    achievements: Array.isArray(account.achievements) ? account.achievements.slice() : []
+  });
+  selectedProfileAvatar = playerProfile.avatar;
+}
+function savePlayerProfile() {
+  localStorage.setItem('rsa-player-profile', JSON.stringify(playerProfile));
+  const key = currentAccountKey();
+  if (!key) return;
+  const accounts = readAccounts();
+  accounts[key] = {username:accounts[key].username, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), updated:Date.now()};
+  writeAccounts(accounts);
+}
+(function restoreSession() {
+  const key = currentAccountKey();
+  if (key) loadAccountIntoProfile(readAccounts()[key]);
+})();
 function playerLevel() { return Math.floor(playerProfile.xp / XP_PER_LEVEL) + 1; }
 function renderProfile() {
   const level = playerLevel();
@@ -316,8 +354,9 @@ function awardXP(amount, achievementKeys=[]) {
       unlocked.push(achievementCatalog[key]);
     }
   });
-  localStorage.setItem('rsa-player-profile',JSON.stringify(playerProfile));
+  savePlayerProfile();
   renderProfile();
+  refreshAuthUI();
   return unlocked;
 }
 
@@ -469,7 +508,7 @@ function saveProgress() {
   else localStorage.setItem('rsa-html-unlocked-level', String(htmlUnlocked));
 }
 function showScreen(screen) {
-  [homeScreen,modeScreen,profileScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
+  [homeScreen,modeScreen,profileScreen,leaderboardScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
   screen.classList.remove('hidden');
 }
 function removeNextButton() {
@@ -780,10 +819,11 @@ document.getElementById('open-profile-button').addEventListener('click', () => {
 document.getElementById('profile-back-button').addEventListener('click', () => showScreen(modeScreen));
 document.getElementById('profile-save-button').addEventListener('click', () => {
   const enteredName = document.getElementById('profile-name-input').value.trim().replace(/\s+/g,' ').slice(0,16);
-  playerProfile.username = enteredName || 'Arena Player';
+  if (!currentAccountKey()) playerProfile.username = enteredName || 'Arena Player';
   playerProfile.avatar = selectedProfileAvatar || 'nova';
-  localStorage.setItem('rsa-player-profile',JSON.stringify(playerProfile));
+  savePlayerProfile();
   renderProfile();
+  refreshAuthUI();
   document.getElementById('profile-save-status').textContent = 'PROFILE SAVED ✓';
 });
 document.getElementById('home-button').addEventListener('click', () => showScreen(homeScreen));
@@ -1182,3 +1222,133 @@ function countBonusClicks(amount,event) {
   playSound('click');
 }
 const originalFinishClickTest = finishClickTest;
+
+/* ---- Sign in, sign out and leaderboard ---- */
+const authModal = document.getElementById('auth-modal');
+const authToggle = document.getElementById('auth-toggle');
+function rankTitleForLevel(level) { return level >= 10 ? 'ARENA LEGEND' : level >= 7 ? 'SPEED MASTER' : level >= 4 ? 'QUICK THINKER' : 'ROOKIE'; }
+function leaderboardEntries() {
+  return Object.entries(readAccounts()).map(([key, account]) => {
+    const xp = Math.max(0, Number(account.xp) || 0);
+    return {key, username:String(account.username || 'Player'), avatar:ARENA_CHARACTERS[account.avatar] ? account.avatar : 'nova', xp, level:Math.floor(xp / XP_PER_LEVEL) + 1, achievements:Array.isArray(account.achievements) ? account.achievements.length : 0};
+  }).sort((a, b) => b.xp - a.xp || b.achievements - a.achievements || a.username.localeCompare(b.username));
+}
+function refreshAuthUI() {
+  const key = currentAccountKey();
+  authToggle.textContent = key ? '👤 ' + playerProfile.username.toUpperCase() : '👤 SIGN IN';
+  authToggle.setAttribute('aria-label', key ? 'Signed in as ' + playerProfile.username + '. Open account menu' : 'Sign in');
+  const nameInput = document.getElementById('profile-name-input');
+  if (nameInput) { nameInput.disabled = !!key; nameInput.title = key ? 'Your player name is set by your sign in' : ''; }
+  const sub = document.getElementById('leaderboard-button-sub');
+  if (!sub) return;
+  if (!key) { sub.textContent = 'SIGN IN TO JOIN THE RANKING ↗'; return; }
+  const entries = leaderboardEntries();
+  const position = entries.findIndex(entry => entry.key === key) + 1;
+  sub.textContent = 'YOUR RANK #' + position + ' OF ' + entries.length + ' ↗';
+}
+function renderLeaderboard() {
+  const key = currentAccountKey();
+  const entries = leaderboardEntries();
+  const youCard = document.getElementById('lb-you-card');
+  const list = document.getElementById('lb-list');
+  youCard.innerHTML = '';
+  list.innerHTML = '';
+  const position = key ? entries.findIndex(entry => entry.key === key) + 1 : 0;
+  const title = document.createElement('strong');
+  const detail = document.createElement('span');
+  if (key) {
+    title.textContent = 'YOUR RANK: #' + position;
+    const ahead = position > 1 ? entries[position - 2] : null;
+    detail.textContent = ahead ? Math.max(1, ahead.xp - playerProfile.xp + 1) + ' XP to pass ' + ahead.username.toUpperCase() : position === 1 && entries.length > 1 ? 'You are the champion. Keep your lead!' : 'You are the first champion. Invite friends to challenge you!';
+    youCard.append(title, detail);
+  } else {
+    title.textContent = 'YOU ARE PLAYING AS A GUEST';
+    detail.textContent = 'Sign in to save your progress and enter the ranking.';
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'lb-signin-button'; button.textContent = 'SIGN IN';
+    button.addEventListener('click', openAuthModal);
+    youCard.append(title, detail, button);
+  }
+  if (!entries.length) {
+    const empty = document.createElement('li');
+    empty.className = 'lb-empty';
+    empty.textContent = 'No champions yet. Sign in, play a few rounds and take the #1 spot!';
+    list.appendChild(empty);
+    return;
+  }
+  const medals = ['🥇', '🥈', '🥉'];
+  entries.slice(0, 20).forEach((entry, index) => {
+    const row = document.createElement('li');
+    row.className = 'lb-row' + (index < 3 ? ' top-' + (index + 1) : '') + (entry.key === key ? ' you' : '');
+    const rank = document.createElement('span'); rank.className = 'lb-rank'; rank.textContent = index < 3 ? medals[index] : '#' + (index + 1);
+    const avatar = document.createElement('span'); avatar.className = 'lb-avatar'; avatar.innerHTML = arenaCharacterArt(entry.avatar);
+    const who = document.createElement('span'); who.className = 'lb-name';
+    const name = document.createElement('strong'); name.textContent = entry.username + (entry.key === key ? ' (YOU)' : '');
+    const meta = document.createElement('small'); meta.textContent = rankTitleForLevel(entry.level) + ' • LEVEL ' + entry.level;
+    who.append(name, meta);
+    const xp = document.createElement('span'); xp.className = 'lb-xp';
+    const xpValue = document.createElement('strong'); xpValue.textContent = entry.xp;
+    const xpLabel = document.createElement('small'); xpLabel.textContent = 'XP';
+    xp.append(xpValue, xpLabel);
+    const ach = document.createElement('span'); ach.className = 'lb-ach'; ach.textContent = '🏅 ' + entry.achievements; ach.title = entry.achievements + ' achievements';
+    row.append(rank, avatar, who, xp, ach);
+    list.appendChild(row);
+  });
+}
+function openAuthModal() {
+  const key = currentAccountKey();
+  document.getElementById('auth-form-view').classList.toggle('hidden', !!key);
+  document.getElementById('auth-user-view').classList.toggle('hidden', !key);
+  document.getElementById('auth-error').textContent = '';
+  if (key) {
+    document.getElementById('auth-user-avatar').innerHTML = arenaCharacterArt(playerProfile.avatar);
+    document.getElementById('auth-user-name').textContent = playerProfile.username;
+    const entries = leaderboardEntries();
+    document.getElementById('auth-user-detail').textContent = 'LEVEL ' + playerLevel() + ' • ' + playerProfile.xp + ' XP • RANK #' + (entries.findIndex(entry => entry.key === key) + 1);
+  }
+  authModal.classList.remove('hidden');
+  setTimeout(() => (key ? document.getElementById('auth-leaderboard-button') : document.getElementById('auth-name-input')).focus(), 30);
+}
+function closeAuthModal() { authModal.classList.add('hidden'); authToggle.focus(); }
+function signIn(rawName) {
+  const name = rawName.trim().replace(/\s+/g, ' ').slice(0, 16);
+  if (name.length < 2) return 'Enter a name with at least 2 characters.';
+  if (!/^[\p{L}\p{N} _.\-]+$/u.test(name)) return 'Use only letters, numbers, spaces, - _ or .';
+  const key = name.toLowerCase();
+  const accounts = readAccounts();
+  if (accounts[key]) {
+    loadAccountIntoProfile(accounts[key]);
+  } else {
+    accounts[key] = {username:name, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), updated:Date.now()};
+    writeAccounts(accounts);
+    playerProfile.username = name;
+  }
+  localStorage.setItem(SESSION_KEY, key);
+  savePlayerProfile();
+  renderProfile();
+  refreshAuthUI();
+  return '';
+}
+function signOut() {
+  localStorage.removeItem(SESSION_KEY);
+  Object.assign(playerProfile, {xp:0, games:0, achievements:[], username:'Arena Player', avatar:'nova'});
+  selectedProfileAvatar = 'nova';
+  savePlayerProfile();
+  renderProfile();
+  refreshAuthUI();
+}
+authToggle.addEventListener('click', openAuthModal);
+document.getElementById('auth-close').addEventListener('click', closeAuthModal);
+authModal.addEventListener('click', event => { if (event.target === authModal) closeAuthModal(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && !authModal.classList.contains('hidden')) closeAuthModal(); });
+document.getElementById('auth-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const error = signIn(document.getElementById('auth-name-input').value);
+  document.getElementById('auth-error').textContent = error;
+  if (!error) { document.getElementById('auth-name-input').value = ''; closeAuthModal(); }
+});
+document.getElementById('auth-signout-button').addEventListener('click', () => { signOut(); closeAuthModal(); });
+document.getElementById('auth-leaderboard-button').addEventListener('click', () => { authModal.classList.add('hidden'); renderLeaderboard(); showScreen(leaderboardScreen); });
+document.getElementById('open-leaderboard-button').addEventListener('click', () => { renderLeaderboard(); showScreen(leaderboardScreen); });
+document.getElementById('leaderboard-back-button').addEventListener('click', () => { refreshAuthUI(); showScreen(modeScreen); });
+refreshAuthUI();

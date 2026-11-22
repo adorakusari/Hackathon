@@ -11,6 +11,7 @@
 </head>
 <body>
   <main class="home">
+    <button class="auth-toggle" id="auth-toggle" type="button" aria-haspopup="dialog">👤 SIGN IN</button>
     <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false">🔊 SOUND ON</button>
     <div class="glow glow-one" aria-hidden="true"></div>
     <div class="glow glow-two" aria-hidden="true"></div>
@@ -49,7 +50,10 @@
       <p class="eyebrow">CHOOSE YOUR GAME MODE</p>
       <h2 id="mode-title">ENTER THE ARENA</h2>
       <p class="panel-subtitle">Choose your challenge. Set a new record. Become the arena champion.</p>
+      <div class="mode-quick-row">
       <button class="profile-open-button" id="open-profile-button" type="button"><span class="profile-open-avatar" id="profile-button-avatar">🚀</span><span><strong id="profile-button-name">ARENA PLAYER</strong><small>VIEW PLAYER PROFILE ↗</small></span></button>
+      <button class="leaderboard-open-button" id="open-leaderboard-button" type="button"><span class="leaderboard-open-icon" aria-hidden="true">🏆</span><span><strong>LEADERBOARD</strong><small id="leaderboard-button-sub">SIGN IN TO JOIN THE RANKING ↗</small></span></button>
+    </div>
       <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary">🏅 0 ACHIEVEMENTS UNLOCKED</div></section>
       <section class="daily-challenges" aria-label="Daily challenges">
         <div class="daily-heading"><div><span class="daily-kicker">FRESH EVERY DAY</span><h3>DAILY CHALLENGES</h3></div><span class="daily-reset" id="daily-reset">RESETS AT MIDNIGHT</span></div>
@@ -154,6 +158,16 @@
       <div class="profile-achievement-grid" id="profile-achievements"></div>
     </section>
 
+    <section class="panel leaderboard-panel hidden" id="leaderboard-screen" aria-labelledby="leaderboard-title">
+      <button class="back-button" id="leaderboard-back-button" type="button">← BACK TO ARENA</button>
+      <p class="eyebrow">HALL OF CHAMPIONS</p>
+      <h2 id="leaderboard-title">LEADERBOARD</h2>
+      <p class="panel-subtitle">Earn XP in every mode to climb the ranking and show the arena who is the best.</p>
+      <div class="lb-you-card" id="lb-you-card" aria-live="polite"></div>
+      <ol class="lb-list" id="lb-list" aria-label="Top players"></ol>
+      <p class="lb-note">Rankings include every player who signed in on this device.</p>
+    </section>
+
     <section class="panel levels-panel hidden" id="levels-screen" aria-labelledby="levels-title">
       <button class="back-button" id="modes-back-button" type="button">← GAME MODES</button>
       <p class="eyebrow" id="levels-eyebrow">COLOR REACTION</p>
@@ -215,6 +229,31 @@
       </div>
       <div class="race-result hidden" id="race-result" aria-live="polite"></div>
     </section>
+    <div class="auth-modal hidden" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <button class="auth-close" id="auth-close" type="button" aria-label="Close">✕</button>
+        <div id="auth-form-view">
+          <p class="eyebrow">JOIN THE RANKING</p>
+          <h2 id="auth-title">SIGN IN</h2>
+          <p class="auth-text">Pick a player name to save your progress and appear on the leaderboard. A new name creates a new player. An existing name loads that player.</p>
+          <form id="auth-form" autocomplete="off">
+            <label class="auth-label" for="auth-name-input">PLAYER NAME</label>
+            <input id="auth-name-input" type="text" maxlength="16" placeholder="e.g. NightHawk" autocomplete="nickname">
+            <p class="auth-error" id="auth-error" role="alert"></p>
+            <button class="start-button auth-submit" type="submit">SIGN IN / CREATE PLAYER</button>
+          </form>
+          <p class="auth-note">Players are saved on this device only and have no password.</p>
+        </div>
+        <div id="auth-user-view" class="hidden">
+          <p class="eyebrow">SIGNED IN</p>
+          <div class="auth-user-avatar" id="auth-user-avatar"></div>
+          <h2 id="auth-user-name">PLAYER</h2>
+          <p class="auth-text" id="auth-user-detail"></p>
+          <button class="start-button auth-submit" id="auth-leaderboard-button" type="button">🏆 VIEW LEADERBOARD</button>
+          <button class="auth-signout" id="auth-signout-button" type="button">SIGN OUT</button>
+        </div>
+      </div>
+    </div>
     <p class="footer-note">HOW FAST CAN YOU THINK?</p>
   </main>
 </body>

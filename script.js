@@ -20,6 +20,7 @@ const profileScreen = document.getElementById('profile-screen');
 const leaderboardScreen = document.getElementById('leaderboard-screen');
 const customizeScreen = document.getElementById('customize-screen');
 const levelsScreen = document.getElementById('levels-screen');
+const timingScreen = document.getElementById('timing-screen');
 const gameScreen = document.getElementById('game-screen');
 const levelGrid = document.getElementById('level-grid');
 const progressLabel = document.getElementById('progress-label');
@@ -379,7 +380,8 @@ const achievementCatalog = {
   combo_5:{name:'UNSTOPPABLE',icon:'🔥',description:'Reach a 5x combo.'},
   lightning:{name:'LIGHTNING REFLEX',icon:'⚡',description:'React in 250 ms or less.'},
   clicker:{name:'CLICK MACHINE',icon:'🖱️',description:'Reach 5 clicks per second.'},
-  code_master:{name:'CODE MASTER',icon:'💻',description:'Reach 40 WPM in Code Race.'}
+  code_master:{name:'CODE MASTER',icon:'💻',description:'Reach 40 WPM in Code Race.'},
+  perfect_timing:{name:'SHARPSHOOTER',icon:'🎯',description:'Land 8 PERFECT hits in one Perfect Timing run.'}
 };
 function readPlayerProfile() {
   try {
@@ -660,6 +662,7 @@ function recordAttempt(mode, isCorrect, timeMs) {
   renderStats();
 }
 function renderStats() {
+  if (window.renderTimingBest) window.renderTimingBest();
   renderProfile();
   const clickBest = document.getElementById('click-best');
   if (clickBest) clickBest.textContent = clickBestCps ? clickBestCps.toFixed(2) : '—';
@@ -681,7 +684,7 @@ function saveProgress() {
   else localStorage.setItem('rsa-html-unlocked-level', String(htmlUnlocked));
 }
 function showScreen(screen) {
-  [homeScreen,modeScreen,profileScreen,customizeScreen,leaderboardScreen,levelsScreen,gameScreen,raceScreen].forEach(item => item.classList.add('hidden'));
+  [homeScreen,modeScreen,profileScreen,customizeScreen,leaderboardScreen,levelsScreen,gameScreen,raceScreen,timingScreen].forEach(item => item.classList.add('hidden'));
   screen.classList.remove('hidden');
 }
 function removeNextButton() {

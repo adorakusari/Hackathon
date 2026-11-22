@@ -52,15 +52,21 @@
 
     <section class="panel mode-panel hidden" id="mode-screen" aria-labelledby="mode-title">
       <button class="back-button" id="home-button" type="button">← HOME</button>
+      <nav class="arena-tabs" id="arena-tabs" aria-label="Arena navigation">
+        <button class="arena-tab active" id="tab-play" type="button" data-pane="play">🎮 <span>PLAY</span></button>
+        <button class="arena-tab" id="tab-daily" type="button" data-pane="daily">🎁 <span>DAILY REWARDS</span><i class="tab-dot hidden" id="daily-dot"></i></button>
+        <button class="arena-tab" id="tab-leaderboard" type="button" data-go="open-leaderboard-button">🏆 <span>LEADERBOARD</span></button>
+        <button class="arena-tab" id="tab-profile" type="button" data-go="open-profile-button">👤 <span>PROFILE</span></button>
+        <button class="arena-tab" id="tab-customize" type="button" data-go="open-customize-quick">🎨 <span>CUSTOMIZE</span></button>
+      </nav>
       <p class="eyebrow">CHOOSE YOUR GAME MODE</p>
       <h2 id="mode-title">ENTER THE ARENA</h2>
       <p class="panel-subtitle">Choose your challenge. Set a new record. Become the arena champion.</p>
-      <div class="mode-quick-row">
+      <div class="mode-quick-row" hidden>
       <button class="profile-open-button" id="open-profile-button" type="button"><span class="profile-open-avatar" id="profile-button-avatar">🚀</span><span><strong id="profile-button-name">ARENA PLAYER</strong><small>VIEW PLAYER PROFILE ↗</small></span></button>
       <button class="leaderboard-open-button" id="open-leaderboard-button" type="button"><span class="leaderboard-open-icon" aria-hidden="true">🏆</span><span><strong>LEADERBOARD</strong><small id="leaderboard-button-sub">SIGN IN TO JOIN THE RANKING ↗</small></span></button>
       <button class="customize-quick-button" id="open-customize-quick" type="button"><span class="customize-quick-icon" aria-hidden="true">🎨</span><span><strong>CUSTOMIZE</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS ↗</small></span></button>
     </div>
-      <nav class="arena-tabs" id="arena-tabs" aria-label="Arena sections"><button class="arena-tab active" id="tab-play" type="button" data-pane="play">🎮 PLAY</button><button class="arena-tab" id="tab-daily" type="button" data-pane="daily">🎁 DAILY REWARDS<i class="tab-dot hidden" id="daily-dot"></i></button></nav>
       <div class="arena-pane" id="pane-play">
       <div class="mode-grid">
         <button class="mode-card color-mode" id="color-mode-button" type="button">

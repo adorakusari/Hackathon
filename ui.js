@@ -3,12 +3,16 @@
   'use strict';
   /* ---------- tabs + notification dot ---------- */
   const tabs = Array.from(document.querySelectorAll('.arena-tab'));
+  const paneTabs = tabs.filter(tab => tab.dataset.pane);
   const panes = {play:document.getElementById('pane-play'), daily:document.getElementById('pane-daily')};
   function showPane(name) {
-    tabs.forEach(tab => { const on = tab.dataset.pane === name; tab.classList.toggle('active', on); tab.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    paneTabs.forEach(tab => { const on = tab.dataset.pane === name; tab.classList.toggle('active', on); tab.setAttribute('aria-pressed', on ? 'true' : 'false'); });
     Object.keys(panes).forEach(key => panes[key].classList.toggle('hidden', key !== name));
   }
-  tabs.forEach(tab => tab.addEventListener('click', () => { showPane(tab.dataset.pane); playSound('click'); }));
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    if (tab.dataset.go) { playSound('click'); const target = document.getElementById(tab.dataset.go); if (target) target.click(); return; }
+    showPane(tab.dataset.pane); playSound('click');
+  }));
   function todayKey() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
   function refreshDot() {
     const dot = document.getElementById('daily-dot'); if (!dot) return;

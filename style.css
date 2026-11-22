@@ -952,3 +952,9 @@ body { font-family:var(--font-body); }
 .demo-mystery span { font:400 64px var(--font-win); color:#f2d88e; text-shadow:0 0 22px #b58cff; animation:demoSpin 3s ease-in-out infinite; }
 @keyframes demoSpin { 50% { transform:rotateY(180deg) scale(1.15); } }
 @media (prefers-reduced-motion:reduce) { .demo *,.demo { animation:none !important; } }
+
+/* top navigation bar */
+.arena-tabs { position:sticky; top:10px; z-index:20; display:flex; justify-content:center; flex-wrap:wrap; gap:6px; margin:0 auto 22px; padding:6px; width:fit-content; max-width:100%; }
+.arena-tab span { vertical-align:middle; }
+.mode-quick-row[hidden] { display:none !important; }
+@media(max-width:640px) { .arena-tab { padding:9px 11px; font-size:10px; letter-spacing:.08em; } .arena-tab span { display:none; } .arena-tab.active span,#tab-daily span { display:inline; } }

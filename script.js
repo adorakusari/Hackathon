@@ -165,15 +165,15 @@ function arenaHair(character) {
   };
 }
 function arenaEye(cx, character) {
-  const lash = character.female ? 1.9 : 1.5;
-  const brow = arenaShade(character.hair, character.style === 'locs' ? 0 : -.1);
+  const brow = arenaShade(character.hair, character.style === 'locs' ? 0 : -.05);
   const side = cx < 60 ? -1 : 1;
-  return '<path d="M' + (cx - 6 * side) + ' 54.6 Q' + (cx + 1 * side) + ' 50.6 ' + (cx + 6.4 * side) + ' 53.2" fill="none" stroke="' + brow + '" stroke-width="' + (character.female ? 1.9 : 2.5) + '" stroke-linecap="round"/>' +
-    '<path d="M' + (cx - 5.6) + ' 60 Q' + cx + ' 55.6 ' + (cx + 5.6) + ' 60 Q' + cx + ' 62.4 ' + (cx - 5.6) + ' 60Z" fill="#f4f0ec"/>' +
-    '<circle cx="' + cx + '" cy="59.6" r="2.9" fill="' + character.iris + '"/><circle cx="' + cx + '" cy="59.6" r="1.35" fill="#090c14"/><circle cx="' + (cx - .9) + '" cy="58.7" r=".8" fill="#fff"/>' +
-    '<path d="M' + (cx - 6.2) + ' 60.2 Q' + cx + ' 55 ' + (cx + 6.2) + ' 60.2" fill="none" stroke="#10131c" stroke-width="' + lash + '" stroke-linecap="round"/>' +
-    (character.female ? '<path d="M' + (cx + 5.6 * side) + ' 59.6 L' + (cx + 8 * side) + ' 57.6" stroke="#10131c" stroke-width="1.4" stroke-linecap="round"/>' : '') +
-    '<path d="M' + (cx - 5.4) + ' 63.4 Q' + cx + ' 61.4 ' + (cx + 5.4) + ' 63.4" fill="none" stroke="' + arenaShade(character.skin, -.35) + '" stroke-width=".8" opacity=".5" stroke-linecap="round"/>';
+  const lid = character.female ? 1.6 : 1.3;
+  return '<path d="M' + (cx - 6 * side) + ' 53.8 Q' + cx + ' 50.8 ' + (cx + 6 * side) + ' 52.6" fill="none" stroke="' + brow + '" stroke-width="' + (character.female ? 1.6 : 2) + '" stroke-linecap="round" opacity=".92"/>' +
+    '<path d="M' + (cx - 6.2) + ' 60 Q' + cx + ' 54.6 ' + (cx + 6.2) + ' 60 Q' + cx + ' 65.4 ' + (cx - 6.2) + ' 60Z" fill="#fbf8f5"/>' +
+    '<circle cx="' + cx + '" cy="60.2" r="3.7" fill="' + character.iris + '"/><circle cx="' + cx + '" cy="60.2" r="3.7" fill="none" stroke="' + arenaShade(character.iris, -.45) + '" stroke-width=".7"/>' +
+    '<circle cx="' + cx + '" cy="60.2" r="1.8" fill="#080b12"/><circle cx="' + (cx - 1.3) + '" cy="58.8" r="1.15" fill="#fff"/><circle cx="' + (cx + 1.3) + '" cy="61.6" r=".5" fill="#fff" opacity=".8"/>' +
+    '<path d="M' + (cx - 6.5) + ' 60.2 Q' + cx + ' 54 ' + (cx + 6.5) + ' 60.2" fill="none" stroke="#1b1a24" stroke-width="' + lid + '" stroke-linecap="round"/>' +
+    (character.female ? '<path d="M' + (cx + 6.2 * side) + ' 59.8 L' + (cx + 8 * side) + ' 58.2" stroke="#1b1a24" stroke-width="1.1" stroke-linecap="round"/>' : '');
 }
 function arenaCharacterArt(characterId) {
   const id = ARENA_CHARACTERS[characterId] ? characterId : 'nova';
@@ -181,7 +181,7 @@ function arenaCharacterArt(characterId) {
   const hair = arenaHair(c);
   const skinDark = arenaShade(c.skin, -.28), skinLight = arenaShade(c.skin, .2);
   const lips = arenaShade(c.skin, c.female ? -.38 : -.3), capeDark = arenaShade(c.cape, -.45), capeLight = arenaShade(c.cape, .18);
-  const face = 'M35 55 Q35 32 60 31 Q85 32 85 55 L84 66 Q80 85 60 91 Q40 85 36 66Z';
+  const face = 'M34 54 Q34 31 60 30 Q86 31 86 54 L85 66 Q82 87 60 92 Q38 87 35 66Z';
   return '<svg class="arena-character-art" viewBox="0 0 120 120" role="img" aria-label="' + c.name + ' character portrait">' +
     '<defs>' +
     '<clipPath id="' + p + 'clip"><circle cx="60" cy="60" r="57"/></clipPath>' +
@@ -208,17 +208,13 @@ function arenaCharacterArt(characterId) {
     '<ellipse cx="35" cy="60" rx="3.4" ry="6" fill="' + c.skin + '"/><ellipse cx="85" cy="60" rx="3.4" ry="6" fill="' + skinDark + '"/>' +
     '<path d="' + face + '" fill="url(#' + p + 'skin)"/>' +
     '<path d="' + face + '" fill="url(#' + p + 'shade)"/>' +
-    (c.female ? '<circle cx="45" cy="71" r="6" fill="#ff7a8a" opacity=".07"/><circle cx="75" cy="71" r="6" fill="#ff7a8a" opacity=".05"/>' : '<path d="M41 80 Q50 90 60 91 Q70 90 79 80 Q70 86 60 86 Q50 86 41 80Z" fill="#000" opacity=".12"/>') +
-    '<path d="M57.5 61 Q56.4 69 55.6 73" fill="none" stroke="' + skinDark + '" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>' +
-    '<path d="M62.6 61 Q63.6 68 64.6 72.6" fill="none" stroke="' + skinLight + '" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>' +
-    '<path d="M55.4 74.6 Q60 77.4 64.8 74.6" fill="none" stroke="' + skinDark + '" stroke-width="1.5" stroke-linecap="round" opacity=".75"/>' +
-    '<circle cx="56.6" cy="74.8" r=".9" fill="' + arenaShade(c.skin, -.5) + '" opacity=".8"/><circle cx="63.6" cy="74.8" r=".9" fill="' + arenaShade(c.skin, -.5) + '" opacity=".8"/>' +
+    '<circle cx="44" cy="71" r="6.5" fill="#ff8a8a" opacity="' + (c.female ? '.06' : '.04') + '"/><circle cx="76" cy="71" r="6.5" fill="#ff8a8a" opacity="' + (c.female ? '.05' : '.03') + '"/>' +
+    '<path d="M57.6 74.2 Q60 76.2 62.4 74.2" fill="none" stroke="' + skinDark + '" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>' +
+    '<path d="M59 67 Q60.6 70 60 72.6" fill="none" stroke="' + skinLight + '" stroke-width="1.6" stroke-linecap="round" opacity=".35"/>' +
     arenaEye(49, c) + arenaEye(71, c) +
-    '<path d="M51.6 79.6 Q60 87.4 68.4 79.6 Q60 83.4 51.6 79.6Z" fill="#f6f1ec"/>' +
-    '<path d="M51.2 79.4 Q56 78.4 60 79.8 Q64 78.4 68.8 79.4 Q60 82.6 51.2 79.4Z" fill="' + lips + '"/>' +
-    '<path d="M53 81.8 Q60 88.8 67 81.8 Q60 86 53 81.8Z" fill="' + arenaShade(lips, .1) + '"/>' +
-    '<path d="M50.6 78.6 Q49.4 80.4 51.2 82.2 M69.4 78.6 Q70.6 80.4 68.8 82.2" fill="none" stroke="' + skinDark + '" stroke-width="1" stroke-linecap="round" opacity=".55"/>' +
-    '<ellipse cx="44.5" cy="70.5" rx="5.5" ry="3.6" fill="' + skinLight + '" opacity=".1"/><ellipse cx="75.5" cy="70.5" rx="5.5" ry="3.6" fill="' + skinLight + '" opacity=".06"/>' +
+    '<path d="M51.6 79.8 Q60 89 68.4 79.8 Q60 83.4 51.6 79.8Z" fill="' + arenaShade(lips, .1) + '"/>' +
+    '<path d="M51.2 79.6 Q56 78.6 60 79.8 Q64 78.6 68.8 79.6" fill="none" stroke="' + lips + '" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<path d="M51.2 79.6 Q60 85.6 68.8 79.6" fill="none" stroke="' + arenaShade(lips, -.4) + '" stroke-width=".9" stroke-linecap="round"/>' +
     hair.front +
     '</g>' +
     '<circle cx="60" cy="60" r="57" fill="none" stroke="' + c.accent + '" stroke-opacity=".75" stroke-width="2"/>' +

@@ -221,6 +221,7 @@
     drawArena(t, s.multiplier);
     const geo = geometry();
     // moving rings
+    const nextRing = s.rings.find(r => !r.done);
     s.rings.forEach(ring => {
       if (ring.done && ring.fade === undefined) return;
       const u = (t - ring.spawn) / ring.approach;
@@ -229,6 +230,7 @@
       if (radius <= 3) return;
       const color = LANES[ring.lane].color;
       const fadeIn = Math.min(1, u * 6);
+      if (ring !== nextRing) { glowRing(geo.cx, geo.cy, radius, color, 2.5, 0, fadeIn * .3); return; } // later keys: faint, so the bright ring is always the one to press
       glowRing(geo.cx, geo.cy, radius, color, 7, 30, fadeIn);
       glowRing(geo.cx, geo.cy, radius, '#ffffff', 2, 8, fadeIn * .85);
     });

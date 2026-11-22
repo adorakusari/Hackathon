@@ -345,56 +345,8 @@ function arenaEye(cx, character) {
 }
 function arenaCharacterArt(characterId, custom) {
   const id = ARENA_CHARACTERS[characterId] ? characterId : 'nova';
-  const c = resolveArenaLook(id, custom), p = 'ac-' + id + '-' + (++arenaArtCounter) + '-';
-  const hair = arenaHair(c);
-  const skinDark = arenaShade(c.skin, -.28), skinLight = arenaShade(c.skin, .2);
-  const lips = arenaShade(c.skin, c.female ? -.24 : -.2), capeDark = arenaShade(c.cape, -.45), capeLight = arenaShade(c.cape, .18);
-  const face = 'M34 54 Q34 31 60 30 Q86 31 86 54 L85 66 Q82 87 60 92 Q38 87 35 66Z';
-  return '<svg class="arena-character-art" viewBox="0 0 120 120" role="img" aria-label="' + c.name + ' character portrait">' +
-    '<defs>' +
-    '<clipPath id="' + p + 'clip"><circle cx="60" cy="60" r="57"/></clipPath>' +
-    '<radialGradient id="' + p + 'bg" cx="50%" cy="38%" r="75%"><stop offset="0" stop-color="#2a3a5c"/><stop offset="1" stop-color="#0b1020"/></radialGradient>' +
-    '<linearGradient id="' + p + 'skin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + skinLight + '"/><stop offset=".55" stop-color="' + c.skin + '"/><stop offset="1" stop-color="' + skinDark + '"/></linearGradient>' +
-    '<linearGradient id="' + p + 'shade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>' +
-    '<linearGradient id="' + p + 'cape" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + capeLight + '"/><stop offset="1" stop-color="' + capeDark + '"/></linearGradient>' +
-    '<linearGradient id="' + p + 'suit" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + arenaShade(c.suit, .22) + '"/><stop offset="1" stop-color="' + arenaShade(c.suit, -.5) + '"/></linearGradient>' +
-    '<linearGradient id="' + p + 'plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + arenaShade(c.accent, .15) + '"/><stop offset="1" stop-color="' + arenaShade(c.accent, -.5) + '"/></linearGradient>' +
-    '<linearGradient id="' + p + 'fgold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b8"/><stop offset=".5" stop-color="#d9a52a"/><stop offset="1" stop-color="#fff3b8"/></linearGradient>' +
-    '<linearGradient id="' + p + 'frainbow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a7a"/><stop offset=".25" stop-color="#ffd24a"/><stop offset=".5" stop-color="#5aff9a"/><stop offset=".75" stop-color="#4ab8ff"/><stop offset="1" stop-color="#b06aff"/></linearGradient>' +
-    '<linearGradient id="' + p + 'ffire" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d2e"/><stop offset=".6" stop-color="#ff9a2e"/><stop offset="1" stop-color="#ffe27a"/></linearGradient>' +
-    '<filter id="' + p + 'glowf" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
-    '</defs>' +
-    '<g clip-path="url(#' + p + 'clip)">' +
-    '<rect width="120" height="120" fill="url(#' + p + 'bg)"/>' +
-    hair.back +
-    '<path d="M0 120 Q2 86 34 80 L86 80 Q118 86 120 120Z" fill="url(#' + p + 'cape)"/>' +
-    '<path d="M10 120 Q13 98 38 93 L50 99 L70 99 L82 93 Q107 98 110 120Z" fill="url(#' + p + 'suit)"/>' +
-    '<path d="M14 112 Q17 96 36 92 L42 100 Q28 101 24 114Z M106 112 Q103 96 84 92 L78 100 Q92 101 96 114Z" fill="url(#' + p + 'plate)" stroke="' + c.trim + '" stroke-opacity=".6" stroke-width=".8"/>' +
-    '<path d="M44 102 L76 102 L84 120 L36 120Z" fill="url(#' + p + 'plate)" stroke="' + c.trim + '" stroke-opacity=".7" stroke-width=".9"/>' +
-    arenaEmblem(c) +
-    '<path d="M50 84 L50 101 Q60 108 70 101 L70 84Z" fill="url(#' + p + 'skin)"/><path d="M50 84 L50 101 Q60 108 70 101 L70 84Z" fill="url(#' + p + 'shade)"/>' +
-    '<path d="M49 85 Q60 97 71 85 Q60 92 49 85Z" fill="#000" opacity=".3"/>' +
-    '<path d="M28 100 Q23 76 35 66 Q45 68 51 79 L53 104Z" fill="url(#' + p + 'cape)" stroke="' + c.trim + '" stroke-opacity=".55" stroke-width=".9"/>' +
-    '<path d="M92 100 Q97 76 85 66 Q75 68 69 79 L67 104Z" fill="url(#' + p + 'cape)" stroke="' + c.trim + '" stroke-opacity=".55" stroke-width=".9"/>' +
-    '<path d="M34 90 Q36 76 41 71 M86 90 Q84 76 79 71" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="2"/>' +
-    '<ellipse cx="35" cy="60" rx="3.4" ry="6" fill="' + c.skin + '"/><ellipse cx="85" cy="60" rx="3.4" ry="6" fill="' + skinDark + '"/>' +
-    '<path d="' + face + '" fill="url(#' + p + 'skin)"/>' +
-    '<path d="' + face + '" fill="url(#' + p + 'shade)"/>' +
-    '<circle cx="44" cy="71" r="6.5" fill="#ff8a8a" opacity="' + (c.female ? '.06' : '.04') + '"/><circle cx="76" cy="71" r="6.5" fill="#ff8a8a" opacity="' + (c.female ? '.05' : '.03') + '"/>' +
-    '<path d="M57.6 74.2 Q60 76.2 62.4 74.2" fill="none" stroke="' + skinDark + '" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>' +
-    '<path d="M59 67 Q60.6 70 60 72.6" fill="none" stroke="' + skinLight + '" stroke-width="1.6" stroke-linecap="round" opacity=".35"/>' +
-    arenaAccessoryBack(c) +
-    arenaEye(49, c) + arenaEye(71, c) +
-    '<path d="M51.8 80 Q60 84 68.2 80 Q64.6 86.2 60 86.2 Q55.4 86.2 51.8 80Z" fill="' + arenaShade(lips, .08) + '"/>' +
-    '<path d="M51.4 79.4 Q55.4 77 58.8 78.2 Q60 77.4 61.2 78.2 Q64.6 77 68.6 79.4 Q60 83.6 51.4 79.4Z" fill="' + lips + '"/>' +
-    '<path d="M51.4 79.4 Q55.4 77 58.8 78.2 Q60 77.4 61.2 78.2 Q64.6 77 68.6 79.4 Q60 83.6 51.4 79.4Z M51.8 80 Q60 84 68.2 80 Q64.6 86.2 60 86.2 Q55.4 86.2 51.8 80Z" fill="#e0536c" opacity="' + (c.female ? '.42' : '.3') + '"/>' +
-    '<path d="M51 78.8 Q60 85.2 69 78.8" fill="none" stroke="' + arenaShade(lips, -.5) + '" stroke-width="1" stroke-linecap="round"/>' +
-    '<path d="M56.4 83.4 Q60 84.6 63.6 83.4" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".3"/>' +
-    hair.front +
-    arenaAccessoryFront(c) +
-    '</g>' +
-    arenaFrame(c, p) +
-    '</svg>';
+  const look = resolveArenaLook(id, custom), p = 'ac-' + id + '-' + (++arenaArtCounter) + '-';
+  return window.drawArenaCharacter(id, look, p, arenaFrame(look, p), arenaEmblem(look));
 }
 const achievementCatalog = {
   first_game:{name:'FIRST VICTORY',icon:'target',description:'Complete your first challenge.'},

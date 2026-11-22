@@ -168,12 +168,12 @@ function arenaEye(cx, character) {
   const lash = character.female ? 1.9 : 1.5;
   const brow = arenaShade(character.hair, character.style === 'locs' ? 0 : -.1);
   const side = cx < 60 ? -1 : 1;
-  return '<path d="M' + (cx - 6) + ' 54.2 Q' + cx + ' 50.8 ' + (cx + 6) + ' 54.2" fill="none" stroke="' + brow + '" stroke-width="' + (character.female ? 1.9 : 2.5) + '" stroke-linecap="round"/>' +
-    '<path d="M' + (cx - 5.6) + ' 60 Q' + cx + ' 55.6 ' + (cx + 5.6) + ' 60 Q' + cx + ' 63.6 ' + (cx - 5.6) + ' 60Z" fill="#f4f0ec"/>' +
+  return '<path d="M' + (cx - 6 * side) + ' 54.6 Q' + (cx + 1 * side) + ' 50.6 ' + (cx + 6.4 * side) + ' 53.2" fill="none" stroke="' + brow + '" stroke-width="' + (character.female ? 1.9 : 2.5) + '" stroke-linecap="round"/>' +
+    '<path d="M' + (cx - 5.6) + ' 60 Q' + cx + ' 55.6 ' + (cx + 5.6) + ' 60 Q' + cx + ' 62.4 ' + (cx - 5.6) + ' 60Z" fill="#f4f0ec"/>' +
     '<circle cx="' + cx + '" cy="59.6" r="2.9" fill="' + character.iris + '"/><circle cx="' + cx + '" cy="59.6" r="1.35" fill="#090c14"/><circle cx="' + (cx - .9) + '" cy="58.7" r=".8" fill="#fff"/>' +
     '<path d="M' + (cx - 6.2) + ' 60.2 Q' + cx + ' 55 ' + (cx + 6.2) + ' 60.2" fill="none" stroke="#10131c" stroke-width="' + lash + '" stroke-linecap="round"/>' +
     (character.female ? '<path d="M' + (cx + 5.6 * side) + ' 59.6 L' + (cx + 8 * side) + ' 57.6" stroke="#10131c" stroke-width="1.4" stroke-linecap="round"/>' : '') +
-    '<path d="M' + (cx - 5) + ' 63.6 Q' + cx + ' 65.2 ' + (cx + 5) + ' 63.6" fill="none" stroke="' + arenaShade(character.skin, -.35) + '" stroke-width=".8" opacity=".5" stroke-linecap="round"/>';
+    '<path d="M' + (cx - 5.4) + ' 63.4 Q' + cx + ' 61.4 ' + (cx + 5.4) + ' 63.4" fill="none" stroke="' + arenaShade(character.skin, -.35) + '" stroke-width=".8" opacity=".5" stroke-linecap="round"/>';
 }
 function arenaCharacterArt(characterId) {
   const id = ARENA_CHARACTERS[characterId] ? characterId : 'nova';
@@ -214,10 +214,11 @@ function arenaCharacterArt(characterId) {
     '<path d="M55.4 74.6 Q60 77.4 64.8 74.6" fill="none" stroke="' + skinDark + '" stroke-width="1.5" stroke-linecap="round" opacity=".75"/>' +
     '<circle cx="56.6" cy="74.8" r=".9" fill="' + arenaShade(c.skin, -.5) + '" opacity=".8"/><circle cx="63.6" cy="74.8" r=".9" fill="' + arenaShade(c.skin, -.5) + '" opacity=".8"/>' +
     arenaEye(49, c) + arenaEye(71, c) +
-    '<path d="M52.4 82 Q56 79.6 60 81 Q64 79.6 67.6 82 Q60 84 52.4 82Z" fill="' + lips + '"/>' +
-    '<path d="M53.4 82.4 Q60 88.2 66.6 82.4 Q60 85 53.4 82.4Z" fill="' + arenaShade(lips, .12) + '"/>' +
-    '<path d="M52.4 82 Q60 84.2 67.6 82" fill="none" stroke="' + arenaShade(lips, -.45) + '" stroke-width=".9" stroke-linecap="round"/>' +
-    '<path d="M54.5 85.6 Q60 87.4 65.5 85.6" fill="none" stroke="' + skinLight + '" stroke-width="1" stroke-linecap="round" opacity=".35"/>' +
+    '<path d="M51.6 79.6 Q60 87.4 68.4 79.6 Q60 83.4 51.6 79.6Z" fill="#f6f1ec"/>' +
+    '<path d="M51.2 79.4 Q56 78.4 60 79.8 Q64 78.4 68.8 79.4 Q60 82.6 51.2 79.4Z" fill="' + lips + '"/>' +
+    '<path d="M53 81.8 Q60 88.8 67 81.8 Q60 86 53 81.8Z" fill="' + arenaShade(lips, .1) + '"/>' +
+    '<path d="M50.6 78.6 Q49.4 80.4 51.2 82.2 M69.4 78.6 Q70.6 80.4 68.8 82.2" fill="none" stroke="' + skinDark + '" stroke-width="1" stroke-linecap="round" opacity=".55"/>' +
+    '<ellipse cx="44.5" cy="70.5" rx="5.5" ry="3.6" fill="' + skinLight + '" opacity=".1"/><ellipse cx="75.5" cy="70.5" rx="5.5" ry="3.6" fill="' + skinLight + '" opacity=".06"/>' +
     hair.front +
     '</g>' +
     '<circle cx="60" cy="60" r="57" fill="none" stroke="' + c.accent + '" stroke-opacity=".75" stroke-width="2"/>' +

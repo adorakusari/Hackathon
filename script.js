@@ -130,7 +130,7 @@ function updateCombo(message) {
   const label = document.getElementById('combo-label');
   if (!label) return;
   const streak = comboStreaks[activeMode];
-  label.textContent = message || (streak >= 2 ? '🔥 ' + streak + 'x COMBO!' : streak === 1 ? '1 CORRECT IN A ROW' : 'COMBO: 0');
+  label.textContent = message || (streak >= 2 ? streak + 'x COMBO!' : streak === 1 ? '1 CORRECT IN A ROW' : 'COMBO: 0');
   label.classList.toggle('combo-active', streak >= 2);
 }
 function registerComboResult(passed) {
@@ -140,13 +140,13 @@ function registerComboResult(passed) {
   const streakNow = comboStreaks[activeMode];
   if (passed && streakNow >= 2) {
     playSound('combo', streakNow);
-    if (streakNow === 3) { shakeScreen('sm'); popText('🔥 3x COMBO!'); }
-    else if (streakNow === 5 || (streakNow >= 10 && streakNow % 5 === 0)) { shakeScreen('lg'); launchConfetti(60 + Math.min(streakNow, 20) * 5); popText('⚡ ' + streakNow + 'x COMBO!'); }
+    if (streakNow === 3) { shakeScreen('sm'); popText('3x COMBO!'); }
+    else if (streakNow === 5 || (streakNow >= 10 && streakNow % 5 === 0)) { shakeScreen('lg'); launchConfetti(60 + Math.min(streakNow, 20) * 5); popText(streakNow + 'x COMBO!'); }
   } else if (!passed && previousStreak >= 3) {
     shakeScreen('sm');
-    popText('💥 COMBO LOST');
+    popText('COMBO LOST');
   }
-  updateCombo(!passed ? 'COMBO RESET — TRY AGAIN!' : comboStreaks[activeMode] >= 2 ? '🔥 ' + comboStreaks[activeMode] + 'x COMBO!' : 'NICE! KEEP GOING!');
+  updateCombo(!passed ? 'COMBO RESET — TRY AGAIN!' : comboStreaks[activeMode] >= 2 ? comboStreaks[activeMode] + 'x COMBO!' : 'NICE! KEEP GOING!');
 }
 
 const XP_PER_LEVEL = 250;
@@ -208,14 +208,14 @@ const CUSTOM_FRAMES = [
   {id:'default',name:'Classic',lvl:1},{id:'gold',name:'Gold',lvl:3},{id:'neon',name:'Neon',lvl:6},{id:'rainbow',name:'Rainbow',lvl:9},{id:'fire',name:'Inferno',lvl:12},{id:'aura',name:'Streak Aura',lvl:1,streak:7}
 ];
 const CUSTOM_CATEGORIES = [
-  {key:'skin',label:'SKIN',icon:'🧑',list:CUSTOM_SKINS,swatch:'color'},
-  {key:'style',label:'HAIR',icon:'💇',list:CUSTOM_HAIR_STYLES},
-  {key:'hairColor',label:'HAIR COLOR',icon:'🎨',list:CUSTOM_HAIR_COLORS,swatch:'color'},
-  {key:'eyes',label:'EYES',icon:'👁️',list:CUSTOM_EYES,swatch:'color'},
-  {key:'outfit',label:'HERO SUIT',icon:'🦸',list:CUSTOM_OUTFITS},
-  {key:'emblem',label:'EMBLEM',icon:'⭐',list:CUSTOM_EMBLEMS},
-  {key:'accessory',label:'EXTRAS',icon:'👑',list:CUSTOM_EXTRAS},
-  {key:'frame',label:'FRAME',icon:'💠',list:CUSTOM_FRAMES}
+  {key:'skin',label:'SKIN',icon:'user',list:CUSTOM_SKINS,swatch:'color'},
+  {key:'style',label:'HAIR',icon:'scissors',list:CUSTOM_HAIR_STYLES},
+  {key:'hairColor',label:'HAIR COLOR',icon:'drop',list:CUSTOM_HAIR_COLORS,swatch:'color'},
+  {key:'eyes',label:'EYES',icon:'eye',list:CUSTOM_EYES,swatch:'color'},
+  {key:'outfit',label:'HERO SUIT',icon:'shield',list:CUSTOM_OUTFITS},
+  {key:'emblem',label:'EMBLEM',icon:'star',list:CUSTOM_EMBLEMS},
+  {key:'accessory',label:'EXTRAS',icon:'crown',list:CUSTOM_EXTRAS},
+  {key:'frame',label:'FRAME',icon:'frame',list:CUSTOM_FRAMES}
 ];
 function resolveArenaLook(characterId, custom) {
   const base = ARENA_CHARACTERS[characterId] || ARENA_CHARACTERS.nova;
@@ -397,13 +397,13 @@ function arenaCharacterArt(characterId, custom) {
     '</svg>';
 }
 const achievementCatalog = {
-  first_game:{name:'FIRST VICTORY',icon:'🎯',description:'Complete your first challenge.'},
-  combo_5:{name:'UNSTOPPABLE',icon:'🔥',description:'Reach a 5x combo.'},
-  lightning:{name:'LIGHTNING REFLEX',icon:'⚡',description:'React in 250 ms or less.'},
-  clicker:{name:'CLICK MACHINE',icon:'🖱️',description:'Reach 5 clicks per second.'},
-  code_master:{name:'CODE MASTER',icon:'💻',description:'Reach 40 WPM in Code Race.'},
-  target_lock:{name:'DEAD EYE',icon:'⌖',description:'Lock onto all 15 targets in one Target Lock run.'},
-  perfect_timing:{name:'SHARPSHOOTER',icon:'🎯',description:'Land 6 PERFECT hits in one Perfect Timing run.'}
+  first_game:{name:'FIRST VICTORY',icon:'target',description:'Complete your first challenge.'},
+  combo_5:{name:'UNSTOPPABLE',icon:'flame',description:'Reach a 5x combo.'},
+  lightning:{name:'LIGHTNING REFLEX',icon:'bolt',description:'React in 250 ms or less.'},
+  clicker:{name:'CLICK MACHINE',icon:'pointer',description:'Reach 5 clicks per second.'},
+  code_master:{name:'CODE MASTER',icon:'code',description:'Reach 40 WPM in Code Race.'},
+  target_lock:{name:'DEAD EYE',icon:'crosshair',description:'Lock onto all 15 targets in one Target Lock run.'},
+  perfect_timing:{name:'SHARPSHOOTER',icon:'target',description:'Land 6 PERFECT hits in one Perfect Timing run.'}
 };
 function readPlayerProfile() {
   try {
@@ -466,7 +466,7 @@ function renderProfile() {
   document.getElementById('player-level').textContent = 'LEVEL ' + level;
   document.getElementById('xp-to-next').textContent = inLevel + ' / ' + XP_PER_LEVEL + ' XP';
   document.getElementById('xp-fill').style.width = (inLevel / XP_PER_LEVEL * 100) + '%';
-  document.getElementById('achievement-summary').textContent = '🏅 ' + playerProfile.achievements.length + ' ACHIEVEMENT' + (playerProfile.achievements.length === 1 ? '' : 'S') + ' UNLOCKED';
+  document.getElementById('achievement-summary').innerHTML = ICON('medal') + ' ' + playerProfile.achievements.length + ' ACHIEVEMENT' + (playerProfile.achievements.length === 1 ? '' : 'S') + ' UNLOCKED';
   renderDetailedProfile();
 }
 function renderDetailedProfile() {
@@ -502,7 +502,7 @@ function renderDetailedProfile() {
   document.getElementById('profile-achievements').innerHTML = catalogKeys.map(key => {
     const item = achievementCatalog[key];
     const unlocked = playerProfile.achievements.includes(key);
-    return '<div class="profile-achievement ' + (unlocked ? 'unlocked' : 'locked') + '"><span class="profile-achievement-icon">' + (unlocked ? item.icon : '🔒') + '</span><span><strong>' + item.name + '</strong><small>' + item.description + '</small></span><em>' + (unlocked ? 'UNLOCKED' : 'LOCKED') + '</em></div>';
+    return '<div class="profile-achievement ' + (unlocked ? 'unlocked' : 'locked') + '"><span class="profile-achievement-icon">' + ICON(unlocked ? item.icon : 'lock') + '</span><span><strong>' + item.name + '</strong><small>' + item.description + '</small></span><em>' + (unlocked ? 'UNLOCKED' : 'LOCKED') + '</em></div>';
   }).join('');
 }
 function renderCharacterPicker() {
@@ -512,7 +512,7 @@ function renderCharacterPicker() {
   picker.innerHTML = Object.entries(ARENA_CHARACTERS).map(([id,character]) => {
     const need = character.unlock || 1, locked = level < need;
     return '<button type="button" class="character-option ' + (id === selectedProfileAvatar ? 'selected ' : '') + (locked ? 'locked' : '') + '" data-character="' + id + '" aria-pressed="' + (id === selectedProfileAvatar) + '"' + (locked ? ' aria-disabled="true" title="Reach level ' + need + ' to unlock"' : '') + '>' +
-      '<span class="character-option-art">' + arenaCharacterArt(id, playerProfile.custom[id]) + (locked ? '<span class="lock-badge">🔒 LV ' + need + '</span>' : '') + '</span><strong>' + character.name + '</strong><small>' + (locked ? 'REACH LEVEL ' + need : character.role) + '</small></button>';
+      '<span class="character-option-art">' + arenaCharacterArt(id, playerProfile.custom[id]) + (locked ? '<span class="lock-badge">' + ICON('lock') + ' LV ' + need + '</span>' : '') + '</span><strong>' + character.name + '</strong><small>' + (locked ? 'REACH LEVEL ' + need : character.role) + '</small></button>';
   }).join('');
   picker.querySelectorAll('.character-option').forEach(button => {
     button.addEventListener('click', () => {
@@ -592,7 +592,7 @@ function renderDailyChallenges() {
       item.id==='code' ? (item.completed?'40+ WPM REACHED': 'BEST: '+(item.progress?Number(item.progress).toFixed(1)+' WPM':'—')) :
       item.id==='click' ? (item.completed?'100+ CLICKS REACHED': 'BEST: '+item.progress+'/100') :
       (item.completed?'3 PERFECT LEVELS':'STREAK: '+item.progress+'/3');
-    return '<article class="daily-item daily-'+item.id+' '+(item.completed?'is-complete':'')+'"><span class="daily-status">'+(item.completed?'✓':'✦')+'</span><div class="daily-copy"><strong>'+item.title+'</strong><p>'+item.description+'</p><small>'+progressText+'</small></div><span class="daily-reward">'+(item.completed?'CLAIMED':'+50 XP')+'</span></article>';
+    return '<article class="daily-item daily-'+item.id+' '+(item.completed?'is-complete':'')+'"><span class="daily-status">'+ICON(item.completed?'check':'sparkle')+'</span><div class="daily-copy"><strong>'+item.title+'</strong><p>'+item.description+'</p><small>'+progressText+'</small></div><span class="daily-reward">'+(item.completed?'CLAIMED':'+50 XP')+'</span></article>';
   }).join('');
   const completed=dailyState.challenges.filter(item=>item.completed).length;
   document.getElementById('daily-progress-label').textContent=completed+' / 3 COMPLETE';
@@ -655,7 +655,7 @@ function showRewardSummary(mode, amount, unlocked, detail) {
   const level = playerLevel();
   const progress = playerProfile.xp % XP_PER_LEVEL;
   const achievements = unlocked.length
-    ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(item => '<div class="achievement-unlock"><b>' + item.icon + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>'
+    ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(item => '<div class="achievement-unlock"><b>' + ICON(item.icon) + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>'
     : '<p class="no-achievement">Keep playing to unlock your next achievement.</p>';
   panel.innerHTML = '<div class="reward-heading">CHALLENGE COMPLETE</div><div class="reward-xp">+' + amount + ' XP <span>earned</span></div><p class="reward-detail">' + detail + '</p>' + achievements + '<div class="reward-progress"><div><b>LEVEL ' + level + '</b><span>' + progress + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (progress / XP_PER_LEVEL * 100) + '%"></span></div></div>';
   panel.classList.remove('hidden');
@@ -728,7 +728,7 @@ function renderLevels() {
     button.className = 'level-button' + (unlocked ? ' unlocked' : '') + (completed ? ' completed' : '');
     button.disabled = !unlocked;
     button.innerHTML = '<span class="level-number">' + String(level).padStart(2,'0') + '</span><span class="level-status">' +
-      (completed ? '✓ COMPLETE' : unlocked ? 'UNLOCKED' : '🔒 LOCKED') + '</span>';
+      (completed ? ICON('check') + ' COMPLETE' : unlocked ? 'UNLOCKED' : ICON('lock') + ' LOCKED') + '</span>';
     if (unlocked) button.addEventListener('click', () => openLevel(level));
     levelGrid.appendChild(button);
   }
@@ -1224,8 +1224,8 @@ function finishCodeRace() {
   const place = botsAhead >= 3 ? '4th Place' : botsAhead === 2 ? '3rd Place' : botsAhead === 1 ? '2nd Place' : '1st Place';
   const xpEarned = 20 + (place === '1st Place' ? 30 : place === '2nd Place' ? 20 : place === '3rd Place' ? 10 : 0) + (accuracy >= 95 ? 10 : 0);
   const unlockedAchievements = awardXP(xpEarned,wpm >= 40 ? ['code_master'] : []);
-  if (place === '1st Place') { launchConfetti(150); popText('🏁 1ST PLACE!'); } else if (place === '2nd Place' || place === '3rd Place') launchConfetti(50);
-  const rewardHtml = '<div class="reward-heading">RACE REWARDS</div><div class="reward-xp">+' + xpEarned + ' XP <span>earned</span></div><p class="reward-detail">' + place + ' finish • ' + wpm.toFixed(1) + ' WPM • ' + accuracy.toFixed(1) + '% accuracy</p>' + (unlockedAchievements.length ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlockedAchievements.map(item => '<div class="achievement-unlock"><b>' + item.icon + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>' : '<p class="no-achievement">Keep racing to unlock your next achievement.</p>') + '<div class="reward-progress"><div><b>LEVEL ' + playerLevel() + '</b><span>' + (playerProfile.xp % XP_PER_LEVEL) + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (playerProfile.xp % XP_PER_LEVEL / XP_PER_LEVEL * 100) + '%"></span></div></div>';
+  if (place === '1st Place') { launchConfetti(150); popText('1ST PLACE!'); } else if (place === '2nd Place' || place === '3rd Place') launchConfetti(50);
+  const rewardHtml = '<div class="reward-heading">RACE REWARDS</div><div class="reward-xp">+' + xpEarned + ' XP <span>earned</span></div><p class="reward-detail">' + place + ' finish • ' + wpm.toFixed(1) + ' WPM • ' + accuracy.toFixed(1) + '% accuracy</p>' + (unlockedAchievements.length ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlockedAchievements.map(item => '<div class="achievement-unlock"><b>' + ICON(item.icon) + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>' : '<p class="no-achievement">Keep racing to unlock your next achievement.</p>') + '<div class="reward-progress"><div><b>LEVEL ' + playerLevel() + '</b><span>' + (playerProfile.xp % XP_PER_LEVEL) + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (playerProfile.xp % XP_PER_LEVEL / XP_PER_LEVEL * 100) + '%"></span></div></div>';
   if (!raceBest || wpm > raceBest.wpm) {
     raceBest = {wpm,accuracy};
     localStorage.setItem('rsa-code-best',JSON.stringify(raceBest));
@@ -1325,7 +1325,7 @@ let soundContext = null;
 function updateSoundToggle() {
   const toggle = document.getElementById('sound-toggle');
   if (!toggle) return;
-  toggle.textContent = soundMuted ? '🔇 SOUND OFF' : '🔊 SOUND ON';
+  toggle.innerHTML = soundMuted ? ICON('speaker-off') + ' SOUND OFF' : ICON('speaker') + ' SOUND ON';
   toggle.setAttribute('aria-pressed', String(soundMuted));
 }
 function playSound(kind, level) {
@@ -1390,7 +1390,7 @@ function setupClickTargets() {
     moveClickTargets();
   });
   const gold = document.createElement('button');
-  gold.type = 'button'; gold.className = 'golden-powerup'; gold.textContent = '★';
+  gold.type = 'button'; gold.className = 'golden-powerup'; gold.innerHTML = ICON('star');
   gold.setAttribute('aria-label','Golden power-up: add ten clicks');
   gold.addEventListener('click',event => {
     event.stopPropagation();
@@ -1535,7 +1535,7 @@ function renderStreak() {
   const streak = playerProfile.streak;
   const canClaim = status.state !== 'claimed';
   const doneDays = status.state === 'claimed' ? ((status.current - 1) % 7) + 1 : status.state === 'ready' ? status.current % 7 : 0;
-  document.getElementById('streak-title').textContent = '🔥 ' + status.current + ' DAY STREAK';
+  document.getElementById('streak-title').innerHTML = ICON('flame') + ' ' + status.current + ' DAY STREAK';
   document.getElementById('streak-best').textContent = 'BEST: ' + streak.best;
   card.classList.toggle('streak-ready', canClaim);
   const days = document.getElementById('streak-days');
@@ -1548,7 +1548,7 @@ function renderStreak() {
     const isTomorrow = !canClaim && number === doneDays + 1;
     tile.className = 'streak-day' + (isDone ? ' done' : '') + (isToday ? ' today' : '') + (number === 7 ? ' special' : '');
     const label = document.createElement('small'); label.textContent = isToday ? 'TODAY' : isTomorrow ? 'TOMORROW' : 'DAY ' + number;
-    const icon = document.createElement('b'); icon.textContent = isDone ? '✓' : number === 7 ? '🏆' : '🎁';
+    const icon = document.createElement('b'); icon.innerHTML = ICON(isDone ? 'check' : number === 7 ? 'trophy' : 'gift');
     const amount = document.createElement('span'); amount.textContent = '+' + xp + ' XP';
     tile.append(label, icon, amount);
     days.appendChild(tile);
@@ -1578,11 +1578,11 @@ function claimStreakReward() {
   const box = button.getBoundingClientRect();
   playSound('reward');
   launchConfetti(count % 7 === 0 ? 190 : 100, {x:box.left + box.width / 2, y:box.top});
-  popText('🔥 DAY ' + count + ' • +' + reward + ' XP');
+  popText('DAY ' + count + ' • +' + reward + ' XP');
   const unlockedNow = [];
   if (before < 7 && playerProfile.streak.best >= 7) unlockedNow.push('Streak Aura frame');
   if (before < 14 && playerProfile.streak.best >= 14) unlockedNow.push('Phoenix suit');
-  if (unlockedNow.length) setTimeout(() => { playSound('unlock'); showGameToast('🔥 STREAK REWARD!', '🔓 Unlocked: ' + unlockedNow.join(' and ') + '. Equip it in Customize!', '🎨 CUSTOMIZE NOW', openCustomize); }, 700);
+  if (unlockedNow.length) setTimeout(() => { playSound('unlock'); showGameToast('STREAK REWARD!', 'Unlocked: ' + unlockedNow.join(' and ') + '. Equip it in Customize!', 'CUSTOMIZE NOW', openCustomize); }, 700);
 }
 
 /* ---- Arena bots and online ranking ---- */
@@ -1681,7 +1681,7 @@ function leaderboardEntries() {
   localLeaderboardEntries().forEach(entry => { if (!merged.has(entry.key) || entry.key === own) merged.set(entry.key, entry); });
   return Array.from(merged.values()).sort((a, b) => b.xp - a.xp || b.achievements - a.achievements || a.username.localeCompare(b.username));
 }
-function entryLabel(entry) { return entry.username.toUpperCase() + (entry.isBot ? ' 🤖' : ''); }
+function entryLabel(entry) { return entry.username.toUpperCase() + ''; }
 function rankSnapshot() {
   const key = currentAccountKey();
   return key ? {key, order:leaderboardEntries().map(entry => entry.key)} : null;
@@ -1698,7 +1698,7 @@ function announceRankChange(snapshot) {
   if (!passed.length) return;
   setTimeout(() => {
     playSound('unlock'); launchConfetti(90);
-    showGameToast('🏆 YOU PASSED ' + passed.slice(0, 2).map(entryLabel).join(' & ') + (passed.length > 2 ? ' +' + (passed.length - 2) : '') + '!', 'You are now rank #' + (after + 1) + ' of ' + entries.length + '. Keep climbing!', '🏆 LEADERBOARD', openLeaderboard);
+    showGameToast('YOU PASSED ' + passed.slice(0, 2).map(entryLabel).join(' & ') + (passed.length > 2 ? ' +' + (passed.length - 2) : '') + '!', 'You are now rank #' + (after + 1) + ' of ' + entries.length + '. Keep climbing!', 'LEADERBOARD', openLeaderboard);
   }, playerLevel() > levelBeforeForToast ? 3600 : 1300);
 }
 let levelBeforeForToast = 0;
@@ -1711,7 +1711,7 @@ function checkRankDrop() {
   const last = Number(localStorage.getItem(storageKey)) || 0;
   if (last && rank > last) {
     const ahead = entries[rank - 2];
-    showGameToast('😤 YOU DROPPED TO #' + rank, (ahead ? entryLabel(ahead) + ' is now ahead of you. ' : '') + 'Play a round to fight back!', '🏆 LEADERBOARD', openLeaderboard);
+    showGameToast('YOU DROPPED TO #' + rank, (ahead ? entryLabel(ahead) + ' is now ahead of you. ' : '') + 'Play a round to fight back!', 'LEADERBOARD', openLeaderboard);
   }
   localStorage.setItem(storageKey, String(rank));
 }
@@ -1719,14 +1719,14 @@ function renderLeaderboardStatus() {
   const node = document.getElementById('lb-status');
   if (!node) return;
   const humans = onlineState.list.length;
-  if (onlineState.status === 'off') node.textContent = '📴 OFFLINE MODE';
-  else if (onlineState.loading) node.textContent = '⏳ UPDATING…';
-  else if (onlineState.status === 'ok') node.textContent = '🌐 ONLINE • ' + humans + ' PLAYER' + (humans === 1 ? '' : 'S');
-  else if (onlineState.status === 'error') node.textContent = '⚠ ONLINE RANKING UNREACHABLE';
-  else node.textContent = '🌐 CONNECTING…';
+  if (onlineState.status === 'off') node.textContent = 'OFFLINE MODE';
+  else if (onlineState.loading) node.textContent = 'UPDATING…';
+  else if (onlineState.status === 'ok') node.textContent = 'ONLINE • ' + humans + ' PLAYER' + (humans === 1 ? '' : 'S');
+  else if (onlineState.status === 'error') node.textContent = 'ONLINE RANKING UNREACHABLE';
+  else node.textContent = 'CONNECTING…';
   node.className = 'lb-status ' + (onlineState.status === 'ok' ? 'ok' : onlineState.status === 'error' ? 'bad' : '');
   const note = document.getElementById('lb-note');
-  if (note) note.textContent = ONLINE_ENABLED ? 'Players from all over the world compete here. 🤖 are arena bots that train every day.' : 'Offline mode: rankings show the 🤖 arena bots and players signed in on this device.';
+  if (note) note.textContent = ONLINE_ENABLED ? 'Players from all over the world compete here. Accounts tagged BOT are arena bots that train every day.' : 'Offline mode: rankings show the arena bots and players signed in on this device.';
 }
 
 /* ---- Sign in, sign out and leaderboard ---- */
@@ -1743,7 +1743,7 @@ function refreshAuthUI() {
   updateCustomizeButtons();
   renderStreak();
   const key = currentAccountKey();
-  authToggle.textContent = key ? '👤 ' + playerProfile.username.toUpperCase() : '👤 SIGN IN';
+  authToggle.innerHTML = ICON('user') + ' '; authToggle.append(key ? playerProfile.username.toUpperCase() : 'SIGN IN');
   authToggle.setAttribute('aria-label', key ? 'Signed in as ' + playerProfile.username + '. Open account menu' : 'Sign in');
   const nameInput = document.getElementById('profile-name-input');
   if (nameInput) { nameInput.disabled = !!key; nameInput.title = key ? 'Your player name is set by your sign in' : ''; }
@@ -1769,7 +1769,7 @@ function renderLeaderboard() {
     title.textContent = 'YOUR RANK: #' + position + ' OF ' + entries.length;
     const ahead = position > 1 ? entries[position - 2] : null;
     const behind = position < entries.length ? entries[position] : null;
-    detail.textContent = ahead ? '🎯 ' + Math.max(1, ahead.xp - playerProfile.xp + 1) + ' XP to pass ' + entryLabel(ahead) + (behind ? ' • ' + entryLabel(behind) + ' is ' + Math.max(0, playerProfile.xp - behind.xp) + ' XP behind you' : '') : '👑 You are the champion! ' + (behind ? entryLabel(behind) + ' is ' + Math.max(0, playerProfile.xp - behind.xp) + ' XP behind you.' : '');
+    detail.textContent = ahead ? Math.max(1, ahead.xp - playerProfile.xp + 1) + ' XP to pass ' + entryLabel(ahead) + (behind ? ' • ' + entryLabel(behind) + ' is ' + Math.max(0, playerProfile.xp - behind.xp) + ' XP behind you' : '') : 'You are the champion! ' + (behind ? entryLabel(behind) + ' is ' + Math.max(0, playerProfile.xp - behind.xp) + ' XP behind you.' : '');
     youCard.append(title, detail);
   } else {
     const guestRank = entries.filter(entry => entry.xp > playerProfile.xp).length + 1;
@@ -1780,22 +1780,22 @@ function renderLeaderboard() {
     button.addEventListener('click', openAuthModal);
     youCard.append(title, detail, button);
   }
-  const medals = ['🥇', '🥈', '🥉'];
+  const medalIcon = index => ICON('medal', 'lb-medal lb-medal-' + (index + 1));
   const buildRow = (entry, index) => {
     const row = document.createElement('li');
     row.className = 'lb-row' + (index < 3 ? ' top-' + (index + 1) : '') + (entry.key === key ? ' you' : '') + (entry.isBot ? ' bot' : '');
-    const rank = document.createElement('span'); rank.className = 'lb-rank'; rank.textContent = index < 3 ? medals[index] : '#' + (index + 1);
+    const rank = document.createElement('span'); rank.className = 'lb-rank'; rank.innerHTML = index < 3 ? medalIcon(index) : '#' + (index + 1);
     const avatar = document.createElement('span'); avatar.className = 'lb-avatar'; avatar.innerHTML = arenaCharacterArt(entry.avatar, entry.custom);
     const who = document.createElement('span'); who.className = 'lb-name';
     const name = document.createElement('strong'); name.textContent = entry.username + (entry.key === key ? ' (YOU)' : '');
-    if (entry.isBot) { const tag = document.createElement('i'); tag.className = 'lb-bot-tag'; tag.textContent = '🤖 BOT'; name.appendChild(tag); }
+    if (entry.isBot) { const tag = document.createElement('i'); tag.className = 'lb-bot-tag'; tag.textContent = 'BOT'; name.appendChild(tag); }
     const meta = document.createElement('small'); meta.textContent = (entry.isBot ? entry.title : rankTitleForLevel(entry.level)) + ' • LEVEL ' + entry.level;
     who.append(name, meta);
     const xp = document.createElement('span'); xp.className = 'lb-xp';
     const xpValue = document.createElement('strong'); xpValue.textContent = entry.xp;
     const xpLabel = document.createElement('small'); xpLabel.textContent = 'XP';
     xp.append(xpValue, xpLabel);
-    const ach = document.createElement('span'); ach.className = 'lb-ach'; ach.textContent = '🏅 ' + entry.achievements; ach.title = entry.achievements + ' achievements';
+    const ach = document.createElement('span'); ach.className = 'lb-ach'; ach.innerHTML = ICON('medal') + ' ' + entry.achievements; ach.title = entry.achievements + ' achievements';
     row.append(rank, avatar, who, xp, ach);
     return row;
   };
@@ -1945,7 +1945,7 @@ function renderCustomize() {
     tab.type = 'button'; tab.setAttribute('role', 'tab');
     tab.className = 'customize-tab' + (category.key === customizeTab ? ' active' : '');
     tab.setAttribute('aria-selected', String(category.key === customizeTab));
-    const label = document.createElement('span'); label.textContent = category.icon + ' ' + category.label;
+    const label = document.createElement('span'); label.innerHTML = ICON(category.icon) + ' ' + category.label;
     const count = document.createElement('small'); count.textContent = open + '/' + category.list.length;
     tab.append(label, count);
     tab.addEventListener('click', () => { customizeTab = category.key; customHint('Pick an option to change your look. Changes save automatically.'); renderCustomize(); });
@@ -1977,11 +1977,11 @@ function renderCustomize() {
       art.innerHTML = arenaCharacterArt(selectedProfileAvatar, previewChoice);
     }
     if (category.key === 'outfit' && item.id !== null) { art.innerHTML = arenaCharacterArt(selectedProfileAvatar, Object.assign({}, choice, {outfit:item.id})); }
-    if (locked) { const lock = document.createElement('span'); lock.className = 'customize-lock'; lock.textContent = item.streak ? '🔥 ' + item.streak + ' DAYS' : '🔒 LV ' + itemLevel(item); art.appendChild(lock); }
+    if (locked) { const lock = document.createElement('span'); lock.className = 'customize-lock'; lock.innerHTML = ICON(item.streak ? 'flame' : 'lock') + ' ' + (item.streak ? item.streak + ' DAYS' : 'LV ' + itemLevel(item)); art.appendChild(lock); }
     const name = document.createElement('small'); name.textContent = item.name;
     button.append(art, name);
     button.addEventListener('click', () => {
-      if (locked) { customHint('🔒 ' + lockedMessage(item)); return; }
+      if (locked) { customHint( lockedMessage(item)); return; }
       setCustomChoice(category.key, item.id);
       customHint('✓ ' + (item.id === null ? 'ORIGINAL ' + category.label : item.name.toUpperCase()) + ' EQUIPPED');
     });
@@ -1998,7 +1998,7 @@ function randomizeCustom() {
   playerProfile.custom[selectedProfileAvatar] = entry;
   playerProfile.avatar = selectedProfileAvatar;
   savePlayerProfile(); renderProfile(); refreshAuthUI(); renderCustomize();
-  customHint('🎲 NEW RANDOM LOOK!');
+  customHint('NEW RANDOM LOOK!');
 }
 function openCustomize() {
   if (!ARENA_CHARACTERS[selectedProfileAvatar] || playerLevel() < (ARENA_CHARACTERS[selectedProfileAvatar].unlock || 1)) selectedProfileAvatar = playerProfile.avatar;
@@ -2008,8 +2008,8 @@ function openCustomize() {
 }
 function announceLevelUp(before, after) {
   const names = allCustomItems().filter(item => !item.streak && item.lvl > before && item.lvl <= after).map(item => item.name);
-  const detail = names.length ? '🔓 Unlocked: ' + names.slice(0, 4).join(', ') + (names.length > 4 ? ' +' + (names.length - 4) + ' more' : '') : 'Keep playing to unlock more looks!';
-  showGameToast('⬆ LEVEL UP! LEVEL ' + after, detail, names.length ? '🎨 CUSTOMIZE NOW' : '', openCustomize);
+  const detail = names.length ? 'Unlocked: ' + names.slice(0, 4).join(', ') + (names.length > 4 ? ' +' + (names.length - 4) + ' more' : '') : 'Keep playing to unlock more looks!';
+  showGameToast('LEVEL UP! LEVEL ' + after, detail, names.length ? 'CUSTOMIZE NOW' : '', openCustomize);
 }
 document.getElementById('open-customize-button').addEventListener('click', openCustomize);
 document.getElementById('open-customize-quick').addEventListener('click', openCustomize);
@@ -2017,7 +2017,7 @@ document.getElementById('customize-back-button').addEventListener('click', () =>
 document.getElementById('customize-random').addEventListener('click', randomizeCustom);
 document.getElementById('customize-reset').addEventListener('click', () => {
   delete playerProfile.custom[selectedProfileAvatar];
-  savePlayerProfile(); renderProfile(); refreshAuthUI(); renderCustomize(); customHint('↺ ORIGINAL LOOK RESTORED');
+  savePlayerProfile(); renderProfile(); refreshAuthUI(); renderCustomize(); customHint('ORIGINAL LOOK RESTORED');
 });
 updateCustomizeButtons();
 renderLeaderboardStatus();

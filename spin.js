@@ -82,7 +82,7 @@
       msg.dataset.won = 'You won +' + prize.xp + ' XP today! Come back tomorrow.';
       playSound(prize.xp >= 50 ? 'levelup' : 'reward');
       launchConfetti(prize.xp >= 50 ? 220 : 110); popText('+' + prize.xp + ' XP!');
-      refresh(); msg.textContent = '🎉 You won +' + prize.xp + ' XP!';
+      refresh(); msg.textContent = 'You won +' + prize.xp + ' XP!';
       if (typeof renderStats === 'function') renderStats();
     }, 5200);
   }

@@ -958,3 +958,11 @@ body { font-family:var(--font-body); }
 .arena-tab span { vertical-align:middle; }
 .mode-quick-row[hidden] { display:none !important; }
 @media(max-width:640px) { .arena-tab { padding:9px 11px; font-size:10px; letter-spacing:.08em; } .arena-tab span { display:none; } .arena-tab.active span,#tab-daily span { display:inline; } }
+
+/* inline SVG icons */
+.ico { width:1.15em; height:1.15em; vertical-align:-.2em; flex:none; }
+.mode-icon .ico { width:1em; height:1em; vertical-align:middle; }
+.arena-tab .ico { margin-right:4px; }
+.lb-medal { width:1.4em; height:1.4em; } .lb-medal-1 { color:#ffd447; } .lb-medal-2 { color:#cfd8ea; } .lb-medal-3 { color:#e08a4a; }
+.profile-achievement-icon .ico,.achievement-unlock .ico { color:#ffd98c; }
+.demo-click .cursor { font-size:0; }

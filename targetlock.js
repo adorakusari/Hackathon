@@ -169,10 +169,10 @@
     if (record) localStorage.setItem('rsa-targetlock-best', JSON.stringify({score:s.score, avg:avg === null ? 0 : avg, hits:s.hits, grade}));
     window.renderTargetLockBest();
     if (grade === 'S' || grade === 'A' || record) launchConfetti(grade === 'S' ? 200 : 110);
-    if (grade === 'S') popText('🎯 S RANK!');
+    if (grade === 'S') popText('S RANK!');
     playSound('finish');
     const level = playerLevel(), progress = playerProfile.xp % XP_PER_LEVEL;
-    const ach = unlocked.length ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(i => '<div class="achievement-unlock"><b>' + i.icon + ' ' + i.name + '</b><small>' + i.description + '</small></div>').join('') + '</div>' : '<p class="no-achievement">Lock all ' + ROUNDS + ' targets in one run to unlock DEAD EYE.</p>';
+    const ach = unlocked.length ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(i => '<div class="achievement-unlock"><b>' + ICON(i.icon) + ' ' + i.name + '</b><small>' + i.description + '</small></div>').join('') + '</div>' : '<p class="no-achievement">Lock all ' + ROUNDS + ' targets in one run to unlock DEAD EYE.</p>';
     resultBox.innerHTML = '<div class="timing-grade grade-' + grade + '">' + grade + '</div><div class="reward-heading">RUN COMPLETE' + (record ? ' • NEW RECORD!' : '') + '</div><div class="reward-xp">+' + xp + ' XP <span>earned</span></div>' +
       '<div class="timing-stats"><div><b>' + s.score + '</b><span>SCORE</span></div><div><b>' + s.hits + ' / ' + ROUNDS + '</b><span>LOCKED</span></div><div><b>' + s.wrong + '</b><span>WRONG</span></div><div><b>' + s.bestCombo + '</b><span>BEST STREAK</span></div><div><b>' + (avg === null ? '—' : avg + ' ms') + '</b><span>AVG LOCK</span></div></div>' + ach +
       '<div class="reward-progress"><div><b>LEVEL ' + level + '</b><span>' + progress + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (progress / XP_PER_LEVEL * 100) + '%"></span></div></div>';

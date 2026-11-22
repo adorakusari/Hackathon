@@ -8,6 +8,7 @@
   <title>Reaction Speed Arena</title>
   <link rel="stylesheet" href="style.css">
   <script src="config.js" defer></script>
+  <script src="icons.js" defer></script>
   <script src="script.js" defer></script>
   <script src="timing.js" defer></script>
   <script src="targetlock.js" defer></script>
@@ -16,8 +17,8 @@
 </head>
 <body>
   <main class="home">
-    <button class="auth-toggle" id="auth-toggle" type="button" aria-haspopup="dialog">👤 SIGN IN</button>
-    <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false">🔊 SOUND ON</button>
+    <button class="auth-toggle" id="auth-toggle" type="button" aria-haspopup="dialog"><svg class="ico ico-user" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg> SIGN IN</button>
+    <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false"><svg class="ico ico-speaker" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/></svg> SOUND ON</button>
     <div class="glow glow-one" aria-hidden="true"></div>
     <div class="glow glow-two" aria-hidden="true"></div>
     <div class="meteor-field" aria-hidden="true">
@@ -53,25 +54,25 @@
     <section class="panel mode-panel hidden" id="mode-screen" aria-labelledby="mode-title">
       <button class="back-button" id="home-button" type="button">← HOME</button>
       <nav class="arena-tabs" id="arena-tabs" aria-label="Arena navigation">
-        <button class="arena-tab active" id="tab-play" type="button" data-pane="play">🎮 <span>PLAY</span></button>
-        <button class="arena-tab" id="tab-daily" type="button" data-pane="daily">🎁 <span>DAILY REWARDS</span><i class="tab-dot hidden" id="daily-dot"></i></button>
-        <button class="arena-tab" id="tab-leaderboard" type="button" data-go="open-leaderboard-button">🏆 <span>LEADERBOARD</span></button>
-        <button class="arena-tab" id="tab-profile" type="button" data-go="open-profile-button">👤 <span>PROFILE</span></button>
-        <button class="arena-tab" id="tab-customize" type="button" data-go="open-customize-quick">🎨 <span>CUSTOMIZE</span></button>
+        <button class="arena-tab active" id="tab-play" type="button" data-pane="play"><svg class="ico ico-gamepad" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor"/><circle cx="18" cy="14" r=".9" fill="currentColor"/></svg> <span>PLAY</span></button>
+        <button class="arena-tab" id="tab-daily" type="button" data-pane="daily"><svg class="ico ico-gift" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8a1 1 0 001 1h12a1 1 0 001-1v-8M12 8c-2-4-6-3-5 0 .5 1.5 3 1 5 0zM12 8c2-4 6-3 5 0-.5 1.5-3 1-5 0z"/></svg> <span>DAILY REWARDS</span><i class="tab-dot hidden" id="daily-dot"></i></button>
+        <button class="arena-tab" id="tab-leaderboard" type="button" data-go="open-leaderboard-button"><svg class="ico ico-trophy" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 01-10 0zM7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4M12 14v4M8 21h8M10 18h4"/></svg> <span>LEADERBOARD</span></button>
+        <button class="arena-tab" id="tab-profile" type="button" data-go="open-profile-button"><svg class="ico ico-user" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg> <span>PROFILE</span></button>
+        <button class="arena-tab" id="tab-customize" type="button" data-go="open-customize-quick"><svg class="ico ico-palette" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.2 0 2-.8 2-1.8 0-1-.8-1.4-.8-2.4 0-.9.7-1.6 1.6-1.6H17a4 4 0 004-4c0-4.4-4-8.2-9-8.2z"/><circle cx="7.5" cy="11" r="1" fill="currentColor"/><circle cx="10.5" cy="7" r="1" fill="currentColor"/><circle cx="15" cy="7.5" r="1" fill="currentColor"/></svg> <span>CUSTOMIZE</span></button>
       </nav>
       <p class="eyebrow">CHOOSE YOUR GAME MODE</p>
       <h2 id="mode-title">ENTER THE ARENA</h2>
       <p class="panel-subtitle">Choose your challenge. Set a new record. Become the arena champion.</p>
       <div class="mode-quick-row" hidden>
-      <button class="profile-open-button" id="open-profile-button" type="button"><span class="profile-open-avatar" id="profile-button-avatar">🚀</span><span><strong id="profile-button-name">ARENA PLAYER</strong><small>VIEW PLAYER PROFILE ↗</small></span></button>
-      <button class="leaderboard-open-button" id="open-leaderboard-button" type="button"><span class="leaderboard-open-icon" aria-hidden="true">🏆</span><span><strong>LEADERBOARD</strong><small id="leaderboard-button-sub">SIGN IN TO JOIN THE RANKING ↗</small></span></button>
-      <button class="customize-quick-button" id="open-customize-quick" type="button"><span class="customize-quick-icon" aria-hidden="true">🎨</span><span><strong>CUSTOMIZE</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS ↗</small></span></button>
+      <button class="profile-open-button" id="open-profile-button" type="button"><span class="profile-open-avatar" id="profile-button-avatar"><svg class="ico ico-user" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></span><span><strong id="profile-button-name">ARENA PLAYER</strong><small>VIEW PLAYER PROFILE ↗</small></span></button>
+      <button class="leaderboard-open-button" id="open-leaderboard-button" type="button"><span class="leaderboard-open-icon" aria-hidden="true"><svg class="ico ico-trophy" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 01-10 0zM7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4M12 14v4M8 21h8M10 18h4"/></svg></span><span><strong>LEADERBOARD</strong><small id="leaderboard-button-sub">SIGN IN TO JOIN THE RANKING ↗</small></span></button>
+      <button class="customize-quick-button" id="open-customize-quick" type="button"><span class="customize-quick-icon" aria-hidden="true"><svg class="ico ico-palette" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.2 0 2-.8 2-1.8 0-1-.8-1.4-.8-2.4 0-.9.7-1.6 1.6-1.6H17a4 4 0 004-4c0-4.4-4-8.2-9-8.2z"/><circle cx="7.5" cy="11" r="1" fill="currentColor"/><circle cx="10.5" cy="7" r="1" fill="currentColor"/><circle cx="15" cy="7.5" r="1" fill="currentColor"/></svg></span><span><strong>CUSTOMIZE</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS ↗</small></span></button>
     </div>
       <div class="arena-pane" id="pane-play">
       <div class="mode-grid">
         <button class="mode-card color-mode" id="color-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">01</span><span class="mode-level">FAST</span></span>
-          <span class="mode-icon" aria-hidden="true">◉</span>
+          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-bolt" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
           <span class="mode-kicker">REFLEX CHALLENGE</span>
           <span class="mode-name">COLOR REACTION</span>
           <span class="mode-description">Test your reflexes. Wait for the color and react at the perfect moment.</span>
@@ -79,7 +80,7 @@
         </button>
         <button class="mode-card html-mode" id="html-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">02</span><span class="mode-level">BRAIN</span></span>
-          <span class="mode-icon" aria-hidden="true">&lt;/&gt;</span>
+          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-code" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></span>
           <span class="mode-kicker">CODE KNOWLEDGE</span>
           <span class="mode-name">HTML SPEED</span>
           <span class="mode-description">Type HTML tags from memory, answer quickly, and beat the clock.</span>
@@ -87,7 +88,7 @@
         </button>
         <button class="mode-card click-mode" id="click-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">03</span><span class="mode-level">POWER</span></span>
-          <span class="mode-icon" aria-hidden="true">✦</span>
+          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-pointer" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l14 7-6 2-2 6z"/></svg></span>
           <span class="mode-kicker">ENDURANCE TEST</span>
           <span class="mode-name">CLICK SPEED</span>
           <span class="mode-description">Click as many times as you can before the timer runs out. Beat your clicks-per-second record!</span>
@@ -95,7 +96,7 @@
         </button>
         <button class="mode-card code-mode" id="code-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">04</span><span class="mode-level">PRO</span></span>
-          <span class="mode-icon" aria-hidden="true">⌨</span>
+          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-keyboard" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></span>
           <span class="mode-kicker">HEAD-TO-HEAD</span>
           <span class="mode-name">CODE RACE</span>
           <span class="mode-description">Type real code, outpace rival drivers, and race to the finish line.</span>
@@ -103,7 +104,7 @@
         </button>
         <button class="mode-card timing-mode" id="timing-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">05</span><span class="mode-level">SHARP</span></span>
-          <span class="mode-icon" aria-hidden="true">◎</span>
+          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-timer" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span>
           <span class="mode-kicker">PRECISION CHALLENGE</span>
           <span class="mode-name">PERFECT TIMING</span>
           <span class="mode-description">Press the key exactly when the glowing ring hits the target. The closer you are, the higher your score.</span>
@@ -111,7 +112,7 @@
         </button>
         <button class="mode-card targetlock-mode" id="targetlock-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">06</span><span class="mode-level">FOCUS</span></span>
-          <span class="mode-icon" aria-hidden="true">⌖</span>
+          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-crosshair" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/></svg></span>
           <span class="mode-kicker">AIM CHALLENGE</span>
           <span class="mode-name">TARGET LOCK</span>
           <span class="mode-description">Targets appear at random. Click only the correct one, as quickly as you can.</span>
@@ -119,14 +120,14 @@
         </button>
         <button class="mode-card mystery-mode" id="mystery-mode-button" type="button">
           <span class="mode-topline"><span class="mode-number">07</span><span class="mode-level">SURPRISE</span></span>
-          <span class="mode-icon" aria-hidden="true">✦</span>
+          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-question" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 115 0c0 1.7-2.5 2-2.5 4M12 17h.01"/></svg></span>
           <span class="mode-kicker">RANDOM CHALLENGE</span>
           <span class="mode-name">MYSTERY MODE</span>
           <span class="mode-description">Five surprise rounds. Six game modes. You never know what challenge comes next!</span>
           <span class="mode-bottomline"><span class="mode-tag">5 ROUNDS • BONUS XP</span><span class="mode-cta">REVEAL CHALLENGE <b>↗</b></span></span>
         </button>
       </div>
-      <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary">🏅 0 ACHIEVEMENTS UNLOCKED</div></section>
+      <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary"><svg class="ico ico-medal" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="15" r="6"/><path d="M8.5 3l3.5 6 3.5-6M12 12.5v5M10.5 14l1.5-1.5"/></svg> 0 ACHIEVEMENTS UNLOCKED</div></section>
       <div class="stats-strip" aria-label="Your personal records">
         <h3 class="stats-heading">YOUR PERSONAL RECORDS</h3>
         <div class="stats-grid">
@@ -141,13 +142,13 @@
       </div>
       <div class="arena-pane hidden" id="pane-daily">
       <section class="streak-card" id="streak-card" aria-label="Daily login streak">
-        <div class="streak-head"><div><span class="streak-kicker">DAILY LOGIN REWARD</span><strong id="streak-title">🔥 0 DAY STREAK</strong></div><span class="streak-best" id="streak-best">BEST: 0</span></div>
+        <div class="streak-head"><div><span class="streak-kicker">DAILY LOGIN REWARD</span><strong id="streak-title"><svg class="ico ico-flame" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4 0 7-2.8 7-7 0-3-1.6-5-3-6.5-.3 2-1.3 3-2.5 3 .5-3-1-6.5-4.5-9.5-.5 4-5 6-5 12 0 5 3.5 8 8 8z"/></svg> 0 DAY STREAK</strong></div><span class="streak-best" id="streak-best">BEST: 0</span></div>
         <div class="streak-days" id="streak-days"></div>
         <div class="streak-foot"><p id="streak-message"></p><button class="streak-claim" id="streak-claim" type="button">CLAIM REWARD</button></div>
       </section>
       <section class="spin-banner" aria-label="Daily spin">
         <div class="spin-copy">
-          <span class="spin-kicker">🎁 FREE DAILY SPIN</span>
+          <span class="spin-kicker"><svg class="ico ico-gift" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8a1 1 0 001 1h12a1 1 0 001-1v-8M12 8c-2-4-6-3-5 0 .5 1.5 3 1 5 0zM12 8c2-4 6-3 5 0-.5 1.5-3 1-5 0z"/></svg> FREE DAILY SPIN</span>
           <h3>Spin the Wheel and Win Exciting Rewards Every Day</h3>
           <p id="spin-banner-note">1 free spin ready — win up to +100 XP!</p>
           <button class="spin-now" id="spin-now-button" type="button"><span id="spin-now-label">SPIN NOW</span></button>
@@ -164,7 +165,7 @@
         <div class="daily-footer"><span id="daily-progress-label">0 / 3 COMPLETE</span><strong id="daily-bonus-label">UP TO +150 BONUS XP</strong></div>
       </section>
       <div class="arena-challenge" aria-live="polite">
-        <span class="challenge-orbit" aria-hidden="true">✦</span>
+        <span class="challenge-orbit" aria-hidden="true"><svg class="ico ico-sparkle" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
         <div><span class="challenge-kicker">ARENA TRANSMISSION</span><strong id="arena-challenge-text">Your next record is waiting. Choose a mode and make it yours.</strong></div>
         <span class="challenge-live"><i></i> LIVE</span>
       </div>
@@ -185,7 +186,7 @@
         </div>
         <div class="profile-level-mark"><strong id="profile-level-detail">01</strong><span>LEVEL</span></div>
       </div>
-      <button class="customize-open-button" id="open-customize-button" type="button"><span class="customize-open-icon" aria-hidden="true">🎨</span><span class="customize-open-text"><strong>CUSTOMIZE YOUR CHARACTER</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS</small></span><span class="customize-open-arrow" aria-hidden="true">↗</span></button>
+      <button class="customize-open-button" id="open-customize-button" type="button"><span class="customize-open-icon" aria-hidden="true"><svg class="ico ico-palette" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.2 0 2-.8 2-1.8 0-1-.8-1.4-.8-2.4 0-.9.7-1.6 1.6-1.6H17a4 4 0 004-4c0-4.4-4-8.2-9-8.2z"/><circle cx="7.5" cy="11" r="1" fill="currentColor"/><circle cx="10.5" cy="7" r="1" fill="currentColor"/><circle cx="15" cy="7.5" r="1" fill="currentColor"/></svg></span><span class="customize-open-text"><strong>CUSTOMIZE YOUR CHARACTER</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS</small></span><span class="customize-open-arrow" aria-hidden="true">↗</span></button>
       <div class="profile-edit-card">
         <div class="profile-section-heading"><span>PERSONALIZE YOUR PROFILE</span><small>SAVED ON THIS DEVICE</small></div>
         <div class="profile-edit-fields">
@@ -225,8 +226,8 @@
           <span class="customize-char-role" id="customize-char-role"></span>
           <span class="customize-level-info" id="customize-level-info"></span>
           <div class="customize-actions">
-            <button type="button" id="customize-random">🎲 RANDOM</button>
-            <button type="button" id="customize-reset">↺ RESET</button>
+            <button type="button" id="customize-random"><svg class="ico ico-dice" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg> RANDOM</button>
+            <button type="button" id="customize-reset"><svg class="ico ico-refresh" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 10-2.3 5.7M20 4v7h-7"/></svg> RESET</button>
           </div>
         </aside>
         <div class="customize-options">
@@ -242,10 +243,10 @@
       <p class="eyebrow">HALL OF CHAMPIONS</p>
       <h2 id="leaderboard-title">LEADERBOARD</h2>
       <p class="panel-subtitle">Earn XP in every mode to climb the ranking and show the arena who is the best.</p>
-      <div class="lb-tools"><span class="lb-status" id="lb-status" aria-live="polite"></span><button type="button" id="lb-refresh">↻ REFRESH</button><button type="button" id="lb-share">🔗 INVITE FRIENDS</button></div>
+      <div class="lb-tools"><span class="lb-status" id="lb-status" aria-live="polite"></span><button type="button" id="lb-refresh"><svg class="ico ico-refresh" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 10-2.3 5.7M20 4v7h-7"/></svg> REFRESH</button><button type="button" id="lb-share"><svg class="ico ico-link" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg> INVITE FRIENDS</button></div>
       <div class="lb-you-card" id="lb-you-card" aria-live="polite"></div>
       <ol class="lb-list" id="lb-list" aria-label="Top players"></ol>
-      <p class="lb-note" id="lb-note">Beat the 🤖 arena bots and climb to the top!</p>
+      <p class="lb-note" id="lb-note">Beat the arena bots and climb to the top!</p>
     </section>
 
     <section class="panel levels-panel hidden" id="levels-screen" aria-labelledby="levels-title">
@@ -349,7 +350,7 @@
     <div class="auth-modal hidden" id="spin-modal" role="dialog" aria-modal="true" aria-labelledby="spin-title">
       <div class="auth-card spin-card">
         <button class="auth-close" id="spin-close" type="button" aria-label="Close">✕</button>
-        <span class="spin-kicker">🎁 FREE DAILY SPIN</span>
+        <span class="spin-kicker"><svg class="ico ico-gift" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8a1 1 0 001 1h12a1 1 0 001-1v-8M12 8c-2-4-6-3-5 0 .5 1.5 3 1 5 0zM12 8c2-4 6-3 5 0-.5 1.5-3 1-5 0z"/></svg> FREE DAILY SPIN</span>
         <h3 id="spin-title">REWARD WHEEL</h3>
         <div class="spin-stage">
           <div class="spin-pointer" aria-hidden="true"></div>
@@ -379,7 +380,7 @@
           <div class="auth-user-avatar" id="auth-user-avatar"></div>
           <h2 id="auth-user-name">PLAYER</h2>
           <p class="auth-text" id="auth-user-detail"></p>
-          <button class="start-button auth-submit" id="auth-leaderboard-button" type="button">🏆 VIEW LEADERBOARD</button>
+          <button class="start-button auth-submit" id="auth-leaderboard-button" type="button"><svg class="ico ico-trophy" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 01-10 0zM7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4M12 14v4M8 21h8M10 18h4"/></svg> VIEW LEADERBOARD</button>
           <button class="auth-signout" id="auth-signout-button" type="button">SIGN OUT</button>
         </div>
       </div>

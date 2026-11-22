@@ -322,13 +322,13 @@
     if (isRecord) localStorage.setItem('rsa-timing-best', JSON.stringify({score:s.score, perfects:s.counts.PERFECT, combo:s.bestCombo, grade}));
     window.renderTimingBest();
     if (grade === 'S' || grade === 'A' || isRecord) { launchConfetti(grade === 'S' ? 200 : 120); }
-    if (grade === 'S') popText('🎯 S RANK!');
+    if (grade === 'S') popText('S RANK!');
     playSound('finish');
     drawFrameOnce();
     const level = playerLevel();
     const progress = playerProfile.xp % XP_PER_LEVEL;
     const achievementHtml = unlocked.length
-      ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(item => '<div class="achievement-unlock"><b>' + item.icon + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>'
+      ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(item => '<div class="achievement-unlock"><b>' + ICON(item.icon) + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>'
       : '<p class="no-achievement">Land 6 PERFECT hits in one run to unlock SHARPSHOOTER.</p>';
     resultBox.innerHTML =
       '<div class="timing-grade grade-' + grade + '">' + grade + '</div>' +

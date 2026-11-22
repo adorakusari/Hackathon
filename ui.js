@@ -36,7 +36,7 @@
   const DEMOS = {
     color:'<div class="demo demo-color"><b>WAIT…</b></div>',
     html:'<div class="demo demo-html"><code>&lt;button&gt;</code><span class="caret"></span></div>',
-    click:'<div class="demo demo-click"><i class="pulse"></i><span class="cursor">☝</span></div>',
+    click:'<div class="demo demo-click"><i class="pulse"></i><span class="cursor"><svg viewBox="0 0 24 24" width="34" height="34" fill="#fff" stroke="#06101f" stroke-width="1.5" stroke-linejoin="round"><path d="M5 3l14 7-6 2-2 6z"/></svg></span></div>',
     race:'<div class="demo demo-race"><i style="--s:3.2s"></i><i style="--s:4s"></i><i style="--s:2.6s"></i><i style="--s:3.6s"></i></div>',
     timing:'<div class="demo demo-timing"><i class="ring r-out"></i><i class="ring r-move"></i><i class="ring r-target"></i></div>',
     target:'<div class="demo demo-target"><i class="t t1"></i><i class="t t2"></i><i class="t t3 pink"></i><i class="t t4"></i><span class="xhair"></span></div>',

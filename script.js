@@ -403,7 +403,7 @@ const achievementCatalog = {
   clicker:{name:'CLICK MACHINE',icon:'🖱️',description:'Reach 5 clicks per second.'},
   code_master:{name:'CODE MASTER',icon:'💻',description:'Reach 40 WPM in Code Race.'},
   target_lock:{name:'DEAD EYE',icon:'⌖',description:'Lock onto all 15 targets in one Target Lock run.'},
-  perfect_timing:{name:'SHARPSHOOTER',icon:'🎯',description:'Land 8 PERFECT hits in one Perfect Timing run.'}
+  perfect_timing:{name:'SHARPSHOOTER',icon:'🎯',description:'Land 6 PERFECT hits in one Perfect Timing run.'}
 };
 function readPlayerProfile() {
   try {

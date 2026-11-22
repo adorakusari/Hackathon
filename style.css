@@ -866,3 +866,25 @@ button:focus-visible { outline:3px solid white; outline-offset:5px; }
 
 .timing-panel { width:min(100%,1200px); max-width:1200px; }
 .timing-stage { max-width:1150px; }
+
+/* ===== DAILY SPIN ===== */
+.spin-banner { position:relative; display:flex; align-items:center; justify-content:space-between; gap:16px; margin:22px auto; max-width:690px; padding:26px 28px; overflow:hidden; text-align:left; border:1px solid rgba(190,120,255,.5); border-radius:18px; background:radial-gradient(ellipse at 85% 50%,rgba(200,110,255,.45),transparent 55%),linear-gradient(120deg,#2a0f55,#5b1fa8 60%,#3a1180); box-shadow:0 0 34px rgba(150,70,255,.28); }
+.spin-copy { position:relative; z-index:2; max-width:62%; }
+.spin-kicker { font-size:10px; font-weight:800; letter-spacing:.2em; color:#ffd447; }
+.spin-banner h3 { margin:8px 0; font:800 clamp(18px,3.6vw,26px)/1.25 Orbitron,sans-serif; color:#fff; }
+.spin-banner p { margin:0 0 14px; font-size:13px; color:#e6d4ff; }
+.spin-now { padding:12px 30px; border:1px solid rgba(255,255,255,.4); border-radius:10px; background:linear-gradient(110deg,#a33cff,#e04be0); color:#fff; font:800 12px Orbitron,sans-serif; letter-spacing:.14em; cursor:pointer; box-shadow:0 0 22px rgba(224,75,224,.5); transition:transform .15s; }
+.spin-now:hover { transform:translateY(-2px) scale(1.04); }
+.spin-art { position:absolute; right:-40px; top:50%; width:230px; height:230px; transform:translateY(-50%); }
+.spin-mini-wheel { width:100%; height:100%; animation:spinSlow 18s linear infinite; filter:drop-shadow(0 0 18px rgba(255,200,80,.4)); }
+@keyframes spinSlow { to { transform:rotate(360deg); } }
+.coin { position:absolute; width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff3b0,#ffd447 55%,#d99a00); box-shadow:0 0 10px rgba(255,212,71,.7); animation:coinFloat 3.4s ease-in-out infinite; }
+.coin.c1 { left:-34px; top:20px; } .coin.c2 { left:-8px; top:150px; width:16px; height:16px; animation-delay:.8s; } .coin.c3 { left:60px; top:-6px; width:14px; height:14px; animation-delay:1.6s; } .coin.c4 { left:-60px; top:95px; width:12px; height:12px; animation-delay:2.2s; }
+@keyframes coinFloat { 50% { transform:translateY(-10px) rotate(25deg); } }
+@media(max-width:600px) { .spin-copy { max-width:70%; } .spin-art { opacity:.55; right:-90px; } }
+.spin-card { text-align:center; max-width:400px; }
+.spin-stage { position:relative; width:min(78vw,320px); margin:12px auto 8px; }
+.spin-wheel { display:block; width:100%; filter:drop-shadow(0 0 22px rgba(170,90,255,.55)); }
+.spin-pointer { position:absolute; left:50%; top:-8px; z-index:3; width:0; height:0; margin-left:-14px; border-left:14px solid transparent; border-right:14px solid transparent; border-top:30px solid #ffd447; filter:drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+.spin-message { min-height:22px; margin:6px 0 12px; font-size:14px; color:#e6d4ff; }
+.spin-go:disabled { opacity:.55; cursor:not-allowed; }

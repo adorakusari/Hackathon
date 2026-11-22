@@ -20,14 +20,14 @@
     {key:'t', color:'#ffe533'}
   ];
   const TOTAL_RINGS = 20;
-  const LEAD_IN = 2400;           // ms of "get ready" before the first ring appears
+  const LEAD_IN = 3200;           // ms of "get ready" before the first ring appears
   const JUDGEMENTS = [
-    {name:'PERFECT', ms:50, points:100, color:'#ffffff'},
-    {name:'GREAT', ms:100, points:70, color:'#7dffb3'},
-    {name:'GOOD', ms:160, points:40, color:'#ffe533'},
-    {name:'OK', ms:240, points:15, color:'#ff9a4d'}
+    {name:'PERFECT', ms:90, points:100, color:'#ffffff'},
+    {name:'GREAT', ms:170, points:70, color:'#7dffb3'},
+    {name:'GOOD', ms:260, points:40, color:'#ffe533'},
+    {name:'OK', ms:380, points:15, color:'#ff9a4d'}
   ];
-  const EARLY_LIMIT = 450;        // pressing this early (or late) costs the ring
+  const EARLY_LIMIT = 650;        // pressing this early (or late) costs the ring
 
   let state = null;
   let frame = 0;
@@ -155,12 +155,12 @@
     let spawn = LEAD_IN, last = -1, repeats = 0;
     for (let i = 0; i < TOTAL_RINGS; i++) {
       const progress = i / (TOTAL_RINGS - 1);
-      const approach = 1750 - 900 * progress;
+      const approach = 2800 - 700 * progress;
       let lane = Math.floor(Math.random() * LANES.length);
       while (lane === last && repeats >= 1) lane = Math.floor(Math.random() * LANES.length);
       repeats = lane === last ? repeats + 1 : 0; last = lane;
       rings.push({lane, spawn, approach, hit:spawn + approach, done:false});
-      spawn += 1150 - 560 * progress;
+      spawn += 2100 - 500 * progress;
     }
     return rings;
   }
@@ -247,7 +247,7 @@
     drawHud(s);
     // get-ready countdown
     if (t < LEAD_IN - 150) {
-      const number = Math.max(1, Math.ceil((LEAD_IN - 150 - t) / 750));
+      const number = Math.max(1, Math.ceil((LEAD_IN - 150 - t) / 1000));
       ctx.save();
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.shadowColor = '#19e6ff'; ctx.shadowBlur = 24;
       ctx.font = '900 ' + Math.round(geo.target * .9) + 'px Orbitron, sans-serif'; ctx.fillText(String(number), geo.cx, geo.cy);
@@ -313,9 +313,9 @@
     stopListening();
     const hits = s.counts.PERFECT + s.counts.GREAT + s.counts.GOOD + s.counts.OK;
     const avg = s.errors.length ? Math.round(s.errors.reduce((a, b) => a + b, 0) / s.errors.length) : null;
-    const grade = s.score >= 4500 ? 'S' : s.score >= 3200 ? 'A' : s.score >= 1800 ? 'B' : s.score >= 700 ? 'C' : 'D';
-    const xp = 20 + Math.min(100, Math.floor(s.score / 70)) + (s.counts.PERFECT >= 8 ? 10 : 0);
-    const unlocked = awardXP(xp, s.counts.PERFECT >= 8 ? ['perfect_timing'] : []);
+    const grade = s.score >= 3800 ? 'S' : s.score >= 2600 ? 'A' : s.score >= 1500 ? 'B' : s.score >= 600 ? 'C' : 'D';
+    const xp = 20 + Math.min(100, Math.floor(s.score / 70)) + (s.counts.PERFECT >= 6 ? 10 : 0);
+    const unlocked = awardXP(xp, s.counts.PERFECT >= 6 ? ['perfect_timing'] : []);
     const previous = readBest();
     const isRecord = !previous || s.score > previous.score;
     if (isRecord) localStorage.setItem('rsa-timing-best', JSON.stringify({score:s.score, perfects:s.counts.PERFECT, combo:s.bestCombo, grade}));
@@ -328,7 +328,7 @@
     const progress = playerProfile.xp % XP_PER_LEVEL;
     const achievementHtml = unlocked.length
       ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlocked.map(item => '<div class="achievement-unlock"><b>' + item.icon + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>'
-      : '<p class="no-achievement">Land 8 PERFECT hits in one run to unlock SHARPSHOOTER.</p>';
+      : '<p class="no-achievement">Land 6 PERFECT hits in one run to unlock SHARPSHOOTER.</p>';
     resultBox.innerHTML =
       '<div class="timing-grade grade-' + grade + '">' + grade + '</div>' +
       '<div class="reward-heading">RUN COMPLETE' + (isRecord ? ' • NEW RECORD!' : '') + '</div>' +

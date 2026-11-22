@@ -18,6 +18,7 @@
   <script src="ui.js" defer></script>
   <script src="brand.js" defer></script>
   <script src="hero.js" defer></script>
+  <script src="tiles.js" defer></script>
 </head>
 <body>
   <main class="home">
@@ -81,69 +82,34 @@
       </nav>
       <p class="eyebrow">CHOOSE YOUR GAME MODE</p>
       <h2 id="mode-title">ENTER THE ARENA</h2>
-      <p class="panel-subtitle">Choose your challenge. Set a new record. Become the arena champion.</p>
+      <p class="panel-subtitle" id="play-subtitle">7 modes. Pick one and set your first record.</p>
       <div class="mode-quick-row" hidden>
       <button class="profile-open-button" id="open-profile-button" type="button"><span class="profile-open-avatar" id="profile-button-avatar"><svg class="ico ico-user" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></span><span><strong id="profile-button-name">ARENA PLAYER</strong><small>VIEW PLAYER PROFILE ↗</small></span></button>
       <button class="leaderboard-open-button" id="open-leaderboard-button" type="button"><span class="leaderboard-open-icon" aria-hidden="true"><svg class="ico ico-trophy" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 01-10 0zM7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4M12 14v4M8 21h8M10 18h4"/></svg></span><span><strong>LEADERBOARD</strong><small id="leaderboard-button-sub">SIGN IN TO JOIN THE RANKING ↗</small></span></button>
       <button class="customize-quick-button" id="open-customize-quick" type="button"><span class="customize-quick-icon" aria-hidden="true"><svg class="ico ico-palette" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.2 0 2-.8 2-1.8 0-1-.8-1.4-.8-2.4 0-.9.7-1.6 1.6-1.6H17a4 4 0 004-4c0-4.4-4-8.2-9-8.2z"/><circle cx="7.5" cy="11" r="1" fill="currentColor"/><circle cx="10.5" cy="7" r="1" fill="currentColor"/><circle cx="15" cy="7.5" r="1" fill="currentColor"/></svg></span><span><strong>CUSTOMIZE</strong><small class="customize-progress-sub">UNLOCK NEW LOOKS ↗</small></span></button>
     </div>
       <div class="arena-pane" id="pane-play">
-      <div class="mode-grid">
-        <button class="mode-card color-mode" id="color-mode-button" type="button">
-          <span class="mode-topline"><span class="mode-number">01</span><span class="mode-level">FAST</span></span>
-          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-bolt" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
-          <span class="mode-kicker">REFLEX CHALLENGE</span>
-          <span class="mode-name">COLOR REACTION</span>
-          <span class="mode-description">Test your reflexes. Wait for the color and react at the perfect moment.</span>
-          <span class="mode-bottomline"><span class="mode-tag">REACTION • 10 LEVELS</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
+      <div class="mode-grid tile-grid">
+        <button class="tile t-code" id="code-mode-button" type="button">
+          <span class="tile-art art-code" aria-hidden="true"><code class="ac-line"><b>const</b> time = <b>await</b> react();<i class="caret"></i></code><span class="ac-lanes"><span><i style="--s:3.1s"></i></span><span><i style="--s:3.9s"></i></span><span><i style="--s:2.6s"></i></span><span class="you"><i style="--s:3.4s"></i></span></span></span><span class="tile-body"><span class="tile-icon" aria-hidden="true"><svg class="ico ico-keyboard" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></span><span class="tile-name">CODE RACE</span><span class="tile-line">Type real code. Outrun three rival drivers to the line.</span><span class="tile-best" data-src="code-best">Not played yet</span></span>
         </button>
-        <button class="mode-card html-mode" id="html-mode-button" type="button">
-          <span class="mode-topline"><span class="mode-number">02</span><span class="mode-level">BRAIN</span></span>
-          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-code" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></span>
-          <span class="mode-kicker">CODE KNOWLEDGE</span>
-          <span class="mode-name">HTML SPEED</span>
-          <span class="mode-description">Type HTML tags from memory, answer quickly, and beat the clock.</span>
-          <span class="mode-bottomline"><span class="mode-tag">QUIZ • 10 LEVELS</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
+        <button class="tile t-timing" id="timing-mode-button" type="button">
+          <span class="tile-art art-rings" aria-hidden="true"><i style="--d:0s;--k:#ff3b4e"></i><i style="--d:.8s;--k:#3d7bff"></i><i style="--d:1.6s;--k:#19e6b0"></i><b></b></span><span class="tile-body"><span class="tile-icon" aria-hidden="true"><svg class="ico ico-timer" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span class="tile-name">PERFECT TIMING</span><span class="tile-line">Hit the key as the ring lands.</span><span class="tile-best" data-src="timing-best">Not played yet</span></span>
         </button>
-        <button class="mode-card click-mode" id="click-mode-button" type="button">
-          <span class="mode-topline"><span class="mode-number">03</span><span class="mode-level">POWER</span></span>
-          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-pointer" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l14 7-6 2-2 6z"/></svg></span>
-          <span class="mode-kicker">ENDURANCE TEST</span>
-          <span class="mode-name">CLICK SPEED</span>
-          <span class="mode-description">Click as many times as you can before the timer runs out. Beat your clicks-per-second record!</span>
-          <span class="mode-bottomline"><span class="mode-tag">30 SEC – 2 MIN</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
+        <button class="tile t-color" id="color-mode-button" type="button">
+          <span class="tile-body"><span class="tile-icon" aria-hidden="true"><svg class="ico ico-bolt" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><span class="tile-name">COLOR REACTION</span><span class="tile-line">Wait for the flash, then click.</span><span class="tile-best" data-src="color-best">Not played yet</span></span>
         </button>
-        <button class="mode-card code-mode" id="code-mode-button" type="button">
-          <span class="mode-topline"><span class="mode-number">04</span><span class="mode-level">PRO</span></span>
-          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-keyboard" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></span>
-          <span class="mode-kicker">HEAD-TO-HEAD</span>
-          <span class="mode-name">CODE RACE</span>
-          <span class="mode-description">Type real code, outpace rival drivers, and race to the finish line.</span>
-          <span class="mode-bottomline"><span class="mode-tag">4 DRIVERS • LIVE RACE</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
+        <button class="tile t-html" id="html-mode-button" type="button">
+          <span class="tile-body"><span class="tile-icon" aria-hidden="true"><svg class="ico ico-code" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></span><span class="tile-name">HTML SPEED</span><span class="tile-line">Name the tag before the clock does.</span><span class="tile-best" data-src="html-best">Not played yet</span></span>
         </button>
-        <button class="mode-card timing-mode" id="timing-mode-button" type="button">
-          <span class="mode-topline"><span class="mode-number">05</span><span class="mode-level">SHARP</span></span>
-          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-timer" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span>
-          <span class="mode-kicker">PRECISION CHALLENGE</span>
-          <span class="mode-name">PERFECT TIMING</span>
-          <span class="mode-description">Hit the key the instant the ring touches the target. Closer means more points.</span>
-          <span class="mode-bottomline"><span class="mode-tag">20 RINGS • COMBO ×5</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
+        <button class="tile t-click" id="click-mode-button" type="button">
+          <span class="tile-body"><span class="tile-icon" aria-hidden="true"><svg class="ico ico-pointer" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l14 7-6 2-2 6z"/></svg></span><span class="tile-name">CLICK SPEED</span><span class="tile-line">Clicks per second, 30 s to 2 min.</span><span class="tile-best" data-src="click-best">Not played yet</span></span>
         </button>
-        <button class="mode-card targetlock-mode" id="targetlock-mode-button" type="button">
-          <span class="mode-topline"><span class="mode-number">06</span><span class="mode-level">FOCUS</span></span>
-          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-crosshair" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/></svg></span>
-          <span class="mode-kicker">AIM CHALLENGE</span>
-          <span class="mode-name">TARGET LOCK</span>
-          <span class="mode-description">Many targets, one is right. Spot the right color and lock on fast.</span>
-          <span class="mode-bottomline"><span class="mode-tag">15 ROUNDS • STREAK ×5</span><span class="mode-cta">ENTER MODE <b>↗</b></span></span>
+        <button class="tile t-target" id="targetlock-mode-button" type="button">
+          <span class="tile-body"><span class="tile-icon" aria-hidden="true"><svg class="ico ico-crosshair" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/></svg></span><span class="tile-name">TARGET LOCK</span><span class="tile-line">One right color. Many wrong ones.</span><span class="tile-best" data-src="targetlock-best">Not played yet</span></span>
         </button>
-        <button class="mode-card mystery-mode" id="mystery-mode-button" type="button">
-          <span class="mode-topline"><span class="mode-number">07</span><span class="mode-level">SURPRISE</span></span>
-          <span class="mode-icon" aria-hidden="true"><svg class="ico ico-question" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 115 0c0 1.7-2.5 2-2.5 4M12 17h.01"/></svg></span>
-          <span class="mode-kicker">RANDOM CHALLENGE</span>
-          <span class="mode-name">MYSTERY MODE</span>
-          <span class="mode-description">Five surprise rounds. Six game modes. You never know what challenge comes next!</span>
-          <span class="mode-bottomline"><span class="mode-tag">5 ROUNDS • BONUS XP</span><span class="mode-cta">REVEAL CHALLENGE <b>↗</b></span></span>
+        <button class="tile t-mystery" id="mystery-mode-button" type="button">
+          <span class="tile-body"><span class="tile-icon" aria-hidden="true"><svg class="ico ico-question" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 115 0c0 1.7-2.5 2-2.5 4M12 17h.01"/></svg></span><span class="tile-name">MYSTERY MODE</span><span class="tile-line">Five random rounds. 75 bonus XP if you finish.</span><span class="tile-best" data-src="mystery">Not played yet</span></span>
         </button>
       </div>
       <section class="player-progression" aria-label="Player progression"><div class="progression-top"><div><span class="progression-kicker">YOUR ARENA RANK</span><strong id="player-rank">ROOKIE</strong></div><div class="xp-total"><strong id="player-xp">0</strong><span> TOTAL XP</span></div></div><div class="xp-track"><span id="xp-fill"></span></div><div class="progression-bottom"><span id="player-level">LEVEL 1</span><span id="xp-to-next">0 / 250 XP</span></div><div class="achievement-summary" id="achievement-summary"><svg class="ico ico-medal" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="15" r="6"/><path d="M8.5 3l3.5 6 3.5-6M12 12.5v5M10.5 14l1.5-1.5"/></svg> 0 ACHIEVEMENTS UNLOCKED</div></section>

@@ -36,6 +36,7 @@ let mysteryActive = false;
 let mysteryRound = 0;
 const MYSTERY_TOTAL_ROUNDS = 5;
 let lastMysteryMode = '';
+function markMysteryDone() { try { localStorage.setItem('rsa-mystery-done', String((parseInt(localStorage.getItem('rsa-mystery-done') || '0', 10) || 0) + 1)); } catch (e) { } }
 function finishMysteryRound() {
   if (!mysteryActive || document.getElementById('mystery-next-button')) return;
   reactionButton.disabled = true;
@@ -48,7 +49,7 @@ function finishMysteryRound() {
   button.addEventListener('click', () => {
     button.remove();
     if (completed) {
-      const bonus = 75;
+      const bonus = 75; markMysteryDone();
       const unlocked = awardXP(bonus);
       showRewardSummary('mystery',bonus,unlocked,'You completed all five surprise rounds. The arena rewards your adaptability!');
       resultMessage.textContent = 'MYSTERY MASTER! You conquered all five surprise rounds.';
@@ -99,7 +100,7 @@ function mysteryMiniGameDone(box) {
   next.addEventListener('click',() => {
     next.remove();
     if (completed) {
-      const bonus = 75; awardXP(bonus); mysteryActive = false;
+      const bonus = 75; markMysteryDone(); awardXP(bonus); mysteryActive = false;
       box.insertAdjacentHTML('beforeend','<p class="reward-detail">MYSTERY MASTER! +' + bonus + ' bonus XP for completing all five surprise rounds.</p><button class="back-button" id="mystery-return-button" type="button">BACK TO ARENA</button>');
       document.getElementById('mystery-return-button').addEventListener('click',() => { showScreen(modeScreen); renderStats(); });
     } else startMysteryChallenge();
@@ -1202,7 +1203,7 @@ function finishCodeRace() {
     next.addEventListener('click',() => {
       next.remove();
       if (mysteryRound >= MYSTERY_TOTAL_ROUNDS) {
-        const bonus = 75;
+        const bonus = 75; markMysteryDone();
         const unlocked = awardXP(bonus);
         raceResult.insertAdjacentHTML('beforeend','<p class="reward-detail">MYSTERY MASTER! +'+bonus+' bonus XP for completing all five surprise rounds.</p>');
         raceResult.insertAdjacentHTML('beforeend','<button class="back-button" id="mystery-return-button" type="button">BACK TO ARENA</button>');

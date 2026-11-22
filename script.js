@@ -112,8 +112,18 @@ function updateCombo(message) {
   label.classList.toggle('combo-active', streak >= 2);
 }
 function registerComboResult(passed) {
+  const previousStreak = comboStreaks[activeMode];
   if (passed) comboStreaks[activeMode]++;
   else comboStreaks[activeMode] = 0;
+  const streakNow = comboStreaks[activeMode];
+  if (passed && streakNow >= 2) {
+    playSound('combo', streakNow);
+    if (streakNow === 3) { shakeScreen('sm'); popText('🔥 3x COMBO!'); }
+    else if (streakNow === 5 || (streakNow >= 10 && streakNow % 5 === 0)) { shakeScreen('lg'); launchConfetti(60 + Math.min(streakNow, 20) * 5); popText('⚡ ' + streakNow + 'x COMBO!'); }
+  } else if (!passed && previousStreak >= 3) {
+    shakeScreen('sm');
+    popText('💥 COMBO LOST');
+  }
   updateCombo(!passed ? 'COMBO RESET — TRY AGAIN!' : comboStreaks[activeMode] >= 2 ? '🔥 ' + comboStreaks[activeMode] + 'x COMBO!' : 'NICE! KEEP GOING!');
 }
 
@@ -161,6 +171,7 @@ const CUSTOM_OUTFITS = [
   {id:'glacier',name:'Glacier',cape:'#5aa8c8',accent:'#8fe0ff',trim:'#e6fbff',suit:'#12212b',lvl:6},
   {id:'royal',name:'Royal',cape:'#8d1f36',accent:'#e0b24a',trim:'#fff0b8',suit:'#1d1016',lvl:8},
   {id:'cosmic',name:'Cosmic',cape:'#4a3bd0',accent:'#46e6ff',trim:'#c9f7ff',suit:'#0f1030',lvl:10},
+  {id:'phoenix',name:'Phoenix',cape:'#e8461f',accent:'#ffd23a',trim:'#fff2b0',suit:'#2a0e08',lvl:1,streak:14},
   {id:'solar',name:'Solar',cape:'#e6a526',accent:'#fff0a0',trim:'#ffffff',suit:'#2a1c08',lvl:12}
 ];
 const CUSTOM_EMBLEMS = [
@@ -172,7 +183,7 @@ const CUSTOM_EXTRAS = [
   {id:'halo',name:'Halo',lvl:8},{id:'crown',name:'Crown',lvl:10}
 ];
 const CUSTOM_FRAMES = [
-  {id:'default',name:'Classic',lvl:1},{id:'gold',name:'Gold',lvl:3},{id:'neon',name:'Neon',lvl:6},{id:'rainbow',name:'Rainbow',lvl:9},{id:'fire',name:'Inferno',lvl:12}
+  {id:'default',name:'Classic',lvl:1},{id:'gold',name:'Gold',lvl:3},{id:'neon',name:'Neon',lvl:6},{id:'rainbow',name:'Rainbow',lvl:9},{id:'fire',name:'Inferno',lvl:12},{id:'aura',name:'Streak Aura',lvl:1,streak:7}
 ];
 const CUSTOM_CATEGORIES = [
   {key:'skin',label:'SKIN',icon:'🧑',list:CUSTOM_SKINS,swatch:'color'},
@@ -229,6 +240,7 @@ function arenaFrame(look, p) {
   if (look.frame === 'gold') return '<circle cx="60" cy="60" r="56" fill="none" stroke="url(#' + p + 'fgold)" stroke-width="3.6"/><circle cx="60" cy="60" r="52.6" fill="none" stroke="#fff3b8" stroke-opacity=".5" stroke-width=".8"/>';
   if (look.frame === 'neon') return '<circle cx="60" cy="60" r="56" fill="none" stroke="#3df0ff" stroke-width="2.4" filter="url(#' + p + 'glowf)"/><circle cx="60" cy="60" r="52.6" fill="none" stroke="#ff4fd8" stroke-width="1.6" stroke-dasharray="6 5" opacity=".9">' + spin(14) + '</circle>';
   if (look.frame === 'rainbow') return '<circle cx="60" cy="60" r="56" fill="none" stroke="url(#' + p + 'frainbow)" stroke-width="3.8"/><circle cx="60" cy="60" r="52.4" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".8" stroke-dasharray="2 5">' + spin(18) + '</circle>';
+  if (look.frame === 'aura') return '<circle cx="60" cy="60" r="56" fill="none" stroke="url(#' + p + 'ffire)" stroke-width="3.4" filter="url(#' + p + 'glowf)"/><circle cx="60" cy="60" r="52.4" fill="none" stroke="#fff3b8" stroke-width="1.6" stroke-dasharray="1 6" stroke-linecap="round">' + spin(10) + '</circle><circle cx="60" cy="60" r="58.6" fill="none" stroke="#ffb347" stroke-opacity=".5" stroke-width="1.4"><animate attributeName="stroke-opacity" values=".15;.7;.15" dur="2.4s" repeatCount="indefinite"/></circle>';
   if (look.frame === 'fire') return '<circle cx="60" cy="60" r="56" fill="none" stroke="url(#' + p + 'ffire)" stroke-width="4" filter="url(#' + p + 'glowf)"/><circle cx="60" cy="60" r="52.4" fill="none" stroke="#ffd36a" stroke-width="1.8" stroke-dasharray="3 6" stroke-linecap="round">' + spin(8) + '</circle>';
   return '<circle cx="60" cy="60" r="57" fill="none" stroke="' + accent + '" stroke-opacity=".75" stroke-width="2"/>';
 }
@@ -372,8 +384,8 @@ const achievementCatalog = {
 function readPlayerProfile() {
   try {
     const saved = JSON.parse(localStorage.getItem('rsa-player-profile') || '{}');
-    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : [],username:typeof saved.username === 'string' ? saved.username.slice(0,16) : 'Arena Player',avatar:typeof saved.avatar === 'string' ? saved.avatar : 'nova',custom:sanitizeCustom(saved.custom)};
-  } catch (error) { return {xp:0,games:0,achievements:[],username:'Arena Player',avatar:'nova',custom:{}}; }
+    return {xp:Number.isFinite(saved.xp) ? Math.max(0,saved.xp) : 0,games:Number.isFinite(saved.games) ? saved.games : 0,achievements:Array.isArray(saved.achievements) ? saved.achievements : [],username:typeof saved.username === 'string' ? saved.username.slice(0,16) : 'Arena Player',avatar:typeof saved.avatar === 'string' ? saved.avatar : 'nova',custom:sanitizeCustom(saved.custom),streak:sanitizeStreak(saved.streak)};
+  } catch (error) { return {xp:0,games:0,achievements:[],username:'Arena Player',avatar:'nova',custom:{},streak:{count:0,best:0,last:''}}; }
 }
 const playerProfile = readPlayerProfile();
 if (!ARENA_CHARACTERS[playerProfile.avatar]) playerProfile.avatar = 'nova';
@@ -400,7 +412,8 @@ function loadAccountIntoProfile(account) {
     xp: Math.max(0, Number(account.xp) || 0),
     games: Math.max(0, Number(account.games) || 0),
     achievements: Array.isArray(account.achievements) ? account.achievements.slice() : [],
-    custom: sanitizeCustom(account.custom)
+    custom: sanitizeCustom(account.custom),
+    streak: sanitizeStreak(account.streak)
   });
   selectedProfileAvatar = playerProfile.avatar;
 }
@@ -409,7 +422,7 @@ function savePlayerProfile() {
   const key = currentAccountKey();
   if (!key) return;
   const accounts = readAccounts();
-  accounts[key] = {username:accounts[key].username, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), custom:playerProfile.custom, updated:Date.now()};
+  accounts[key] = {username:accounts[key].username, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), custom:playerProfile.custom, streak:playerProfile.streak, updated:Date.now()};
   writeAccounts(accounts);
 }
 (function restoreSession() {
@@ -507,7 +520,11 @@ function awardXP(amount, achievementKeys=[]) {
   savePlayerProfile();
   renderProfile();
   refreshAuthUI();
-  if (playerLevel() > levelBefore) announceLevelUp(levelBefore, playerLevel());
+  if (unlocked.length) setTimeout(() => { playSound('unlock'); launchConfetti(70); }, 350);
+  if (playerLevel() > levelBefore) {
+    setTimeout(() => { playSound('levelup'); launchConfetti(190); shakeScreen('sm'); }, 450);
+    announceLevelUp(levelBefore, playerLevel());
+  }
   return unlocked;
 }
 
@@ -614,6 +631,7 @@ function showRewardSummary(mode, amount, unlocked, detail) {
     : '<p class="no-achievement">Keep playing to unlock your next achievement.</p>';
   panel.innerHTML = '<div class="reward-heading">CHALLENGE COMPLETE</div><div class="reward-xp">+' + amount + ' XP <span>earned</span></div><p class="reward-detail">' + detail + '</p>' + achievements + '<div class="reward-progress"><div><b>LEVEL ' + level + '</b><span>' + progress + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (progress / XP_PER_LEVEL * 100) + '%"></span></div></div>';
   panel.classList.remove('hidden');
+  launchConfetti(60);
 }
 
 const emptyStats = () => ({ attempts:0, correct:0, bestMs:null });
@@ -965,7 +983,7 @@ function showHtmlRetry() {
   retry.addEventListener('click', () => openLevel(activeLevel));
   htmlOptions.insertAdjacentElement('afterend', retry);
 }
-document.getElementById('levels-button').addEventListener('click', () => { renderStats(); showScreen(modeScreen); });
+document.getElementById('levels-button').addEventListener('click', () => { renderStats(); renderStreak(); showScreen(modeScreen); });
 document.getElementById('open-profile-button').addEventListener('click', () => { renderProfile(); showScreen(profileScreen); });
 document.getElementById('profile-back-button').addEventListener('click', () => showScreen(modeScreen));
 document.getElementById('profile-save-button').addEventListener('click', () => {
@@ -1176,6 +1194,7 @@ function finishCodeRace() {
   const place = botsAhead >= 3 ? '4th Place' : botsAhead === 2 ? '3rd Place' : botsAhead === 1 ? '2nd Place' : '1st Place';
   const xpEarned = 20 + (place === '1st Place' ? 30 : place === '2nd Place' ? 20 : place === '3rd Place' ? 10 : 0) + (accuracy >= 95 ? 10 : 0);
   const unlockedAchievements = awardXP(xpEarned,wpm >= 40 ? ['code_master'] : []);
+  if (place === '1st Place') { launchConfetti(150); popText('🏁 1ST PLACE!'); } else if (place === '2nd Place' || place === '3rd Place') launchConfetti(50);
   const rewardHtml = '<div class="reward-heading">RACE REWARDS</div><div class="reward-xp">+' + xpEarned + ' XP <span>earned</span></div><p class="reward-detail">' + place + ' finish • ' + wpm.toFixed(1) + ' WPM • ' + accuracy.toFixed(1) + '% accuracy</p>' + (unlockedAchievements.length ? '<div class="new-achievements"><span>ACHIEVEMENT UNLOCKED</span>' + unlockedAchievements.map(item => '<div class="achievement-unlock"><b>' + item.icon + ' ' + item.name + '</b><small>' + item.description + '</small></div>').join('') + '</div>' : '<p class="no-achievement">Keep racing to unlock your next achievement.</p>') + '<div class="reward-progress"><div><b>LEVEL ' + playerLevel() + '</b><span>' + (playerProfile.xp % XP_PER_LEVEL) + ' / ' + XP_PER_LEVEL + ' XP TO NEXT LEVEL</span></div><div class="xp-track"><span style="width:' + (playerProfile.xp % XP_PER_LEVEL / XP_PER_LEVEL * 100) + '%"></span></div></div>';
   if (!raceBest || wpm > raceBest.wpm) {
     raceBest = {wpm,accuracy};
@@ -1279,7 +1298,7 @@ function updateSoundToggle() {
   toggle.textContent = soundMuted ? '🔇 SOUND OFF' : '🔊 SOUND ON';
   toggle.setAttribute('aria-pressed', String(soundMuted));
 }
-function playSound(kind) {
+function playSound(kind, level) {
   if (soundMuted) return;
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1295,8 +1314,12 @@ function playSound(kind) {
       error: { notes:[{hz:220,at:0,duration:.2,wave:'sawtooth'},{hz:155,at:.12,duration:.26,wave:'triangle'}], volume:.075 },
       go: { notes:[{hz:520,at:0,duration:.13,wave:'sine'},{hz:760,at:.09,duration:.16,wave:'sine'}], volume:.09 },
       finish: { notes:[{hz:523,at:0,duration:.16,wave:'sine'},{hz:659,at:.1,duration:.16,wave:'sine'},{hz:784,at:.2,duration:.16,wave:'sine'},{hz:1047,at:.3,duration:.3,wave:'triangle'}], volume:.1 },
-      click: { notes:[{hz:420,at:0,duration:.07,wave:'sine'}], volume:.055 }
+      click: { notes:[{hz:420,at:0,duration:.07,wave:'sine'}], volume:.055 },
+      levelup: { notes:[{hz:523,at:0,duration:.14,wave:'triangle'},{hz:659,at:.09,duration:.14,wave:'triangle'},{hz:784,at:.18,duration:.14,wave:'triangle'},{hz:1047,at:.27,duration:.16,wave:'triangle'},{hz:1319,at:.38,duration:.42,wave:'sine'},{hz:1568,at:.46,duration:.5,wave:'sine'}], volume:.1 },
+      unlock: { notes:[{hz:659,at:0,duration:.12,wave:'sine'},{hz:831,at:.08,duration:.12,wave:'sine'},{hz:988,at:.16,duration:.14,wave:'sine'},{hz:1319,at:.25,duration:.32,wave:'triangle'}], volume:.085 },
+      reward: { notes:[{hz:988,at:0,duration:.09,wave:'square'},{hz:1319,at:.07,duration:.3,wave:'square'},{hz:1760,at:.2,duration:.34,wave:'sine'}], volume:.05 }
     };
+    patterns.combo = { notes:[{hz:Math.min(1400,500 * Math.pow(1.06, Math.min(level, 14))),at:0,duration:.1,wave:'triangle'},{hz:Math.min(2100,750 * Math.pow(1.06, Math.min(level, 14))),at:.06,duration:.16,wave:'sine'}], volume:.075 };
     const pattern = patterns[kind] || patterns.click;
     pattern.notes.forEach(note => {
       const osc = soundContext.createOscillator();
@@ -1374,6 +1397,164 @@ function countBonusClicks(amount,event) {
 }
 const originalFinishClickTest = finishClickTest;
 
+/* ---- Feedback effects: confetti, screen shake, pop text, toasts ---- */
+function prefersReducedMotion() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+const confettiParticles = [];
+let confettiFrame = 0;
+function launchConfetti(amount, origin) {
+  if (prefersReducedMotion()) return;
+  let canvas = document.getElementById('fx-canvas');
+  if (!canvas) { canvas = document.createElement('canvas'); canvas.id = 'fx-canvas'; canvas.setAttribute('aria-hidden', 'true'); document.body.appendChild(canvas); }
+  const ratio = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.floor(window.innerWidth * ratio);
+  canvas.height = Math.floor(window.innerHeight * ratio);
+  const context = canvas.getContext('2d');
+  const colors = ['#4ea8ff', '#a78bfa', '#ffd36a', '#ff6fb0', '#43e08a', '#ffffff', '#46e6ff'];
+  const x0 = origin ? origin.x : window.innerWidth / 2;
+  const y0 = origin ? origin.y : window.innerHeight * .38;
+  for (let index = 0; index < amount; index++) {
+    const angle = Math.random() * Math.PI * 2, speed = 4 + Math.random() * 9;
+    confettiParticles.push({x:x0, y:y0, vx:Math.cos(angle) * speed, vy:Math.sin(angle) * speed - 5, size:5 + Math.random() * 7, spin:Math.random() * 6, spinSpeed:(Math.random() - .5) * .4, color:colors[index % colors.length], round:Math.random() < .3, life:1, decay:.007 + Math.random() * .008});
+  }
+  if (confettiParticles.length > 420) confettiParticles.splice(0, confettiParticles.length - 420);
+  cancelAnimationFrame(confettiFrame);
+  const step = () => {
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    for (let index = confettiParticles.length - 1; index >= 0; index--) {
+      const particle = confettiParticles[index];
+      particle.vy += .26; particle.vx *= .992; particle.x += particle.vx; particle.y += particle.vy; particle.spin += particle.spinSpeed; particle.life -= particle.decay;
+      if (particle.life <= 0 || particle.y > window.innerHeight + 30) { confettiParticles.splice(index, 1); continue; }
+      context.save();
+      context.globalAlpha = Math.max(0, Math.min(1, particle.life * 1.6));
+      context.translate(particle.x, particle.y); context.rotate(particle.spin); context.fillStyle = particle.color;
+      if (particle.round) { context.beginPath(); context.arc(0, 0, particle.size / 2, 0, Math.PI * 2); context.fill(); }
+      else context.fillRect(-particle.size / 2, -particle.size / 3, particle.size, particle.size * .6);
+      context.restore();
+    }
+    if (confettiParticles.length) confettiFrame = requestAnimationFrame(step);
+    else context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  };
+  confettiFrame = requestAnimationFrame(step);
+}
+function shakeScreen(strength) {
+  if (prefersReducedMotion()) return;
+  const root = document.querySelector('.home');
+  if (!root) return;
+  root.classList.remove('shake-sm', 'shake-lg');
+  void root.offsetWidth;
+  root.classList.add(strength === 'lg' ? 'shake-lg' : 'shake-sm');
+  clearTimeout(shakeScreen.timer);
+  shakeScreen.timer = setTimeout(() => root.classList.remove('shake-sm', 'shake-lg'), 600);
+  if (navigator.vibrate) { try { navigator.vibrate(strength === 'lg' ? [40, 30, 60] : 25); } catch (error) { /* vibration is optional */ } }
+}
+function popText(text) {
+  const node = document.createElement('div');
+  node.className = 'fx-pop';
+  node.textContent = text;
+  node.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(node);
+  node.addEventListener('animationend', () => node.remove());
+  setTimeout(() => node.remove(), 2200);
+}
+function showGameToast(title, detail, actionLabel, action) {
+  let toast = document.getElementById('level-toast');
+  if (!toast) { toast = document.createElement('div'); toast.id = 'level-toast'; toast.className = 'level-toast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast); }
+  toast.innerHTML = '';
+  const heading = document.createElement('strong'); heading.textContent = title;
+  const text = document.createElement('span'); text.textContent = detail;
+  toast.append(heading, text);
+  if (actionLabel) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = actionLabel;
+    button.addEventListener('click', () => { toast.classList.remove('show'); action(); });
+    toast.appendChild(button);
+  }
+  toast.classList.add('show');
+  clearTimeout(showGameToast.timer);
+  showGameToast.timer = setTimeout(() => toast.classList.remove('show'), 8000);
+}
+
+/* ---- Daily login streak ---- */
+const STREAK_REWARDS = [20, 30, 40, 50, 60, 80, 150];
+function sanitizeStreak(raw) {
+  const count = Math.max(0, Math.floor(Number(raw && raw.count) || 0));
+  const best = Math.max(count, Math.floor(Number(raw && raw.best) || 0));
+  const last = raw && typeof raw.last === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.last) ? raw.last : '';
+  return {count, best, last};
+}
+function localDateKey(date) {
+  const d = date || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function daysBetween(from, to) {
+  const utc = value => { const [y, m, d] = value.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+  return Math.round((utc(to) - utc(from)) / 86400000);
+}
+function streakStatus() {
+  const streak = playerProfile.streak;
+  if (!streak.last) return {state:'new', current:0};
+  const gap = daysBetween(streak.last, localDateKey());
+  if (gap <= 0) return {state:'claimed', current:streak.count};
+  if (gap === 1) return {state:'ready', current:streak.count};
+  return {state:'broken', current:0, lost:streak.count};
+}
+function renderStreak() {
+  const card = document.getElementById('streak-card');
+  if (!card) return;
+  const status = streakStatus();
+  const streak = playerProfile.streak;
+  const canClaim = status.state !== 'claimed';
+  const doneDays = status.state === 'claimed' ? ((status.current - 1) % 7) + 1 : status.state === 'ready' ? status.current % 7 : 0;
+  document.getElementById('streak-title').textContent = '🔥 ' + status.current + ' DAY STREAK';
+  document.getElementById('streak-best').textContent = 'BEST: ' + streak.best;
+  card.classList.toggle('streak-ready', canClaim);
+  const days = document.getElementById('streak-days');
+  days.innerHTML = '';
+  STREAK_REWARDS.forEach((xp, index) => {
+    const number = index + 1;
+    const tile = document.createElement('div');
+    const isDone = number <= doneDays;
+    const isToday = canClaim && number === doneDays + 1;
+    const isTomorrow = !canClaim && number === doneDays + 1;
+    tile.className = 'streak-day' + (isDone ? ' done' : '') + (isToday ? ' today' : '') + (number === 7 ? ' special' : '');
+    const label = document.createElement('small'); label.textContent = isToday ? 'TODAY' : isTomorrow ? 'TOMORROW' : 'DAY ' + number;
+    const icon = document.createElement('b'); icon.textContent = isDone ? '✓' : number === 7 ? '🏆' : '🎁';
+    const amount = document.createElement('span'); amount.textContent = '+' + xp + ' XP';
+    tile.append(label, icon, amount);
+    days.appendChild(tile);
+  });
+  const message = document.getElementById('streak-message');
+  const button = document.getElementById('streak-claim');
+  button.disabled = !canClaim;
+  if (status.state === 'claimed') {
+    message.textContent = status.current >= 14 ? 'Reward claimed! Legendary dedication — come back tomorrow.' : 'Reward claimed! Come back tomorrow to keep your streak alive.';
+    button.textContent = '✓ CLAIMED TODAY';
+  } else {
+    const nextDay = status.state === 'ready' ? (status.current % 7) + 1 : 1;
+    message.textContent = status.state === 'ready' ? 'Claim today to keep your ' + status.current + '-day streak burning!' : status.state === 'broken' ? 'Your ' + status.lost + '-day streak ended. Start a new one today — your best of ' + streak.best + ' is saved!' : 'Claim your first daily reward and start a streak! Reach 7 days to unlock the exclusive Streak Aura frame.';
+    button.textContent = 'CLAIM DAY ' + nextDay + ' • +' + STREAK_REWARDS[nextDay - 1] + ' XP';
+  }
+}
+function claimStreakReward() {
+  const status = streakStatus();
+  if (status.state === 'claimed') return;
+  const before = playerProfile.streak.best;
+  const count = status.state === 'ready' ? playerProfile.streak.count + 1 : 1;
+  const reward = STREAK_REWARDS[(count - 1) % 7];
+  playerProfile.streak = {count, best:Math.max(before, count), last:localDateKey()};
+  awardXP(reward);
+  renderStreak();
+  const button = document.getElementById('streak-claim');
+  const box = button.getBoundingClientRect();
+  playSound('reward');
+  launchConfetti(count % 7 === 0 ? 190 : 100, {x:box.left + box.width / 2, y:box.top});
+  popText('🔥 DAY ' + count + ' • +' + reward + ' XP');
+  const unlockedNow = [];
+  if (before < 7 && playerProfile.streak.best >= 7) unlockedNow.push('Streak Aura frame');
+  if (before < 14 && playerProfile.streak.best >= 14) unlockedNow.push('Phoenix suit');
+  if (unlockedNow.length) setTimeout(() => { playSound('unlock'); showGameToast('🔥 STREAK REWARD!', '🔓 Unlocked: ' + unlockedNow.join(' and ') + '. Equip it in Customize!', '🎨 CUSTOMIZE NOW', openCustomize); }, 700);
+}
+
 /* ---- Sign in, sign out and leaderboard ---- */
 const authModal = document.getElementById('auth-modal');
 const authToggle = document.getElementById('auth-toggle');
@@ -1386,6 +1567,7 @@ function leaderboardEntries() {
 }
 function refreshAuthUI() {
   updateCustomizeButtons();
+  renderStreak();
   const key = currentAccountKey();
   authToggle.textContent = key ? '👤 ' + playerProfile.username.toUpperCase() : '👤 SIGN IN';
   authToggle.setAttribute('aria-label', key ? 'Signed in as ' + playerProfile.username + '. Open account menu' : 'Sign in');
@@ -1471,7 +1653,7 @@ function signIn(rawName) {
   if (accounts[key]) {
     loadAccountIntoProfile(accounts[key]);
   } else {
-    accounts[key] = {username:name, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), custom:playerProfile.custom, updated:Date.now()};
+    accounts[key] = {username:name, avatar:playerProfile.avatar, xp:playerProfile.xp, games:playerProfile.games, achievements:playerProfile.achievements.slice(), custom:playerProfile.custom, streak:playerProfile.streak, updated:Date.now()};
     writeAccounts(accounts);
     playerProfile.username = name;
   }
@@ -1483,7 +1665,7 @@ function signIn(rawName) {
 }
 function signOut() {
   localStorage.removeItem(SESSION_KEY);
-  Object.assign(playerProfile, {xp:0, games:0, achievements:[], username:'Arena Player', avatar:'nova', custom:{}});
+  Object.assign(playerProfile, {xp:0, games:0, achievements:[], username:'Arena Player', avatar:'nova', custom:{}, streak:{count:0, best:0, last:''}});
   selectedProfileAvatar = 'nova';
   savePlayerProfile();
   renderProfile();
@@ -1504,17 +1686,19 @@ document.getElementById('auth-leaderboard-button').addEventListener('click', () 
 document.getElementById('open-leaderboard-button').addEventListener('click', () => { renderLeaderboard(); showScreen(leaderboardScreen); });
 document.getElementById('leaderboard-back-button').addEventListener('click', () => { refreshAuthUI(); showScreen(modeScreen); });
 refreshAuthUI();
+document.getElementById('streak-claim').addEventListener('click', claimStreakReward);
 
 /* ---- Customization ---- */
 let customizeTab = 'skin';
 function itemLevel(item) { return item.lvl || 1; }
+function itemUnlocked(item) { return itemLevel(item) <= playerLevel() && (!item.streak || playerProfile.streak.best >= item.streak); }
 function allCustomItems() {
   const items = [];
-  CUSTOM_CATEGORIES.forEach(category => category.list.forEach(item => items.push({category:category.label, name:item.name, lvl:itemLevel(item)})));
-  Object.values(ARENA_CHARACTERS).forEach(character => items.push({category:'CHARACTER', name:character.name, lvl:character.unlock || 1}));
+  CUSTOM_CATEGORIES.forEach(category => category.list.forEach(item => items.push({category:category.label, name:item.name, lvl:itemLevel(item), streak:item.streak || 0, unlocked:itemUnlocked(item)})));
+  Object.values(ARENA_CHARACTERS).forEach(character => items.push({category:'CHARACTER', name:character.name, lvl:character.unlock || 1, streak:0, unlocked:(character.unlock || 1) <= playerLevel()}));
   return items;
 }
-function unlockedCustomCount() { return allCustomItems().filter(item => item.lvl <= playerLevel()).length; }
+function unlockedCustomCount() { return allCustomItems().filter(item => item.unlocked).length; }
 function updateCustomizeButtons() {
   const text = unlockedCustomCount() + ' / ' + allCustomItems().length + ' ITEMS UNLOCKED';
   document.querySelectorAll('.customize-progress-sub').forEach(node => { node.textContent = text; });
@@ -1532,6 +1716,7 @@ function setCustomChoice(key, value) {
 }
 function customHint(message) { document.getElementById('customize-hint').textContent = message; }
 function lockedMessage(item) {
+  if (item.streak) return item.name.toUpperCase() + ' UNLOCKS WITH A ' + item.streak + '-DAY LOGIN STREAK • YOUR BEST: ' + playerProfile.streak.best;
   const need = itemLevel(item);
   return item.name.toUpperCase() + ' UNLOCKS AT LEVEL ' + need + ' • ' + Math.max(0, (need - 1) * XP_PER_LEVEL - playerProfile.xp) + ' XP TO GO';
 }
@@ -1542,13 +1727,13 @@ function renderCustomize() {
   document.getElementById('customize-stage').innerHTML = arenaCharacterArt(selectedProfileAvatar, choice);
   document.getElementById('customize-char-name').textContent = base.name;
   document.getElementById('customize-char-role').textContent = base.role;
-  const nextLevel = allCustomItems().map(item => item.lvl).filter(value => value > level).sort((a, b) => a - b)[0];
-  const nextNames = nextLevel ? allCustomItems().filter(item => item.lvl === nextLevel).map(item => item.name) : [];
+  const nextLevel = allCustomItems().filter(item => !item.streak).map(item => item.lvl).filter(value => value > level).sort((a, b) => a - b)[0];
+  const nextNames = nextLevel ? allCustomItems().filter(item => !item.streak && item.lvl === nextLevel).map(item => item.name) : [];
   document.getElementById('customize-level-info').textContent = nextLevel ? 'LEVEL ' + level + ' • NEXT UNLOCK AT LEVEL ' + nextLevel + ': ' + nextNames.slice(0, 3).join(', ') + (nextNames.length > 3 ? '…' : '') : 'LEVEL ' + level + ' • EVERYTHING UNLOCKED!';
   const tabs = document.getElementById('customize-tabs');
   tabs.innerHTML = '';
   CUSTOM_CATEGORIES.forEach(category => {
-    const open = category.list.filter(item => itemLevel(item) <= level).length;
+    const open = category.list.filter(itemUnlocked).length;
     const tab = document.createElement('button');
     tab.type = 'button'; tab.setAttribute('role', 'tab');
     tab.className = 'customize-tab' + (category.key === customizeTab ? ' active' : '');
@@ -1568,7 +1753,7 @@ function renderCustomize() {
   if (!(category.key in defaults)) options.push({id:null, name:'Original', lvl:1, color:baseColor[category.key]});
   category.list.forEach(item => options.push(item));
   options.forEach(item => {
-    const locked = itemLevel(item) > level;
+    const locked = !itemUnlocked(item);
     const selected = item.id === null ? !(category.key in choice) : (choice[category.key] || defaults[category.key]) === item.id;
     const button = document.createElement('button');
     button.type = 'button';
@@ -1585,7 +1770,7 @@ function renderCustomize() {
       art.innerHTML = arenaCharacterArt(selectedProfileAvatar, previewChoice);
     }
     if (category.key === 'outfit' && item.id !== null) { art.innerHTML = arenaCharacterArt(selectedProfileAvatar, Object.assign({}, choice, {outfit:item.id})); }
-    if (locked) { const lock = document.createElement('span'); lock.className = 'customize-lock'; lock.textContent = '🔒 LV ' + itemLevel(item); art.appendChild(lock); }
+    if (locked) { const lock = document.createElement('span'); lock.className = 'customize-lock'; lock.textContent = item.streak ? '🔥 ' + item.streak + ' DAYS' : '🔒 LV ' + itemLevel(item); art.appendChild(lock); }
     const name = document.createElement('small'); name.textContent = item.name;
     button.append(art, name);
     button.addEventListener('click', () => {
@@ -1600,7 +1785,7 @@ function randomizeCustom() {
   const level = playerLevel();
   const entry = {};
   CUSTOM_CATEGORIES.forEach(category => {
-    const open = category.list.filter(item => itemLevel(item) <= level);
+    const open = category.list.filter(itemUnlocked);
     entry[category.key] = open[Math.floor(Math.random() * open.length)].id;
   });
   playerProfile.custom[selectedProfileAvatar] = entry;
@@ -1615,22 +1800,9 @@ function openCustomize() {
   showScreen(customizeScreen);
 }
 function announceLevelUp(before, after) {
-  const names = allCustomItems().filter(item => item.lvl > before && item.lvl <= after).map(item => item.name);
-  let toast = document.getElementById('level-toast');
-  if (!toast) { toast = document.createElement('div'); toast.id = 'level-toast'; toast.className = 'level-toast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast); }
-  toast.innerHTML = '';
-  const title = document.createElement('strong'); title.textContent = '⬆ LEVEL UP! LEVEL ' + after;
-  const detail = document.createElement('span');
-  detail.textContent = names.length ? '🔓 Unlocked: ' + names.slice(0, 4).join(', ') + (names.length > 4 ? ' +' + (names.length - 4) + ' more' : '') : 'Keep playing to unlock more looks!';
-  toast.append(title, detail);
-  if (names.length) {
-    const button = document.createElement('button'); button.type = 'button'; button.textContent = '🎨 CUSTOMIZE NOW';
-    button.addEventListener('click', () => { toast.classList.remove('show'); openCustomize(); });
-    toast.appendChild(button);
-  }
-  toast.classList.add('show');
-  clearTimeout(announceLevelUp.timer);
-  announceLevelUp.timer = setTimeout(() => toast.classList.remove('show'), 8000);
+  const names = allCustomItems().filter(item => !item.streak && item.lvl > before && item.lvl <= after).map(item => item.name);
+  const detail = names.length ? '🔓 Unlocked: ' + names.slice(0, 4).join(', ') + (names.length > 4 ? ' +' + (names.length - 4) + ' more' : '') : 'Keep playing to unlock more looks!';
+  showGameToast('⬆ LEVEL UP! LEVEL ' + after, detail, names.length ? '🎨 CUSTOMIZE NOW' : '', openCustomize);
 }
 document.getElementById('open-customize-button').addEventListener('click', openCustomize);
 document.getElementById('open-customize-quick').addEventListener('click', openCustomize);
